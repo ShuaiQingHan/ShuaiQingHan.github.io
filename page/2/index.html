@@ -66,8 +66,6 @@ var _hmt = _hmt || [];
 			
 				<li><a href="/">主页</a></li>
 	        
-				<li><a href="/photos">相册</a></li>
-	        
 			</ul>
 		</nav>
 		<nav class="header-smart-menu">
@@ -118,8 +116,6 @@ var _hmt = _hmt || [];
 			
 				
 			
-				
-			
 			
 			
 			<nav class="header-nav">
@@ -138,9 +134,7 @@ var _hmt = _hmt || [];
 				<ul style="width: 50%">
 				
 				
-					<li style="width: 50%"><a href="/">主页</a></li>
-		        
-					<li style="width: 50%"><a href="/photos">相册</a></li>
+					<li style="width: 100%"><a href="/">主页</a></li>
 		        
 				</ul>
 			</nav>
@@ -310,96 +304,6 @@ var _hmt = _hmt || [];
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2021/06/24/Vue%E7%BB%84%E4%BB%B6%E5%8C%96%E5%BC%80%E5%8F%91/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-测试" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/16/%E6%B5%8B%E8%AF%95/">测试</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/16/%E6%B5%8B%E8%AF%95/" class="archive-article-date">
-  	<time datetime="2021-03-16T07:18:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-16</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="JavaScript深入之call和apply的模拟实现"><a href="#JavaScript深入之call和apply的模拟实现" class="headerlink" title="JavaScript深入之call和apply的模拟实现"></a>JavaScript深入之call和apply的模拟实现</h1><blockquote>
-<p>JavaScript深入系列第十篇，通过call和apply的模拟实现，带你揭开call和apply改变this的真相</p>
-</blockquote>
-<h2 id="call"><a href="#call" class="headerlink" title="call"></a>call</h2><p>一句话介绍 call：</p>
-<blockquote>
-<p>call() 方法在使用一个指定的 this 值和若干个指定的参数值的前提下调用某个函数或方法。</p>
-</blockquote>
-<p>举个例子：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> foo = &#123;</span><br><span class="line">    <span class="attr">value</span>: <span class="number">1</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">bar</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>.value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bar.call(foo); <span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
-
-<p>注意两点：</p>
-<ol>
-<li>call 改变了 this 的指向，指向到 foo</li>
-<li>bar 函数执行了</li>
-</ol>
-        
-          <a class="article-more-a" href="/2021/03/16/%E6%B5%8B%E8%AF%95/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">ES6</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/16/%E6%B5%8B%E8%AF%95/">展开全文 >></a>
         </p>
       
 
@@ -1797,6 +1701,416 @@ var _hmt = _hmt || [];
 
 
   
+    <article id="post-webpack构建和性能优化探索" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/01/19/webpack%E6%9E%84%E5%BB%BA%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8E%A2%E7%B4%A2/">webpack构建和性能优化探索</a>
+    </h1>
+  
+
+        
+        <a href="/2019/01/19/webpack%E6%9E%84%E5%BB%BA%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8E%A2%E7%B4%A2/" class="archive-article-date">
+  	<time datetime="2019-01-19T13:02:09.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>随着业务复杂度的不断的增加，工程模块的体积也会不断增加，构建后的模块通常要以M为单位计算。在构建过程中，基于nodejs的webpack在单进程的情况下loader表现变得越来越慢，在不做任何特殊处理的情况下，构建完后的多项目之间公用基础资源存在重复打包，基础库代码复用率也不高，这都慢慢暴露出webpack的问题。</p>
+<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><p>针对存在的问题，社区涌出了各种解决方案，包括webpack自身也在不断优化。</p>
+<h3 id="构建优化"><a href="#构建优化" class="headerlink" title="构建优化"></a>构建优化</h3><p>下面利用相关的方案对实际项目一步一步进行构建优化，提升我们的编译速度，本次优化相关属性如下：</p>
+<ul>
+<li><p>机器： Macbook Air 四核 8G内存</p>
+</li>
+<li><p>Webpack： v4.10.2</p>
+</li>
+<li><p>项目：922个模块</p>
+</li>
+</ul>
+<p>构建优化方案如下：</p>
+<ul>
+<li><p>减少编译体积大小</p>
+</li>
+<li><p>将大型库外链</p>
+</li>
+<li><p>将库预先编译</p>
+</li>
+<li><p>使用缓存</p>
+</li>
+<li><p>并行编译</p>
+</li>
+</ul>
+<p>初始构建时间如下：</p>
+<table>
+<thead>
+<tr>
+<th><strong>增量构建</strong></th>
+<th><strong>Development</strong> <strong>构建</strong></th>
+<th><strong>Production</strong> <strong>构建</strong></th>
+<th><strong>备注</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3088ms</td>
+<td>43702ms</td>
+<td>89371ms</td>
+<td></td>
+</tr>
+</tbody></table>
+<h4 id="减少编译体积大小"><a href="#减少编译体积大小" class="headerlink" title="减少编译体积大小"></a>减少编译体积大小</h4><p>初始构建时候，我们利用<code>webpack-bundle-analyzer</code>对编译结果进行分析，结果如下：</p>
+<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/webpack%E6%9E%84%E5%BB%BA%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8E%A2%E7%B4%A2/image-20190119171027893.png" alt="image-20190119171027893"></p>
+<p>可以看到，td-ui（类似于antd的ui组件库）、moment库的locale、BizCharts占了项目的大部分体积，而在没有全部使用这些库的全部内容的情况下，我们可以对齐进行按需加载。</p>
+<p>针对td-ui和BizCharts，我们对齐添加按需加载<code>babel-plugin-import</code>，这个包可以在使用ES6模块导入的时候，对其进行分析，解析成引入相应文件夹下面的模块，如下：</p>
+<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/webpack%E6%9E%84%E5%BB%BA%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8E%A2%E7%B4%A2/image-20190119171900475.png" alt="image-20190119171900475"></p>
+<p>首先，我们先添加babel的配置，在plugins中加入<code>babel-plugin-import</code>:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;plugins&quot;</span>: [</span><br><span class="line">        [<span class="string">&quot;import&quot;</span>, [</span><br><span class="line">            &#123; <span class="attr">&quot;libraryName&quot;</span>: <span class="string">&quot;td-ui&quot;</span>, <span class="attr">&quot;style&quot;</span>: <span class="literal">true</span> &#125;,</span><br><span class="line">            &#123; <span class="attr">&quot;libraryName&quot;</span>: <span class="string">&quot;bizcharts&quot;</span>, <span class="attr">&quot;libraryDirectory&quot;</span>: <span class="string">&quot;lib/components&quot;</span> &#125;</span><br><span class="line">        ]]</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，我们给bizcharts也添加了按需加载，配置中添加了按需加载的指定文件夹，针对bizcharts，编译前后代码对比如下：</p>
+<p>编译前：</p>
+<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/webpack%E6%9E%84%E5%BB%BA%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8E%A2%E7%B4%A2/image-20190119172521201.png" alt="image-20190119172521201"></p>
+<p>编译后：</p>
+<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/webpack%E6%9E%84%E5%BB%BA%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8E%A2%E7%B4%A2/image-20190119172527996.png" alt="image-20190119172527996"></p>
+<p>注意：<code>bizcharts</code>按需加载需要引入其核心代码<code>bizcharts/lib/core</code>;</p>
+<p>到此为止，td-ui和bizcharts的按需加载已经处理完毕，接下来是针对moment的处理。moment的主要体积来源于locale国际化文件夹，由于项目中有中英文国际化的需求，我们这里使用<code>webpack.ContextReplacementPugin</code>对该文件夹的上下文进行匹配，只匹配中文和英文的语言包，plugin配置如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> webpack.ContextReplacementPugin(</span><br><span class="line">    <span class="regexp">/moment[\/\\]locale$/</span>, <span class="comment">//匹配文件夹</span></span><br><span class="line">    <span class="regexp">/zh-cn|en-us/</span>  <span class="comment">// 中英文语言包</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>如果没有国际化的需求，可以使用<code>webpack.IgnorePlugin</code>对整个locale文件夹进行忽略，配置如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> webpack.IgnorePlugin(<span class="regexp">/^\.\/locale$/</span>, <span class="regexp">/moment$/</span>)</span><br></pre></td></tr></table></figure>
+
+<p>减少编译体积大小完成之后得到如下构建对比结果：</p>
+<table>
+<thead>
+<tr>
+<th><strong>增量构建</strong></th>
+<th><strong>Development</strong> <strong>构建</strong></th>
+<th><strong>Production</strong>  <strong>构建</strong></th>
+<th><strong>备注</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3088ms</td>
+<td>43702ms</td>
+<td>89371ms</td>
+<td></td>
+</tr>
+<tr>
+<td>2561ms</td>
+<td>27864ms</td>
+<td>67441ms</td>
+<td>减少编译体积大小</td>
+</tr>
+</tbody></table>
+<h4 id="将大型库外链-amp-amp-将库预先编译"><a href="#将大型库外链-amp-amp-将库预先编译" class="headerlink" title="将大型库外链 &amp;&amp; 将库预先编译"></a>将大型库外链 &amp;&amp; 将库预先编译</h4><p>为了避免一些已经编译好的大型库重新编译，我们需要将这些库放在编译意外的地方，或者预先编译这些库。</p>
+<p>webpack也为我们提供了将模块外链的配置<code>externals</code>，比如我们把lodash外链，配置如下</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  <span class="attr">externals</span> : &#123;</span><br><span class="line">    <span class="attr">lodash</span>: <span class="string">&#x27;window._&#x27;</span></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 或者</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">externals</span> : &#123;</span><br><span class="line">    <span class="attr">lodash</span> : &#123;</span><br><span class="line">      <span class="attr">commonjs</span>: <span class="string">&#x27;lodash&#x27;</span>,</span><br><span class="line">      <span class="attr">amd</span>: <span class="string">&#x27;lodash&#x27;</span>,</span><br><span class="line">      <span class="attr">root</span>: <span class="string">&#x27;_&#x27;</span> <span class="comment">// 指向全局变量</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>针对库预先编译，webpack也提供了相应的插件，那就是<code>webpack.Dllplugin</code>，这个插件可以预先编译制定好的库，最后在实际项目中使用<code>webpack.DllReferencePlugin</code>将预先编译好的库关联到当前的编译结果中，无需重新编译。</p>
+<p>Dllplugin配置文件webpack.dll.config.js如下：</p>
+<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/webpack%E6%9E%84%E5%BB%BA%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8E%A2%E7%B4%A2/image-20190119174609909.png" alt="image-20190119174609909"></p>
+<p>dllReference配置文件webpack.dll.reference.config.js如下：</p>
+<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/webpack%E6%9E%84%E5%BB%BA%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8E%A2%E7%B4%A2/image-20190119174637136.png" alt="image-20190119174637136"></p>
+<p>最后使用<code>webpack-merge</code>将<code>webpack.dll.reference.config.js</code>合并到到webpack配置中。</p>
+<p>注意：预先编译好的库文件需要在html中手动引入并且必须放在webpack的entry引入之前，否则会报错。</p>
+<p>其实，将大型库外链和将库预先编译也属于减少编译体积的一种，最后得到编译时间结果如下：</p>
+<table>
+<thead>
+<tr>
+<th><strong>增量构建</strong></th>
+<th><strong>Development</strong> <strong>构建</strong></th>
+<th><strong>Production</strong> <strong>构建</strong></th>
+<th><strong>备注</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3088ms</td>
+<td>43702ms</td>
+<td>89371ms</td>
+<td></td>
+</tr>
+<tr>
+<td>2561ms</td>
+<td>27864ms</td>
+<td>67441ms</td>
+<td>减少编译体积大小</td>
+</tr>
+<tr>
+<td>2246ms</td>
+<td>22870ms</td>
+<td>50601ms</td>
+<td>Dll优化后</td>
+</tr>
+</tbody></table>
+<h4 id="使用缓存"><a href="#使用缓存" class="headerlink" title="使用缓存"></a>使用缓存</h4><p>首先，我们开启babel-loader自带的缓存功能（默认其实就是打开的）。</p>
+<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/webpack%E6%9E%84%E5%BB%BA%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8E%A2%E7%B4%A2/image-20190119175219987.png" alt="image-20190119175219987"></p>
+<p>另外，开启<code>uglifyjs-webpack-plugin</code>的缓存功能。</p>
+<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/webpack%E6%9E%84%E5%BB%BA%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8E%A2%E7%B4%A2/image-20190119175311844.png" alt="image-20190119175311844"></p>
+<p>添加缓存插件<code>hard-source-webpack-plugin</code>（当然也可以添加cache-loader）</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> hardSourcePlugin = <span class="built_in">require</span>(<span class="string">&#x27;hard-source-webpack-plugin&#x27;</span>);</span><br><span class="line"></span><br><span class="line">moudle.exports = &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="attr">plugins</span>: [</span><br><span class="line">        <span class="keyword">new</span> hardSourcePlugin()</span><br><span class="line">    ],</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>添加缓存后编译结果如下：</p>
+<table>
+<thead>
+<tr>
+<th><strong>增量构建</strong></th>
+<th><strong>Development</strong> <strong>构建</strong></th>
+<th><strong>Production</strong> <strong>构建</strong></th>
+<th><strong>备注</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3088ms</td>
+<td>43702ms</td>
+<td>89371ms</td>
+<td></td>
+</tr>
+<tr>
+<td>2561ms</td>
+<td>27864ms</td>
+<td>67441ms</td>
+<td>减少编译体积大小</td>
+</tr>
+<tr>
+<td>2246ms</td>
+<td>22870ms</td>
+<td>50601ms</td>
+<td>Dll优化后</td>
+</tr>
+<tr>
+<td>1918ms</td>
+<td>10056ms</td>
+<td>17298ms</td>
+<td>使用缓存后</td>
+</tr>
+</tbody></table>
+<p>可以看到，编译效果极好。</p>
+<h4 id="并行编译"><a href="#并行编译" class="headerlink" title="并行编译"></a>并行编译</h4><p>由于nodejs为单线程，为了更好利用好电脑多核的特性，我们可以将编译并行开始，这里我们使用<code>happypack</code>，当然也可以使用<code>thread-loader</code>，我们将babel-loader和样式的loader交给happypack接管。</p>
+<p>babel-loader配置如下：</p>
+<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/webpack%E6%9E%84%E5%BB%BA%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8E%A2%E7%B4%A2/image-20190119180033334.png" alt="image-20190119180033334"></p>
+<p>less-loader配置如下：</p>
+<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/webpack%E6%9E%84%E5%BB%BA%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8E%A2%E7%B4%A2/image-20190119180113456.png" alt="image-20190119180113456"></p>
+<p>构建结果如下：</p>
+<table>
+<thead>
+<tr>
+<th><strong>增量构建</strong></th>
+<th><strong>Development</strong> <strong>构建</strong></th>
+<th><strong>Production</strong> <strong>构建</strong></th>
+<th><strong>备注</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3088ms</td>
+<td>43702ms</td>
+<td>89371ms</td>
+<td></td>
+</tr>
+<tr>
+<td>2561ms</td>
+<td>27864ms</td>
+<td>67441ms</td>
+<td>减少编译体积大小</td>
+</tr>
+<tr>
+<td>2246ms</td>
+<td>22870ms</td>
+<td>50601ms</td>
+<td>Dll优化后</td>
+</tr>
+<tr>
+<td>1918ms</td>
+<td>10056ms</td>
+<td>17298ms</td>
+<td>使用缓存后</td>
+</tr>
+<tr>
+<td>2252ms</td>
+<td>11846ms</td>
+<td>18727ms</td>
+<td>开启happypack后</td>
+</tr>
+</tbody></table>
+<p>可以看到，添加happypack之后，编译时间有所增加，针对这个结果，我对webpack版本和项目大小进行了对比测试，如下：</p>
+<ul>
+<li><p>Webpack：v2.7.0</p>
+</li>
+<li><p>项目：1013个模块</p>
+</li>
+<li><p>全量production构建：105395ms</p>
+</li>
+</ul>
+<p>添加happypack之后，全量production构建时间降低到<code>58414ms</code>。</p>
+<p>针对webpack版本：</p>
+<ul>
+<li><p>Webpack：v4.23.0</p>
+</li>
+<li><p>项目：1013个模块</p>
+</li>
+<li><p>全量development构建 : 12352ms</p>
+</li>
+</ul>
+<p>添加happypack之后，全量development构建降低到11351ms。</p>
+<p>得到结论：Webpack v4 之后，happypack已经力不从心，效果并不明显，而且在小型中并不适用。</p>
+<p>所以针对并行加载方案要不要加，要具体项目具体分析。</p>
+<h3 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h3><p>对于webpack编译出来的结果，也有相应的性能优化的措施。方案如下：</p>
+<ul>
+<li><p>减少模块数量及大小</p>
+</li>
+<li><p>合理缓存</p>
+</li>
+<li><p>合理拆包</p>
+</li>
+</ul>
+<h4 id="减少模块数量及大小"><a href="#减少模块数量及大小" class="headerlink" title="减少模块数量及大小"></a>减少模块数量及大小</h4><p>针对减少模块数量及大小，我们在构建优化的章节中有提到很多，具体点如下：</p>
+<ul>
+<li>按需加载 babel-plugin-import（antd、iview、bizcharts）、babel-plugin-component（element-ui）</li>
+<li>减少无用模块webpack.ContextReplacementPlugin、webpack.IgnorePlugin</li>
+<li>Tree-shaking：树摇功能，消除无用代码，无用模块。</li>
+<li>Scope-Hoisting：作用域提升。</li>
+<li>babel-plugin-transform-runtime，针对babel-polyfill清除不必要的polyfill。</li>
+</ul>
+<p>前面两点我们就不具体描述，在构建优化章节中有说。</p>
+<h5 id="Tree-shaking"><a href="#Tree-shaking" class="headerlink" title="Tree-shaking"></a>Tree-shaking</h5><p>树摇功能，将树上没用的叶子摇下来，寓意将没有必要的代码删除。该功能在webapck V2中已被webpack默认开启，但是使用前提是，<code>模块必须是ES6模块</code>，因为ES6模块为静态分析，动态引入的特性，可以让webpack在构建模块的时候知道，哪些模块内容在引入中被使用，哪些模块没有被使用，然后将没有被引用的的模块在转为为AST后删除。</p>
+<p>由于必须使用ES6模块，我们需要将babel的自动模块转化功能关闭，否则你的es6模块将自动转化为commonjs模块，配置如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;presets&quot;</span>: [</span><br><span class="line">        <span class="string">&quot;react&quot;</span>,</span><br><span class="line">        <span class="string">&quot;stage-2&quot;</span>,</span><br><span class="line">        [</span><br><span class="line">            <span class="string">&quot;env&quot;</span>,</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;modlues&quot;</span>: <span class="literal">false</span> <span class="comment">// 关闭babel的自动转化模块功能，保留ES6模块语法</span></span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Tree-shaking编译时候可以在命令后使用–display-used-exports可以在shell打印出关于代码剔除的提示。</p>
+<h5 id="Scope-Hoisting"><a href="#Scope-Hoisting" class="headerlink" title="Scope-Hoisting"></a>Scope-Hoisting</h5><p>作用域提升，尽可能的把打散的模块合并到一个函数中，前提是不能造成代码冗余。因此只有那些被引用了一次的模块才能被合并。</p>
+<p>可能不好理解，下面demo对比一下有无Scope-Hoisting的编译结果。</p>
+<p>首先定义一个util.js文件</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="string">&#x27;Hello,Webpack&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>然后定义入口文件main.js</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> str <span class="keyword">from</span> <span class="string">&#x27;./util.js&#x27;</span></span><br><span class="line"><span class="built_in">console</span>.log(str);</span><br></pre></td></tr></table></figure>
+
+<p>下面是无Scope-Hoisting结果：</p>
+<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/webpack%E6%9E%84%E5%BB%BA%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8E%A2%E7%B4%A2/image-20190119194535595.png" alt="image-20190119194535595"></p>
+<p>然后是Scope-Hoisting后的结果：</p>
+<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/webpack%E6%9E%84%E5%BB%BA%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8E%A2%E7%B4%A2/image-20190119194554573.png" alt="image-20190119194554573"></p>
+<p>与Tree-Shaking类似，使用Scope-Hoisting的前提也是必须是ES6模块，除此之外，还需要加入webpack内置插件，位于webpack文件夹，<code>webpack/lib/optimize/ModuleConcatenationPlugin</code>，配置如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> ModuleConcatenationPlugin = <span class="built_in">require</span>(<span class="string">&#x27;webpack/lib/optimize/ModuleConcatenationPlugin&#x27;</span>);</span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="attr">plugins</span>: [</span><br><span class="line">        <span class="keyword">new</span> ModuleConcatenationPlugin()</span><br><span class="line">    ]</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>另外，为了跟好的利用Scope-Hoisting，针对Npm的第三方模块，它们也可能提供了ES6模块，我们可以指定优先使用它们的ES6模块，而不是使用它们编译后的代码，webpack的配置如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="attr">resolve</span>: &#123;</span><br><span class="line">        <span class="comment">// 优先采用jsnext:main中指定的ES6模块文件</span></span><br><span class="line">        <span class="attr">mainFields</span>: [<span class="string">&#x27;jsnext:main&#x27;</span>, <span class="string">&#x27;module&#x27;</span>, <span class="string">&#x27;browser&#x27;</span>, <span class="string">&#x27;main&#x27;</span>]</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>jsnext:main</code>为业内大家约定好的存放ES6模块的文件夹，后续为了规范，更改为<code>module</code>文件夹。</p>
+<h5 id="babel-plugin-transform-runtime"><a href="#babel-plugin-transform-runtime" class="headerlink" title="babel-plugin-transform-runtime"></a>babel-plugin-transform-runtime</h5><p>在我们实际的项目中，为了兼容一些老式的浏览器，我们需要在项目加入babel-polyfill这个包。由于babel-polyfill太大，导致我们编译后的包体积增大，降低我们的加载性能，但是实际上，我们只需要加入我们使用到的不兼容的内容的polyfill就可以，这个时候<code>babel-plugin-transform-runtime</code>就可以帮我们去除那些我们没有使用到的polyfill，当然，你需要在<code>babal-preset-env</code>中配置你需要兼容的浏览器，否则会使用默认兼容浏览器。</p>
+<p>添加babel-plugin-transform-runtime的.babelrc配置如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;presets&quot;</span>: [[<span class="string">&quot;env&quot;</span>, &#123;</span><br><span class="line">        <span class="attr">&quot;targets&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;browsers&quot;</span>: [<span class="string">&quot;last 2 versions&quot;</span>, <span class="string">&quot;safari &gt;= 7&quot;</span>, <span class="string">&quot;ie &gt;= 9&quot;</span>, <span class="string">&quot;chrome &gt;= 52&quot;</span>] <span class="comment">// 配置兼容浏览器版本</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">&quot;modules&quot;</span>: <span class="literal">false</span></span><br><span class="line">    &#125;], <span class="string">&quot;stage-2&quot;</span>],</span><br><span class="line">    <span class="attr">&quot;plugins&quot;</span>: [</span><br><span class="line">        <span class="string">&quot;transform-class-properties&quot;</span>,</span><br><span class="line">        <span class="string">&quot;transform-runtime&quot;</span>, <span class="comment">// 添加babel-plugin-transform-runtime</span></span><br><span class="line">        <span class="string">&quot;transform-decorators-legacy&quot;</span></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="合理使用缓存"><a href="#合理使用缓存" class="headerlink" title="合理使用缓存"></a>合理使用缓存</h4><p>webpack对应的缓存方案为添加hash，那我们为什么要给静态资源添加hash呢？</p>
+<ul>
+<li>避免覆盖旧文件</li>
+<li>回滚方便，只需要回滚html</li>
+<li>由于文件名唯一，可开启服务器永远缓</li>
+</ul>
+<p>然后，webpack对应的hash有两种，<code>hash</code>和<code>chunkhash</code>。</p>
+<ul>
+<li>hash是跟整个项目的构建相关，只要项目里有文件更改，整个项目构建的hash值都会更改，并且全部文件都共用相同的hash值</li>
+<li>chunkhash根据不同的入口文件(Entry)进行依赖文件解析、构建对应的chunk，生成对应的哈希值。</li>
+</ul>
+<p>细想我们期望的最理想的hash就是当我们的编译后的文件，不管是初始化文件，还是chunk文件或者样式文件，只要文件内容一修改，我们的hash就应该更改，然后刷新缓存。可惜，hash和chunkhash的最终效果都没有达到我们的预期。</p>
+<p>另外，还有来自于的 <code>extract-text-webpack-plugin</code>的 <code>contenthash</code>，contenthash针对编译后的每个文件内容生成hash。只是extract-text-webpack-plugin在wbepack4中已经被弃用，而且这个插件只对css文件生效。</p>
+<h5 id="webpack-md5-hash"><a href="#webpack-md5-hash" class="headerlink" title="webpack-md5-hash"></a>webpack-md5-hash</h5><p>为了达到我们的预期效果，我们可以为webpack添加<code>webpack-md5-hash</code>插件，这个插件可以让webpack的chunkhash根据文件内容生成hash，相对稳定，这样就可以达到我们预期的效果了，配置如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">var</span> WebpackMd5Hash = <span class="built_in">require</span>(<span class="string">&#x27;webpack-md5-hash&#x27;</span>);</span><br><span class="line"> </span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="attr">output</span>: &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">        <span class="attr">chunkFilename</span>: <span class="string">&quot;[chunkhash].[id].chunk.js&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">plugins</span>: [</span><br><span class="line">        <span class="keyword">new</span> WebpackMd5Hash()</span><br><span class="line">    ]</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="合理拆包"><a href="#合理拆包" class="headerlink" title="合理拆包"></a>合理拆包</h4><p>为了减少首屏加载的时候，我们需要将包拆分成多个包，然后需要的时候在加载，拆包方案有：</p>
+<ul>
+<li>第三方包，DllPlugin、externals。</li>
+<li>动态拆包，利用import()、require.ensure()语法拆包</li>
+<li>splitChunksPlugin</li>
+</ul>
+<p>针对第一点第三方包，我们也在第一章节构建优化中有介绍，这里就不详细说了。</p>
+<h5 id="动态拆包"><a href="#动态拆包" class="headerlink" title="动态拆包"></a>动态拆包</h5><p>首先是import()，这是webpack提供的语法，webpack在解析到这样的语法时，会将指定的目录文件打包成一个chunk，当成异步加载文件输出到编译结果中，语法如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span>(<span class="comment">/* webpackChunkName: chunkName */</span> <span class="string">&#x27;./chunkFile.js&#x27;</span>).then(<span class="function"><span class="params">_module</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// do something</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>import()遵循promise规范，可以在then的回调函数中处理模块。</p>
+<p>注意：import()的参数不能完全是动态的，如果是动态的字符串，需要预先指定前缀文件夹，然后webpack会把整个文件夹编译到结果中，按需加载。</p>
+<p>然后是require.ensure()，与import()类似，为webpack提供函数，也是用来生成异步加载模块，只是是使用callback的形式处理模块，语法如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// require.ensure(dependencies: String[], callback: function(require), chunkName: String)</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">require</span>.ensure([], <span class="function"><span class="keyword">function</span>(<span class="params"><span class="built_in">require</span></span>)</span>&#123;</span><br><span class="line">	<span class="keyword">const</span> _module = <span class="built_in">require</span>(<span class="string">&#x27;chunkFile.js&#x27;</span>);</span><br><span class="line">&#125;, <span class="string">&#x27;chunkName&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<h5 id="splitChunksPlugin"><a href="#splitChunksPlugin" class="headerlink" title="splitChunksPlugin"></a>splitChunksPlugin</h5><p>webpack4中，将commonChunksPlugin废弃，引入splitChunksPlugin，两个plugin的作用都是用来切割chunk。</p>
+<p>webpack 把 chunk 分为两种类型，initial和async。在webpack4的默认情况下，production构建会分析你的 entry、动态加载（import()、require.ensure）模块，找出这些模块之间共用的node_modules下的模块，并将这些模块提取到单独的chunk中，在需要的时候异步加载到页面当中。</p>
+<p>默认配置如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  <span class="attr">optimization</span>: &#123;</span><br><span class="line">    <span class="attr">splitChunks</span>: &#123;</span><br><span class="line">      <span class="attr">chunks</span>: <span class="string">&#x27;async&#x27;</span>, <span class="comment">// 标记为异步加载的chunk</span></span><br><span class="line">      <span class="attr">minSize</span>: <span class="number">30000</span>,</span><br><span class="line">      <span class="attr">minChunks</span>: <span class="number">1</span>,</span><br><span class="line">      <span class="attr">maxAsyncRequests</span>: <span class="number">5</span>,</span><br><span class="line">      <span class="attr">maxInitialRequests</span>: <span class="number">3</span>,</span><br><span class="line">      <span class="attr">automaticNameDelimiter</span>: <span class="string">&#x27;~&#x27;</span>, <span class="comment">// 文件名中chunk的分隔符</span></span><br><span class="line">      <span class="attr">name</span>: <span class="literal">true</span>,</span><br><span class="line">      <span class="attr">cacheGroups</span>: &#123;</span><br><span class="line">        <span class="attr">vendors</span>: &#123;</span><br><span class="line">          <span class="attr">test</span>: <span class="regexp">/[\\/]node_modules[\\/]/</span>,</span><br><span class="line">          priority: -<span class="number">10</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">default</span>: &#123;</span><br><span class="line">          <span class="attr">minChunks</span>: <span class="number">2</span>, <span class="comment">// 最小共享的chunk数</span></span><br><span class="line">          <span class="attr">priority</span>: -<span class="number">20</span>,</span><br><span class="line">          <span class="attr">reuseExistingChunk</span>: <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>splitChunksPlugin提供了灵活的配置，开发者可以根据自己的需求分割chunk，比如下面官方的例子1代码：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">module.exports</span> = <span class="string">&#123;</span></span><br><span class="line">  <span class="attr">//...</span></span><br><span class="line">  <span class="attr">optimization</span>: <span class="string">&#123;</span></span><br><span class="line">    <span class="attr">splitChunks</span>: <span class="string">&#123;</span></span><br><span class="line">      <span class="attr">cacheGroups</span>: <span class="string">&#123;</span></span><br><span class="line">        <span class="attr">commons</span>: <span class="string">&#123;</span></span><br><span class="line">          <span class="attr">name</span>: <span class="string">&#x27;commons&#x27;,</span></span><br><span class="line">          <span class="attr">chunks</span>: <span class="string">&#x27;initial&#x27;,</span></span><br><span class="line">          <span class="attr">minChunks</span>: <span class="string">2</span></span><br><span class="line">        <span class="attr">&#125;</span></span><br><span class="line">      <span class="attr">&#125;</span></span><br><span class="line">    <span class="attr">&#125;</span></span><br><span class="line">  <span class="attr">&#125;</span></span><br><span class="line"><span class="attr">&#125;;</span></span><br></pre></td></tr></table></figure>
+
+<p>意思是在所有的初始化模块中抽取公共部分，生成一个chunk，chunk名字为comons。</p>
+<p>在如官方例子2代码：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  <span class="attr">optimization</span>: &#123;</span><br><span class="line">    <span class="attr">splitChunks</span>: &#123;</span><br><span class="line">      <span class="attr">cacheGroups</span>: &#123;</span><br><span class="line">        <span class="attr">commons</span>: &#123;</span><br><span class="line">          <span class="attr">test</span>: <span class="regexp">/[\\/]node_modules[\\/]/</span>,</span><br><span class="line">          name: <span class="string">&#x27;vendors&#x27;</span>,</span><br><span class="line">          <span class="attr">chunks</span>: <span class="string">&#x27;all&#x27;</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>意思是从所有模块中抽离来自于node_modules下的所有模块，生成一个chunk。当然这只是一个例子，实际生产环境中并不推荐，因为会使我们首屏加载的包增大。</p>
+<p>针对官方例子2，我们可以在开发环境中使用，因为在开发环境中，我们的node_modules下的所有文件是基本不会变动的，我们将其生产一个chunk之后，每次增量编译，webpack都不会去编译这个来自于node_modules的已经生产好的chunk，这样如果项目很大，来源于node_modules的模块非常多，这个时候可以大大降低我们的构建时间。</p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>现在大部分前端项目都是基于webpack进行构建的，面对这些项目，或多或少都有一些需要优化的地方，或许做优化不为完成KPI，仅为自己有更好的开发体验，也应该行动起来。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">前端构建</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">webpack</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">性能优化</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/01/19/webpack%E6%9E%84%E5%BB%BA%E5%92%8C%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8E%A2%E7%B4%A2/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
@@ -1999,10 +2313,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">js线程</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">ES6</a>
               </li>
              
               <li class="article-tag-list-item">
