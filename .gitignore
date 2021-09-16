@@ -13,6 +13,3 @@ coverage
 RELEASE_NOTE*.md
 dist/*.js
 .vscode
-.github
-.deploy_git
-public
