@@ -6,46 +6,28 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://shuaiqinghan.github.io/jk.github.io">
-  <title>JK酱的博客</title>
+  <title>优化架沟 | JK酱的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="前言在我们面试过程中，面试官经常会问到这么一个问题，那就是从在浏览器地址栏中输入URL到页面显示，浏览器到底发生了什么？这个问题看起来是老生常谈，但是这个问题回答的好坏，确实可以很好的反映出面试者知识的广度和深度。 本文从浏览器角度来告诉你，URL后输入后按回车，浏览器内部究竟发生了什么，读完本文后，你将了解到：  浏览器内有哪些进程，这些进程都有些什么作用 浏览器地址输入URL后，内部的进程、线">
+  <meta name="description" content="引言笔者本科是在成都的一所双非大学念的，四年前大四的找工作时候，由于没什么好公司愿意到我们学校招人，于是我每天到隔壁985电子科技大学蹲点混宣讲会，经过了一个多月的不要脸的摸爬滚打，终于收到杭州的一家独角兽公司的offer，月薪8K，贼开心，不久之后，我就到了这家公司上班。 项目初态这家独角兽公司主要是toB的业务，对于前端的需求来说，项目是一个非常大的管理平台，当时前端架构也非常非常古老，前后端">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JK酱的博客">
-<meta property="og:url" content="https://shuaiqinghan.github.io/jk.github.io/2021/09/09/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:title" content="优化架沟">
+<meta property="og:url" content="https://shuaiqinghan.github.io/jk.github.io/2021/09/17/%E5%89%8D%E7%AB%AF%E6%85%A2%E6%85%A2%E6%9E%B6%E6%9E%84%E4%BA%86/index.html">
 <meta property="og:site_name" content="JK酱的博客">
-<meta property="og:description" content="前言在我们面试过程中，面试官经常会问到这么一个问题，那就是从在浏览器地址栏中输入URL到页面显示，浏览器到底发生了什么？这个问题看起来是老生常谈，但是这个问题回答的好坏，确实可以很好的反映出面试者知识的广度和深度。 本文从浏览器角度来告诉你，URL后输入后按回车，浏览器内部究竟发生了什么，读完本文后，你将了解到：  浏览器内有哪些进程，这些进程都有些什么作用 浏览器地址输入URL后，内部的进程、线">
+<meta property="og:description" content="引言笔者本科是在成都的一所双非大学念的，四年前大四的找工作时候，由于没什么好公司愿意到我们学校招人，于是我每天到隔壁985电子科技大学蹲点混宣讲会，经过了一个多月的不要脸的摸爬滚打，终于收到杭州的一家独角兽公司的offer，月薪8K，贼开心，不久之后，我就到了这家公司上班。 项目初态这家独角兽公司主要是toB的业务，对于前端的需求来说，项目是一个非常大的管理平台，当时前端架构也非常非常古老，前后端">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/1.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/2.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/3.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/4.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/5.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/6.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/7.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/8.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/9.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/10.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/11.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/12.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/13.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/14.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/15.gif">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/16.gif">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/17.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/18.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/19.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/20.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/21.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/22.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/23.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/24.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/25.png">
-<meta property="article:published_time" content="2021-09-09T02:27:05.408Z">
-<meta property="article:modified_time" content="2021-09-09T03:08:05.493Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%88%91%E4%BB%AC%E6%8A%8A%E5%85%AC%E5%8F%B8%E5%89%8D%E7%AB%AF%E6%85%A2%E6%85%A2%E6%9E%B6%E6%9E%84%E4%BA%86/image-20201119205537278.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%88%91%E4%BB%AC%E6%8A%8A%E5%85%AC%E5%8F%B8%E5%89%8D%E7%AB%AF%E6%85%A2%E6%85%A2%E6%9E%B6%E6%9E%84%E4%BA%86/image-20201119205628118.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%88%91%E4%BB%AC%E6%8A%8A%E5%85%AC%E5%8F%B8%E5%89%8D%E7%AB%AF%E6%85%A2%E6%85%A2%E6%9E%B6%E6%9E%84%E4%BA%86/image-20201120100214453.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%88%91%E4%BB%AC%E6%8A%8A%E5%85%AC%E5%8F%B8%E5%89%8D%E7%AB%AF%E6%85%A2%E6%85%A2%E6%9E%B6%E6%9E%84%E4%BA%86/image-20201120131044267.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%88%91%E4%BB%AC%E6%8A%8A%E5%85%AC%E5%8F%B8%E5%89%8D%E7%AB%AF%E6%85%A2%E6%85%A2%E6%9E%B6%E6%9E%84%E4%BA%86/image-20201120141102717.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%88%91%E4%BB%AC%E6%8A%8A%E5%85%AC%E5%8F%B8%E5%89%8D%E7%AB%AF%E6%85%A2%E6%85%A2%E6%9E%B6%E6%9E%84%E4%BA%86/image-20201120142134478.png">
+<meta property="article:published_time" content="2021-09-17T09:00:00.000Z">
+<meta property="article:modified_time" content="2021-09-16T08:33:31.013Z">
 <meta property="article:author" content="小韩">
-<meta property="article:tag" content="前端,js,jquery,javascript,html5,开发者,程序猿,程序媛,极客,编程,代码,开源,IT网站,Developer,Programmer,Coder,Geek,html,css,css3,用户体验">
+<meta property="article:tag" content="前端">
+<meta property="article:tag" content="重构">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/1.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%88%91%E4%BB%AC%E6%8A%8A%E5%85%AC%E5%8F%B8%E5%89%8D%E7%AB%AF%E6%85%A2%E6%85%A2%E6%9E%B6%E6%9E%84%E4%BA%86/image-20201119205537278.png">
   
     <link rel="alternative" href="/atom.xml" title="JK酱的博客" type="application/atom+xml">
   
@@ -179,165 +161,106 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-浏览器工作原理" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-前端慢慢架构了" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      优化架沟
+    </h1>
+  
+
+        
+        <a href="/2021/09/17/%E5%89%8D%E7%AB%AF%E6%85%A2%E6%85%A2%E6%9E%B6%E6%9E%84%E4%BA%86/" class="archive-article-date">
+  	<time datetime="2021-09-17T09:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-09-17</time>
+</a>
+        
+      </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在我们面试过程中，面试官经常会问到这么一个问题，那就是从在浏览器地址栏中输入URL到页面显示，浏览器到底发生了什么？这个问题看起来是老生常谈，但是这个问题回答的好坏，确实可以很好的反映出面试者知识的广度和深度。</p>
-<p>本文从浏览器角度来告诉你，URL后输入后按回车，浏览器内部究竟发生了什么，读完本文后，你将了解到：</p>
+        <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>笔者本科是在成都的一所双非大学念的，四年前大四的找工作时候，由于没什么好公司愿意到我们学校招人，于是我每天到隔壁985电子科技大学蹲点混宣讲会，经过了一个多月的不要脸的摸爬滚打，终于收到杭州的一家独角兽公司的offer，月薪8K，贼开心，不久之后，我就到了这家公司上班。</p>
+<h2 id="项目初态"><a href="#项目初态" class="headerlink" title="项目初态"></a>项目初态</h2><p>这家独角兽公司主要是toB的业务，对于前端的需求来说，项目是一个非常大的管理平台，当时前端架构也非常非常古老，前后端并没有分离，整体架构大体是这样的。</p>
+<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%88%91%E4%BB%AC%E6%8A%8A%E5%85%AC%E5%8F%B8%E5%89%8D%E7%AB%AF%E6%85%A2%E6%85%A2%E6%9E%B6%E6%9E%84%E4%BA%86/image-20201119205537278.png" alt="image-20201119205537278"></p>
+<p>一个非常大的Java项目，用的阿里开源的JavaWeb框架Webx，然后用了类似JSP之类的东西，也就是velocity模板来渲染页面，而前端需要编写jQuery脚本和CSS脚本来完成功能，这些脚本放在Webx的静态资源目录，在velocity模板中引入对应的脚本。</p>
+<p>可以看到，这种模式对于现在的我们来说，非常有年代感，经典的MVC模式，缺点很明显。</p>
 <ul>
-<li>浏览器内有哪些进程，这些进程都有些什么作用</li>
-<li>浏览器地址输入URL后，内部的进程、线程都做了哪些事</li>
-<li>我们与浏览器交互时，内部进程是怎么处理这些交互事件的</li>
+<li>前端代码在velocity模板中与部分后端逻辑混杂在一起，前端依赖后端渲染HTML，使得前后端代码有着很强的耦合性。</li>
+<li>前端需要学习Java的模板引擎velocity语法，增加了前端学习的成本。</li>
+<li>每次前端出现问题需要修改发布，即使后端没有任何更新，都必须伴随一次后端服务的发布，增加了出问题的可能。</li>
 </ul>
-<h2 id="浏览器架构"><a href="#浏览器架构" class="headerlink" title="浏览器架构"></a>浏览器架构</h2><p>在讲浏览器架构之前，先理解两个概念，<code>进程</code>和<code>线程</code>。</p>
-<p>进程（process）是程序的一次执行过程，是一个动态概念，是程序在执行过程中分配和管理资源的基本单位，线程（thread）是CPU调度和分派的基本单位，它可与同属一个进程的其他的线程共享进程所拥有的全部资源。</p>
-<p>简单的说呢，进程可以理解成正在执行的应用程序，而线程呢，可以理解成我们应用程序中的代码的执行器。而他们的关系可想而知，<strong>线程是跑在进程里面的</strong>，一个进程里面可能有一个或者多个线程，而一个线程，只能隶属于一个进程。</p>
-<p>大家都知道，浏览器属于一个应用程序，而应用程序的一次执行，可以理解为计算机启动了一个<code>进程</code>，进程启动后，CPU会给该进程分配相应的内存空间，当我们的进程得到了内存之后，就可以使用<code>线程</code>进行资源调度，进而完成我们应用程序的功能。</p>
-<p>而在应用程序中，为了满足功能的需要，启动的进程会创建另外的新的进程来处理其他任务，这些创建出来的新的进程拥有全新的独立的内存空间，不能与原来的进程内向内存，如果这些进程之间需要通信，可以通过IPC机制（Inter Process Communication）来进行。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/1.png" alt="进程1"></p>
-<p>很多应用程序都会采取这种多进程的方式来工作，因为进程和进程之间是互相独立的它们<code>互不影响</code>，也就是说，当其中一个进程挂掉了之后，不会影响到其他进程的执行，只需要重启挂掉的进程就可以恢复运行。</p>
-<h3 id="浏览器的多进程架构"><a href="#浏览器的多进程架构" class="headerlink" title="浏览器的多进程架构"></a>浏览器的多进程架构</h3><p>假如我们去开发一个浏览器，它的架构可以是一个单进程多线程的应用程序，也可以是一个使用IPC通信的多进程应用程序。</p>
-<p>不同的浏览器使用不同的架构，下面主要以Chrome为例，介绍浏览器的多进程架构。</p>
-<p>在Chrome中，主要的进程有4个：</p>
-<ul>
-<li>浏览器进程 (Browser Process)：负责浏览器的TAB的前进、后退、地址栏、书签栏的工作和处理浏览器的一些不可见的底层操作，比如网络请求和文件访问。</li>
-<li>渲染进程 (Renderer Process)：负责一个Tab内的显示相关的工作，也称渲染引擎。</li>
-<li>插件进程 (Plugin Process)：负责控制网页使用到的插件</li>
-<li>GPU进程 (GPU Process)：负责处理整个应用程序的GPU任务</li>
-</ul>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/2.png" alt="进程关系"></p>
-<p>这4个进程之间的关系是什么呢？</p>
-<p>首先，当我们是要浏览一个网页，我们会在浏览器的地址栏里输入URL，这个时候<code>Browser Process</code>会向这个URL发送请求，获取这个URL的HTML内容，然后将HTML交给<code>Renderer Process</code>，<code>Renderer Process</code>解析HTML内容，解析遇到需要请求网络的资源又返回来交给<code>Browser Process</code>进行加载，同时通知<code>Browser Process</code>，需要<code>Plugin Process</code>加载插件资源，执行插件代码。解析完成后，<code>Renderer Process</code>计算得到图像帧，并将这些图像帧交给<code>GPU Process</code>，<code>GPU Process</code>将其转化为图像显示屏幕。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/3.png" alt="进程关系"></p>
-<h3 id="多进程架构的好处"><a href="#多进程架构的好处" class="headerlink" title="多进程架构的好处"></a>多进程架构的好处</h3><p>Chrome为什么要使用多进程架构呢？</p>
-<p>第一，更高的容错性。当今WEB应用中，HTML，JavaScript和CSS日益复杂，这些跑在渲染引擎的代码，频繁的出现BUG，而有些BUG会直接导致渲染引擎崩溃，多进程架构使得每一个渲染引擎运行在各自的进程中，相互之间不受影响，也就是说，当其中一个页面崩溃挂掉之后，其他页面还可以正常的运行不收影响。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/4.png" alt="浏览器容错性"></p>
-<p>第二，更高的安全性和沙盒性（sanboxing）。渲染引擎会经常性的在网络上遇到不可信、甚至是恶意的代码，它们会利用这些漏洞在你的电脑上安装恶意的软件，针对这一问题，浏览器对不同进程限制了不同的权限，并为其提供沙盒运行环境，使其更安全更可靠</p>
-<p>第三，更高的响应速度。在单进程的架构中，各个任务相互竞争抢夺CPU资源，使得浏览器响应速度变慢，而多进程架构正好规避了这一缺点。</p>
-<h3 id="多进程架构优化"><a href="#多进程架构优化" class="headerlink" title="多进程架构优化"></a>多进程架构优化</h3><p>之前的我们说到，<code>Renderer Process</code>的作用是负责一个Tab内的显示相关的工作，这就意味着，一个Tab，就会有一个Renderer Process，这些进程之间的内存无法进行共享，而不同进程的内存常常需要包含相同的内容。</p>
-<h4 id="浏览器的进程模式"><a href="#浏览器的进程模式" class="headerlink" title="浏览器的进程模式"></a>浏览器的进程模式</h4><p>为了节省内存，Chrome提供了四种进程模式（Process Models），不同的进程模式会对 tab 进程做不同的处理。</p>
-<ul>
-<li><strong>Process-per-site-instance</strong> (default) - 同一个 <strong>site-instance</strong> 使用一个进程</li>
-<li><strong>Process-per-site -</strong> 同一个 <strong>site</strong> 使用一个进程</li>
-<li><strong>Process-per-tab -</strong> 每个 tab 使用一个进程</li>
-<li><strong>Single process -</strong> 所有 tab 共用一个进程</li>
-</ul>
-<p>这里需要给出 site 和 site-instance 的定义</p>
-<ul>
-<li><strong>site</strong> 指的是相同的 registered domain name(如： google.com ，bbc.co.uk)和scheme (如：https://)。比如a.baidu.com和b.baidu.com就可以理解为同一个 site（注意这里要和 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy">Same-origin policy</a> 区分开来，同源策略还涉及到子域名和端口）。</li>
-<li><strong>site-instance</strong> 指的是一组 <strong>connected pages from the same site</strong>，这里 <strong>connected</strong> 的定义是 <strong>can obtain references to each other in script code</strong> 怎么理解这段话呢。满足下面两中情况并且打开的新页面和旧页面属于上面定义的同一个 site，就属于同一个 <strong>site-instance</strong><ul>
-<li>用户通过<code>&lt;a target=&quot;_blank&quot;&gt;</code>这种方式点击打开的新页面</li>
-<li>JS代码打开的新页面（比如 <code>window.open</code>)</li>
-</ul>
-</li>
-</ul>
-<p>理解了概念之后，下面解释四个进程模式</p>
-<p>首先是<code>Single process</code>，顾名思义，单进程模式，所有tab都会使用同一个进程。接下来是<code>Process-per-tab</code> ，也是顾名思义，每打开一个tab，会新建一个进程。而对于<code>Process-per-site</code>，当你打开 a.baidu.com 页面，在打开 b.baidu.com 的页面，这两个页面的tab使用的是共一个进程，因为这两个页面的site相同，而如此一来，如果其中一个tab崩溃了，而另一个tab也会崩溃。</p>
-<p><code>Process-per-site-instance</code> 是最重要的，因为这个是 Chrome 默认使用的模式，也就是几乎所有的用户都在用的模式。当你打开一个 tab 访问 a.baidu.com ，然后再打开一个 tab 访问 b.baidu.com，这两个 tab 会使用<strong>两个进程</strong>。而如果你在 a.baidu.com 中，通过JS代码打开了 b.baidu.com 页面，这两个 tab 会使用<strong>同一个进程</strong>。</p>
-<h4 id="默认模式选择"><a href="#默认模式选择" class="headerlink" title="默认模式选择"></a>默认模式选择</h4><p>那么为什么浏览器使用<code>Process-per-site-instance</code>作为默认的进程模式呢？</p>
-<p><code>Process-per-site-instance</code>兼容了性能与易用性，是一个比较中庸通用的模式。</p>
-<ul>
-<li>相较于 Process-per-tab，能够少开很多进程，就意味着更少的内存占用</li>
-<li>相较于 Process-per-site，能够更好的隔离相同域名下毫无关联的 tab，更加安全</li>
-</ul>
-<h2 id="导航过程都发生了什么"><a href="#导航过程都发生了什么" class="headerlink" title="导航过程都发生了什么"></a>导航过程都发生了什么</h2><p>前面我们讲了浏览器的多进程架构，讲了多进程架构的各种好处，和Chrome是怎么优化多进程架构的，下面从用户浏览网页这一简单的场景，来深入了解进程和线程是如何呈现我们的网站页面的。</p>
-<h3 id="网页加载过程"><a href="#网页加载过程" class="headerlink" title="网页加载过程"></a>网页加载过程</h3><p>之前我们我们提到，tab以外的大部分工作由浏览器进程<code>Browser Process</code>负责，针对工作的不同，Browser Process 划分出不同的工作线程：</p>
-<ul>
-<li>UI thread：控制浏览器上的按钮及输入框；</li>
-<li>network thread：处理网络请求，从网上获取数据（Chrome72以后，已单独将network thread单独摘成network service process，当然也可以通过 <a href="chrome://flags/#network-service-in-process">chrome://flags/#network-service-in-process</a>修改配置，将其其作为线程运行在Browser Process中，感谢 @Popeye-Wz 的提出）；</li>
-<li>storage thread： 控制文件等的访问；</li>
-</ul>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/5.png" alt="浏览器进程线程"></p>
-<h4 id="第一步：处理输入"><a href="#第一步：处理输入" class="headerlink" title="第一步：处理输入"></a>第一步：处理输入</h4><p>当我们在浏览器的地址栏输入内容按下回车时，<code>UI thread</code>会判断输入的内容是搜索关键词（search query）还是URL，如果是搜索关键词，跳转至默认搜索引擎对应都搜索URL，如果输入的内容是URL，则开始请求URL。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/6.png" alt="处理输入"></p>
-<h4 id="第二步：开始导航"><a href="#第二步：开始导航" class="headerlink" title="第二步：开始导航"></a>第二步：开始导航</h4><p>回车按下后，<code>UI thread</code>将关键词搜索对应的URL或输入的URL交给网络线程<code>Network thread</code>，此时UI线程使Tab前的图标展示为加载中状态，然后网络进程进行一系列诸如DNS寻址，建立TLS连接等操作进行资源请求，如果收到服务器的301重定向响应，它就会告知UI线程进行重定向然后它会再次发起一个新的网络请求。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/7.png" alt="开始导航"></p>
-<h4 id="第三步：读取响应"><a href="#第三步：读取响应" class="headerlink" title="第三步：读取响应"></a>第三步：读取响应</h4><p><code>network thread</code>接收到服务器的响应后，开始解析HTTP响应报文，然后根据响应头中的<code>Content-Type</code>字段来确定响应主体的媒体类型（MIME Type），如果媒体类型是一个HTML文件，则将响应数据交给渲染进程（renderer process）来进行下一步的工作，如果是 zip 文件或者其它文件，会把相关数据传输给下载管理器。</p>
-<p>与此同时，浏览器会进行 <a target="_blank" rel="noopener" href="https://safebrowsing.google.com/">Safe Browsing</a> 安全检查，如果域名或者请求内容匹配到已知的恶意站点，network thread 会展示一个警告页。除此之外，网络线程还会做 <a target="_blank" rel="noopener" href="https://www.chromium.org/Home/chromium-security/corb-for-developers">CORB</a>（Cross Origin Read Blocking）检查来确定那些敏感的跨站数据不会被发送至渲染进程。</p>
-<h4 id="第四步：查找渲染进程"><a href="#第四步：查找渲染进程" class="headerlink" title="第四步：查找渲染进程"></a>第四步：查找渲染进程</h4><p>各种检查完毕以后，network thread 确信浏览器可以导航到请求网页，network thread 会通知 UI thread 数据已经准备好，UI thread 会查找到一个 renderer process 进行网页的渲染。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/8.png" alt="查找渲染进程"></p>
-<p>浏览器为了对查找渲染进程这一步骤进行优化，考虑到网络请求获取响应需要时间，所以在第二步开始，浏览器已经预先查找和启动了一个渲染进程，如果中间步骤一切顺利，当 network thread 接收到数据时，渲染进程已经准备好了，但是如果遇到重定向，这个准备好的渲染进程也许就不可用了，这个时候会重新启动一个渲染进程。</p>
-<h4 id="第五步：提交导航"><a href="#第五步：提交导航" class="headerlink" title="第五步：提交导航"></a>第五步：提交导航</h4><p>到了这一步，数据和渲染进程都准备好了，<code>Browser Process</code> 会向 <code>Renderer Process </code> 发送IPC消息来确认导航，此时，浏览器进程将准备好的数据发送给渲染进程，渲染进程接收到数据之后，又发送IPC消息给浏览器进程，告诉浏览器进程导航已经提交了，页面开始加载。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/9.png" alt="提交导航"></p>
-<p>这个时候导航栏会更新，安全指示符更新（地址前面的小锁），访问历史列表（history tab）更新，即可以通过前进后退来切换该页面。</p>
-<h4 id="第六步：初始化加载完成"><a href="#第六步：初始化加载完成" class="headerlink" title="第六步：初始化加载完成"></a>第六步：初始化加载完成</h4><p>当导航提交完成后，渲染进程开始加载资源及渲染页面（详细内容下文介绍），当页面渲染完成后（页面及内部的iframe都触发了onload事件），会向浏览器进程发送IPC消息，告知浏览器进程，这个时候UI thread会停止展示tab中的加载中图标。</p>
-<h3 id="网页渲染原理"><a href="#网页渲染原理" class="headerlink" title="网页渲染原理"></a>网页渲染原理</h3><p>导航过程完成之后，浏览器进程把数据交给了渲染进程，渲染进程负责tab内的所有事情，核心目的就是将HTML/CSS/JS代码，转化为用户可进行交互的web页面。那么渲染进程是如何工作的呢？</p>
-<p>渲染进程中，包含线程分别是：</p>
-<ul>
-<li>一个主线程（main thread）</li>
-<li>多个工作线程（work thread）</li>
-<li>一个合成器线程（compositor thread）</li>
-<li>多个光栅化线程（raster thread）</li>
-</ul>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/10.png" alt="浏览器进程中线程"></p>
-<p>不同的线程，有着不同的工作职责。</p>
-<h4 id="构建DOM"><a href="#构建DOM" class="headerlink" title="构建DOM"></a>构建DOM</h4><p>当渲染进程接受到导航的确认信息后，开始接受来自浏览器进程的数据，这个时候，主线程会解析数据转化为DOM（Document Object Model）对象。</p>
-<p>DOM为WEB开发人员通过JavaScript与网页进行交互的数据结构及API。</p>
-<h4 id="资源子加载"><a href="#资源子加载" class="headerlink" title="资源子加载"></a>资源子加载</h4><p>在构建DOM的过程中，会解析到图片、CSS、JavaScript脚本等资源，这些资源是需要从网络或者缓存中获取的，主线程在构建DOM过程中如果遇到了这些资源，逐一发起请求去获取，而为了提升效率，浏览器也会运行预加载扫描（preload scanner）程序，如果如果HTML中存在<code>img</code>、<code>link</code>等标签，预加载扫描程序会把这些请求传递给<code>Browser Process</code>的network thread进行资源下载。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/11.png" alt="加载子资源"></p>
-<h4 id="JavaScript的下载与执行"><a href="#JavaScript的下载与执行" class="headerlink" title="JavaScript的下载与执行"></a>JavaScript的下载与执行</h4><p>构建DOM过程中，如果遇到<code>&lt;script&gt;</code>标签，渲染引擎会停止对HTML的解析，而去加载执行JS代码，原因在于JS代码可能会改变DOM的结构（比如执行<code>document.write()</code>等API）</p>
-<p>不过开发者其实也有多种方式来告知浏览器应对如何应对某个资源，比如说如果在<code>&lt;script&gt;</code> 标签上添加了 <code>async</code> 或 <code>defer</code> 等属性，浏览器会异步的加载和执行JS代码，而不会阻塞渲染。</p>
-<h4 id="样式计算-Style-calculation"><a href="#样式计算-Style-calculation" class="headerlink" title="样式计算 - Style calculation"></a>样式计算 - Style calculation</h4><p>DOM树只是我们页面的结构，我们要知道页面长什么样子，我们还需要知道DOM的每一个节点的样式。主线程在解析页面时，遇到<code>&lt;style&gt;</code>标签或者<code>&lt;link&gt;</code>标签的CSS资源，会加载CSS代码，根据CSS代码确定每个DOM节点的计算样式（computed style）。</p>
-<p>计算样式是主线程根据CSS样式选择器（CSS selectors）计算出的每个DOM元素应该具备的具体样式，即使你的页面没有设置任何自定义的样式，浏览器也会提供其默认的样式。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/12.png" alt="样式计算"></p>
-<h4 id="布局-Layout"><a href="#布局-Layout" class="headerlink" title="布局 - Layout"></a>布局 - Layout</h4><p>DOM树和计算样式完成后，我们还需要知道每一个节点在页面上的位置，布局（Layout）其实就是找到所有元素的几何关系的过程。</p>
-<p>主线程会遍历DOM 及相关元素的计算样式，构建出包含每个元素的页面坐标信息及盒子模型大小的布局树（Render Tree），遍历过程中，会跳过隐藏的元素（display: none），另外，伪元素虽然在DOM上不可见，但是在布局树上是可见的。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/13.png" alt="layout"></p>
-<h4 id="绘制-Paint"><a href="#绘制-Paint" class="headerlink" title="绘制 - Paint"></a>绘制 - Paint</h4><p>布局 layout 之后，我们知道了不同元素的结构，样式，几何关系，我们要绘制出一个页面，我们要需要知道每个元素的绘制先后顺序，在绘制阶段，主线程会遍历布局树（layout tree），生成一系列的绘画记录（paint records）。绘画记录可以看做是记录各元素绘制先后顺序的笔记。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/14.png" alt="paint"></p>
-<h4 id="合成-Compositing"><a href="#合成-Compositing" class="headerlink" title="合成 - Compositing"></a>合成 - Compositing</h4><p>文档结构、元素的样式、元素的几何关系、绘画顺序，这些信息我们都有了，这个时候如果要绘制一个页面，我们需要做的是把这些信息转化为显示器中的像素，这个转化的过程，叫做<code>光栅化</code>（rasterizing）。</p>
-<p>那我们要绘制一个页面，最简单的做法是只光栅化视口内（viewport）的网页内容，如果用户进行了页面滚动，就移动光栅帧（rastered frame）并且光栅化更多的内容以补上页面缺失的部分，如下：</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/15.gif" alt="最简单的光栅化过程"></p>
-<p>Chrome第一个版本就是采用这种简单的绘制方式，这一方式唯一的缺点就是每当页面滚动，光栅线程都需要对新移进视图的内容进行光栅化，这是一定的性能损耗，为了优化这种情况，Chrome采取一种更加复杂的叫做合成（compositing）的做法。</p>
-<p>那么，什么是合成？合成是一种将<strong>页面分成若干层</strong>，然后分别对它们进行光栅化，最后在一个单独的线程 - 合成线程（compositor thread）里面合并成一个页面的技术。当用户滚动页面时，由于页面各个层都已经被光栅化了，浏览器需要做的只是合成一个新的帧来展示滚动后的效果罢了。页面的动画效果实现也是类似，将页面上的层进行移动并构建出一个新的帧即可。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/16.gif" alt="合成的光栅化过程"></p>
-<p>为了实现合成技术，我们需要对元素进行分层，确定哪些元素需要放置在哪一层，主线程需要遍历渲染树来创建一棵层次树（Layer Tree），对于添加了 <code>will-change</code> CSS 属性的元素，会被看做单独的一层，没有 <code>will-change</code> CSS属性的元素，浏览器会根据情况决定是否要把该元素放在单独的层。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/17.png" alt="layer tree"></p>
-<p>你可能会想要给页面上所有的元素一个单独的层，然而当页面的层超过一定的数量后，层的合成操作要比在每个帧中光栅化页面的一小部分还要慢，因此衡量你应用的渲染性能是十分重要的一件事情。</p>
-<p>一旦Layer Tress被创建，渲染顺序被确定，主线程会把这些信息通知给合成器线程，合成器线程开始对层次数的每一层进行光栅化。有的层的可以达到整个页面的大小，所以合成线程需要将它们切分为一块又一块的小图块（tiles），之后将这些小图块分别进行发送给一系列光栅线程（raster threads）进行光栅化，结束后光栅线程会将每个图块的光栅结果存在<code>GPU Process</code>的内存中。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/18.png" alt="光栅线程创建图块的位图并发送给GPU"></p>
-<p>为了优化显示体验，合成线程可以给不同的光栅线程赋予不同的优先级，将那些在视口中的或者视口附近的层先被光栅化。</p>
-<p>当图层上面的图块都被栅格化后，合成线程会收集图块上面叫做<strong>绘画四边形</strong>（draw quads）的信息来构建一个<strong>合成帧</strong>（compositor frame）。</p>
-<ul>
-<li>绘画四边形：包含图块在<strong>内存的位置</strong>以及图层合成后图块在页面的位置之类的信息。</li>
-<li>合成帧：代表页面一个帧的内容的绘制四边形<strong>集合</strong>。</li>
-</ul>
-<p>以上所有步骤完成后，合成线程就会通过IPC向浏览器进程（browser process）提交（commit）一个渲染帧。这个时候可能有另外一个合成帧被浏览器进程的UI线程（UI thread）提交以改变浏览器的UI。这些合成帧都会被发送给GPU从而展示在屏幕上。如果合成线程收到页面滚动的事件，合成线程会构建另外一个合成帧发送给GPU来更新页面。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/19.png" alt="合成线程构建出合成帧，合成帧会被发送给浏览器进程然后再发送给GPU"></p>
-<p>合成的好处在于这个过程没有涉及到主线程，所以合成线程不需要等待样式的计算以及JavaScript完成执行。这就是为什么<a target="_blank" rel="noopener" href="https://www.html5rocks.com/en/tutorials/speed/high-performance-animations/">合成器相关的动画</a>最流畅，如果某个动画涉及到布局或者绘制的调整，就会涉及到主线程的重新计算，自然会慢很多。</p>
-<h2 id="浏览器对事件的处理"><a href="#浏览器对事件的处理" class="headerlink" title="浏览器对事件的处理"></a>浏览器对事件的处理</h2><p>当页面渲染完毕以后，TAB内已经显示出了可交互的WEB页面，用户可以进行移动鼠标、点击页面等操作了，而当这些事件发生时候，浏览器是如何处理这些事件的呢？</p>
-<p>以点击事件（click event）为例，让鼠标点击页面时候，首先接受到事件信息的是<code>Browser Process</code>，但是Browser Process只知道事件发生的类型和发生的位置，具体怎么对这个点击事件进行处理，还是由Tab内的<code>Renderer Process</code>进行的。Browser Process接受到事件后，随后便把事件的信息传递给了渲染进程，渲染进程会找到根据事件发生的坐标，找到目标对象（target），并且运行这个目标对象的点击事件绑定的监听函数（listener）。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/20.png" alt="点击事件从浏览器进程路由到渲染进程"></p>
-<h3 id="渲染进程中合成器线程接收事件"><a href="#渲染进程中合成器线程接收事件" class="headerlink" title="渲染进程中合成器线程接收事件"></a>渲染进程中合成器线程接收事件</h3><p>前面我们说到，合成器线程可以独立于主线程之外通过已光栅化的层创建组合帧，例如页面滚动，如果没有对页面滚动绑定相关的事件，组合器线程可以独立于主线程创建组合帧，如果页面绑定了页面滚动事件，合成器线程会等待主线程进行事件处理后才会创建组合帧。那么，合成器线程是如何判断出这个事件是否需要路由给主线程处理的呢？</p>
-<p>由于执行 JS 是主线程的工作，当页面合成时，合成器线程会标记页面中绑定有事件处理器的区域为<code>非快速滚动区域</code>(non-fast scrollable region)，如果事件发生在这些存在标注的区域，合成器线程会把事件信息发送给主线程，等待主线程进行事件处理，如果事件不是发生在这些区域，合成器线程则会直接合成新的帧而不用等到主线程的响应。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/21.png" alt="非快速滚动区域有用户事件发生"></p>
-<p>而对于非快速滚动区域的标记，开发者需要注意全局事件的绑定，比如我们使用事件委托，将目标元素的事件交给根元素body进行处理，代码如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.body.addEventListener(<span class="string">&#x27;touchstart&#x27;</span>, <span class="function"><span class="params">event</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (event.target === area) &#123;</span><br><span class="line">    event.preventDefault()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>由于项目相对来说已经比较成熟了，所有内容推倒重做是不可能的，而且当时前端在公司的地位非常的低，没有影响力，老板是不会允许前端乱搞的，所以，只能一步一步的想办法，改变现状。</p>
+<h2 id="前端第一次改造：技术栈更新"><a href="#前端第一次改造：技术栈更新" class="headerlink" title="前端第一次改造：技术栈更新"></a>前端第一次改造：技术栈更新</h2><p>对当时的我们来说，最大的痛点是前端在开发过程中，必须启动一个后端项目，而随着后端项目的越来越庞大，每次启动都至少需要四五分钟，开发体验极差。为什么必须要启动后端项目？一个是项目开发依赖于velocity渲染的html结构，第二是因为项目请求的数据接口依赖于后端项目。</p>
+<p>为了解决开发体验的问题，我们想到了个两全其美的办法，既可以更新技术栈，又可以提升开发体验。那就是对于老的、已完成的模块页面，先放着不管，后续有时间在重构，而对于新的需求页面，使用React进行工程化编写。</p>
+<p>对于velocity渲染的html依赖问题，我们只需要约定好在velocity中渲染对应ID的DOM节点和初始化数据，然后在React项目中ReactDOM.render对应ID的节点并将初始化数据传递进去，这样就可以解决渲染后端项目的html渲染依赖问题。</p>
+<p>而接口依赖问题很容易解决，可以通过mock接口解决，也可以在webpack中配置代理，将请求代理到后端的测试机器，这样就可以解决后端项目启动的问题。</p>
+<p>而在项目发布时，将React项目的webpack的output目录指定到Webx的静态资源目录，然后在velocity中引入对应的编译结果就可以。比如现在有一个新的模块A，那么velocity中的模板是这样的：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span> <span class="attr">href</span>=<span class="string">&quot;/static/xxx_module/moduleA/main.css?v=hash&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;/static/xxx_module/moduleA/main.js?v=hash&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript">  <span class="keyword">var</span> _velocity_init_data_ = &#123;</span></span><br><span class="line"><span class="javascript">    <span class="comment">// 渲染velocity数据</span></span></span><br><span class="line"><span class="javascript">  &#125;;</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;pageA&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-<p>在开发者角度看，这一段代码没什么问题，但是从浏览器角度看，这一段代码给body元素绑定了事件监听器，也就意味着整个页面都被编辑为一个非快速滚动区域，这会使得即使你的页面的某些区域没有绑定任何事件，每次用户触发事件时，合成器线程也需要和主线程通信并等待反馈，流畅的合成器独立处理合成帧的模式就失效了。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/22.png" alt="当整个页面都是非快速滚动区域时页面的事件处理示意图"></p>
-<p>其实这种情况也很好处理，只需要在事件监听时传递<code>passtive</code>参数为 true，<code>passtive</code>会告诉浏览器你既要绑定事件，又要让组合器线程直接跳过主线程的事件处理直接合成创建组合帧。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.body.addEventListener(<span class="string">&#x27;touchstart&#x27;</span>, <span class="function"><span class="params">event</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (event.target === area) &#123;</span><br><span class="line">        event.preventDefault()</span><br><span class="line">    &#125;</span><br><span class="line"> &#125;, &#123;<span class="attr">passive</span>: <span class="literal">true</span>&#125;);</span><br></pre></td></tr></table></figure>
+<p>而React的项目是这样的</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react-dom&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> App <span class="keyword">from</span> <span class="string">&#x27;./App&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在开发时，声明一个带ID为pageA的空页面就可以</span></span><br><span class="line"><span class="keyword">const</span> container = <span class="built_in">document</span>.getElementById(<span class="string">&#x27;pageA&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> initData = <span class="built_in">window</span>._velocity_init_data_;</span><br><span class="line"></span><br><span class="line">ReactDom.render(<span class="xml"><span class="tag">&lt;<span class="name">App</span> <span class="attr">initData</span>=<span class="string">&#123;initData&#125;/</span>&gt;</span></span>, container);</span><br></pre></td></tr></table></figure>
 
-<h3 id="查找事件的目标对象（event-target）"><a href="#查找事件的目标对象（event-target）" class="headerlink" title="查找事件的目标对象（event target）"></a>查找事件的目标对象（event target）</h3><p>当合成器线程接收到事件信息，判定到事件发生不在非快速滚动区域后，合成器线程会向主线程发送这个时间信息，主线程获取到事件信息的第一件事就是通过命中测试（hit test）去找到事件的目标对象。具体的命中测试流程是遍历在绘制阶段生成的绘画记录（paint records）来找到包含了事件发生坐标上的元素对象。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/23.png" alt="当整个页面都是非快速滚动区域时页面的事件处理示意图"></p>
-<h3 id="浏览器对事件的优化"><a href="#浏览器对事件的优化" class="headerlink" title="浏览器对事件的优化"></a>浏览器对事件的优化</h3><p>一般我们屏幕的帧率是每秒60帧，也就是60fps，但是某些事件触发的频率超过了这个数值，比如wheel，mousewheel，mousemove，pointermove，touchmove，这些连续性的事件一般每秒会触发60~120次，假如每一次触发事件都将事件发送到主线程处理，由于屏幕的刷新速率相对来说降低，这样使得主线程会触发过量的命中测试以及JS代码，使得性能有了没必要是损耗。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/24.png" alt="事件淹没了屏幕刷新的时间轴，导致页面很卡顿"></p>
-<p>出于优化的目的，浏览器会合并这些连续的事件，延迟到下一帧渲染是执行，也就是<code>requestAnimationFrame</code>之前。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/25.png" alt="和之前相同的事件轴，可是这次事件被合并并延迟调度了"></p>
-<p>而对于非连续性的事件，如keydown，keyup，mousedown，mouseup，touchstart，touchend等，会直接派发给主线程去执行。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>浏览器的多进程架构，根据不同的功能划分了不同的进程，进程内不同的使命划分了不同的线程，当用户开始浏览网页时候，浏览器进程进行处理输入、开始导航请求数据、请求响应数据，查找新建渲染进程，提交导航，之后渲染又进行了解析HTML构建DOM、构建过程加载子资源、下载并执行JS代码、样式计算、布局、绘制、合成，一步一步的构建出一个可交互的WEB页面，之后浏览器进程又接受页面的交互事件信息，并将其交给渲染进程，渲染进程内主进程进行命中测试，查找目标元素并执行绑定的事件，完成页面的交互。</p>
-<p>本文大部分内容也是对<a target="_blank" rel="noopener" href="https://developers.google.com/web/updates/2018/09/inside-browser-part1">inside look at modern web browser</a>系列文章的整理、解读和翻译吧，整理过程还是收获非常大的，希望读者读了本文只有有所启发吧。</p>
-<h2 id="相关参考链接"><a href="#相关参考链接" class="headerlink" title="相关参考链接"></a>相关参考链接</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/ithzhang/article/details/7917754">为什么浏览器会使用多进程架构</a></li>
-<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5e182a47e51d453cee48c752">一文看懂Chrome浏览器工作原理</a></li>
-<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/102128787">浏览器多进程架构</a></li>
-<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/47407398">图解浏览器的基本工作原理</a></li>
-<li><a target="_blank" rel="noopener" href="https://developers.google.com/web/updates/2018/09/inside-browser-part2">Inside look at modern web browser (part 2)</a></li>
-<li><a target="_blank" rel="noopener" href="https://developers.google.com/web/updates/2018/09/inside-browser-part3">Inside look at modern web browser (part 3)</a></li>
+<p>webpack项目配置：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&#x27;path&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">entry</span>: <span class="string">&#x27;./src/main.js&#x27;</span>,</span><br><span class="line">  <span class="attr">output</span>: &#123;</span><br><span class="line">    <span class="attr">path</span>: path.resolve(<span class="string">&#x27;后端项目路径&#x27;</span>, <span class="string">&#x27;static&#x27;</span>, <span class="string">&#x27;moduleA&#x27;</span>) <span class="comment">// 对应的模块目录</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">// ...其他配置</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时，项目的架构如下：</p>
+<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%88%91%E4%BB%AC%E6%8A%8A%E5%85%AC%E5%8F%B8%E5%89%8D%E7%AB%AF%E6%85%A2%E6%85%A2%E6%9E%B6%E6%9E%84%E4%BA%86/image-20201119205628118.png" alt="image-20201119205628118"></p>
+<p>可以看到，将页面使用React工程化编写以后，前端代码与后端代码的耦合性大大降低了，后端只需要为前端提供初始化数据，前端可使用初始化数据完成相应的页面渲染。</p>
+<h2 id="前端第二次改造：微前端"><a href="#前端第二次改造：微前端" class="headerlink" title="前端第二次改造：微前端"></a>前端第二次改造：微前端</h2><p>随着公司业务的发展，整个后端项目越来越庞大，项目的单次更新部署至少都需要二三十分钟，而且由于业务场景要求，后端项目必须提升其高可用性和稳定性，这使得后端不得不将项目拆分，将各个模块各自单独开发，并且根据其访问情况，单独部署不同的机器、容器数量。这样的模块拆分，可以理解为后端项目在想微服务架构演进，各个模块有各自的路由，它们之间内部会通过http、rpc或者kafka进行通信。而当时前端在公司的影响力也并不大，以至于当时错过在后端项目拆分过程中的可以接过路由让前端管理的机会。</p>
+<p>在后端向微服务架构演进的过程中，前端也迫不得已变成了一个微前端架构，因为公司当时没有专门做前端架构的人，所以由当时开发这部分的前端拍脑袋定了一个iframe的方案。</p>
+<p>页面情况大体是这样，平台有一个主入口路由，这个路由由原本的Webx项目控制，这个路由渲染页面左侧的菜单栏和右侧的内容区域，所有的页面的权限控制、路由分发由原本的Webx项目完成，右侧内容区域渲染一个iframe节点，iframe根据左侧的菜单栏的选中项来加载不同模块的页面。</p>
+<p>后端模块拆分后，大部分项目框架用的Spring Boot，而模板引擎，也从velocity切换到了freemarker，完成后架构如下：</p>
+<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%88%91%E4%BB%AC%E6%8A%8A%E5%85%AC%E5%8F%B8%E5%89%8D%E7%AB%AF%E6%85%A2%E6%85%A2%E6%9E%B6%E6%9E%84%E4%BA%86/image-20201120100214453.png" alt="image-20201120100214453"></p>
+<p>由于刚开始没有经过详细的考虑，iframe式的微前端架构缺点也慢慢暴露出来，和社区里讲的一样：</p>
+<ul>
+<li>页面加载性能：页面之间切换必须重新加载一次页面，且主页面的onload事件受到iframe的影响。</li>
+<li>用户体验不佳：iframe必须给指定高度，不然就会塌陷，这可能使得主页面和子页面都会出现滚动条。另外iframe内的fixed节点样式受到限制，比如Antd的message组件和Modal组件，会被定为到iframe的中心位置，而不是浏览器窗口的中心问题。</li>
 </ul>
+<p>由于项目为toB项目，更注重项目的可用性，而不是性能，所以我们当时忽略了页面加载性能问题。对于用户体验问题，我们通过在iframe内实时计算高度，并用postMessage发送到主页面，主页面动态设置iframe的高度，从而解决了高度塌陷问题。而iframe内的fixed节点样式受限问题，只能见招拆招，比如前面提到的Antd的message组件和Modal组件，在设置了主页面和子页面的域解决了跨域问题后，通过设置组件的<code>getContainer</code>方法，将fixed节点渲染到主页面去，然后在主页面中添加对应的css样式。</p>
+<h2 id="前端第三次改造：前端独立发布系统"><a href="#前端第三次改造：前端独立发布系统" class="headerlink" title="前端第三次改造：前端独立发布系统"></a>前端第三次改造：前端独立发布系统</h2><p>iframe式微前端完成后，为了提高前端影响力，我的导师当时率先提出了前端独立发布的想法，将需要发布的前端的静态资源从后端服务中抽离出来你，部署到公司的CDN中（印象里我的导师好像是华为云的前员工，据说这个前端独立发布的想法是他在华为云提出并实践过）。</p>
+<p>针对当时前端的情况，我们的难点很明显，路由是由后端项目来分发的，HTML的渲染也是由后端控制的，假如前端资源抽离单独发布，那么在只发布前端的时，必须保证在HTML不变的情况下（HTML决定了加载哪些CSS、JS），更新需要加载的前端资源，也就是更新需要加载的JS和CSS。</p>
+<p>为了解决这个难点，我们实现了一个前端资源独立发布系统，项目代号prelude。每个项目的模块需要prelude在定义应用app，模块bundle，在资源发布时，应用以模块为粒度，将对应版本（版本号必须遵循<a target="_blank" rel="noopener" href="http://semver.org/lang/zh-CN/">Semantic Versioning规范</a>）的静态资源发布到对应的CDN文件夹。比如，应用appA的模块bundleA，发布的V1.1.0版本，那么资源请求的路径应该是：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:<span class="regexp">//</span>static.xxx.com<span class="regexp">/appA/</span>bundleA<span class="regexp">/1.1.0/</span></span><br></pre></td></tr></table></figure>
+
+<p>在prelude控制台中，需要配置该模块bundleA初始化需要加载的资源，也可以配置的前置依赖模块，比如初始化配置了需要加载vender-chunk.js、main.js、vender-chunk.css和main.css，那么如果需要使用这个模块，则需要加载以下资源：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span> <span class="attr">href</span>=<span class="string">&quot;https://static.xxx.com/appA/bundleA/1.1.0/vender-chunk.css&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span> <span class="attr">href</span>=<span class="string">&quot;https://static.xxx.com/appA/bundleA/1.1.0/main.css&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;https://static.xxx.com/appA/bundleA/1.1.0/vender-chunk.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;https://static.xxx.com/appA/bundleA/1.1.0/main.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>知道了模块需要加载的资源后，prelude向外暴露了一个loader接口，这个接口接收app、bundle、version三个参数，然后渲染一段js脚本，用来向页面中注入对应app/bundle/version配置好的需要加载的所有资源，例如前面的例子，只需要在velocity或者freemarker中引入一下脚本：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;https://prelude.xxx.com/prelude-loader?app=appA&amp;bundle=bundleA&amp;version=V1.1.0&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>loader接口渲染的脚本大体如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> assets = &#123;</span><br><span class="line">  <span class="attr">css</span>: [</span><br><span class="line">    <span class="string">&#x27;https://static.xxx.com/appA/bundleA/1.1.0/vender-chunk.css&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;https://static.xxx.com/appA/bundleA/1.1.0/main.css&#x27;</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">js</span>: [</span><br><span class="line">    <span class="string">&#x27;https://static.xxx.com/appA/bundleA/1.1.0/vender-chunk.js&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;https://static.xxx.com/appA/bundleA/1.1.0/main.js&#x27;</span></span><br><span class="line">  ]</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 加载CSS</span></span><br><span class="line">assets.css.forEach(<span class="function"><span class="params">href</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">var</span> link = <span class="built_in">document</span>.createElement(<span class="string">&#x27;link&#x27;</span>);</span><br><span class="line">  <span class="comment">// 其他逻辑</span></span><br><span class="line">  link.rel = <span class="string">&#x27;stylesheet&#x27;</span>;</span><br><span class="line">  link.href = hrefs;</span><br><span class="line">  <span class="built_in">document</span>.head.appendChild(link);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 加载JS</span></span><br><span class="line">assets.css.forEach(<span class="function"><span class="params">src</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">var</span> script = <span class="built_in">document</span>.createElement(<span class="string">&#x27;script&#x27;</span>);</span><br><span class="line">  <span class="comment">// 其他逻辑</span></span><br><span class="line">  script.async = <span class="literal">false</span>; <span class="comment">// 顺序执行</span></span><br><span class="line">  script.src = src;</span><br><span class="line">  <span class="built_in">document</span>.body.appendChild(script);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>对此还不够，因为接口的version参数是写死的V1.1.0，如果前端发布更新了版本，那么还需要后端应用去发布更新velocity或者freemarker中的script标签的version参数，这不符合需求。于是我们将version参数进行了升级，可以使用规范的通配符，比如传入version=*，代表永远取该模块的最新版本，那么velocity或者freemarker引入的脚本就变成了下面这样：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;https://prelude.xxx.com/preluer-loader?app=appA&amp;bundle=bundleA&amp;version=*&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>于是，流程差不多通了，在技术方案评审过程中，收到了来自经理的疑问：假如前后端同时发布的情况下，如何保证前后端发布的同步？</p>
+<ul>
+<li>前端先发布，还未发布后端渲染的页面就会直接加载到发布后的前端资源，如果新的版本需要请求新的接口，而后端还未更新，页面就会报错。</li>
+<li>后端先发布，为发布的前端资源就会请求到发布更新后的后端接口，如果接口存在不兼容情况，页面就会报错。</li>
+</ul>
+<p>那既然是经理的疑问，该解决还是要解决，不然方案评审不给过怎么办？针对在这个问题，我们可以前后端做好约定，约定version参数只允许有第三位版本号的使用通配符，例如只能使用<code>V1.1.*</code>，这种情况，loader只会加载<code>V1.1.*</code>的最新版本，然后在做好发布的版本更新约定。</p>
+<ul>
+<li>只发布前端：前端发布版本只更新第三位版本号，则页面自动会拉取到最新版本。</li>
+<li>只发布后端：不需要更新任何内容。</li>
+<li>前后端同时发布：前端先发布版本更新第一或第二位版本号，前端发布完成后，后端发布更新script标签的version参数的对应的第一第二版本号。</li>
+</ul>
+<p>例如，当前后端同时发布时，前端先发布更新版本到<code>V1.2.0</code>，后端没发布时，一直用的是<code>V1.1.*</code>的版本，当后端发布后，更新version参数为<code>V1.2.*</code>，上线后就自动加载为V1.2.0的版本了。</p>
+<p>整个项目由有三个人完成，我主要负责平台的所有配置和配置Mysql入库，我的导师负责loader接口的开发和对应redis的读写、项目基建等，另外一个同事负责CDN的对接操作，历时大概一个月左右就完成了。</p>
+<p>项目完成并实施后，架构已经将前端慢慢的解耦出来了。</p>
+<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%88%91%E4%BB%AC%E6%8A%8A%E5%85%AC%E5%8F%B8%E5%89%8D%E7%AB%AF%E6%85%A2%E6%85%A2%E6%9E%B6%E6%9E%84%E4%BA%86/image-20201120131044267.png" alt="image-20201120131044267"></p>
+<p>当prelude项目完成后，我们利用prelude的优势，通过新的方式弥补将iframe式的微前端架构的缺点，比如在Webx项目路由分发时，用渲染prelude-loader标签的形式代替iframe标签，制造一个伪iframe微前端的架构。</p>
+<h2 id="前端第四次改造：持续集成CI-CD"><a href="#前端第四次改造：持续集成CI-CD" class="headerlink" title="前端第四次改造：持续集成CI/CD"></a>前端第四次改造：持续集成CI/CD</h2><p>项目完成后，由于我的导师功劳巨大（期间还不断组件公司组件库的建设之类的），他直接被掉到了公司的基础架构组做前端架构。2019年12月，我从这家独角兽离职，后续偶尔有和我的导师聊两句，他说prelude的发展挺好的，得到了公司的认可，目前也和持续集成平台打通了，虽然我没有问细节，但是大体我可以想象到现在prelude的样子。</p>
+<p>我离职的时候，prelude的状态是，模块production编译发布是在个人电脑上进行的，编译后通过手动或者webpack插件的形式上传到prelude平台，由prelude代发到CDN中，操作极其繁琐。</p>
+<p>如今打通了持续集成后，可以做非常多的事情，例如静态类型检查、编码风格检测等，当然这都不是重点，重点是怎么利用持续集成，将前端代码的交付规范起来，而不是原本的在个人电脑上完成。</p>
+<p>首先，前端项目方在gitlab中，我们需要规定每个项目有一个编译产出的出口目录，然后流水线按照约定好的出口目录获取产出，并发布到prelude。</p>
+<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%88%91%E4%BB%AC%E6%8A%8A%E5%85%AC%E5%8F%B8%E5%89%8D%E7%AB%AF%E6%85%A2%E6%85%A2%E6%9E%B6%E6%9E%84%E4%BA%86/image-20201120141102717.png" alt="image-20201120141102717"></p>
+<p>有了持续集成之后，所有production环境的代码我们不需要在自己的电脑进行build，只需要在项目根目录新建build.sh脚本，这个脚本内包含了所有编译构建的命令，让持续集成平台去执行，编译后在根目录产出output.tar.gz，然后将产出包包含app/bundle/version参数描述文件或者在产出发布时候直接传参给prelude，让prelude代发到CDN，这样就可以完成版本发布。</p>
+<p>到了这一步，整个前端架构基本已经完全解耦出来。</p>
+<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%88%91%E4%BB%AC%E6%8A%8A%E5%85%AC%E5%8F%B8%E5%89%8D%E7%AB%AF%E6%85%A2%E6%85%A2%E6%9E%B6%E6%9E%84%E4%BA%86/image-20201120142134478.png" alt="image-20201120142134478"></p>
+<h2 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h2><p>整个架构的发展大概经历了两到三年的时间，中间也遇到了很多坎坎坷坷的问题，虽然我们没有全局最优的方案，但是基本都用了局部最优的方案来解决问题，这两三年时间，我也从一个前端菜鸟变成了一个还可以的前端精神小伙，还是非常感谢当时的导师。</p>
 
       
 
@@ -346,6 +269,21 @@ var _hmt = _hmt || [];
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">前端</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">重构</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -396,7 +334,7 @@ var _hmt = _hmt || [];
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=https://shuaiqinghan.github.io/jk.github.io/2021/09/09/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=https://shuaiqinghan.github.io/jk.github.io/2021/09/17/%E5%89%8D%E7%AB%AF%E6%85%A2%E6%85%A2%E6%9E%B6%E6%9E%84%E4%BA%86/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -410,18 +348,9 @@ var _hmt = _hmt || [];
   
 <nav id="article-nav">
   
-    <a href="/2021/09/09/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Chrome%20V8%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          (no title)
-        
-      </div>
-    </a>
   
-  
-    <a href="/2021/06/29/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3TCPIP%E5%8D%8F%E8%AE%AE%EF%BC%9F/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">如何理解TCPIP协议？</div>
+    <a href="/2021/09/16/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">浏览器工作原理</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -451,7 +380,7 @@ var _hmt = _hmt || [];
   
 
   
-  <div id="SOHUCS" sid="浏览器工作原理" ></div> 
+  <div id="SOHUCS" sid="前端慢慢架构了" ></div> 
 <script charset="utf-8" type="text/javascript" src="//changyan.sohu.com/upload/changyan.js" ></script>
 <script type="text/javascript">
     window.changyan.api.config({
@@ -593,6 +522,14 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Nodes</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">EventLoop</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">组件化开发</a>
               </li>
              
@@ -697,11 +634,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">重构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">业务</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">自动化</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Chreom</a>
               </li>
              
               <li class="article-tag-list-item">
