@@ -151,570 +151,6 @@ var _hmt = _hmt || [];
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-一年半经验，百度、有赞、阿里面试总结" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/18/%E4%B8%80%E5%B9%B4%E5%8D%8A%E7%BB%8F%E9%AA%8C%EF%BC%8C%E7%99%BE%E5%BA%A6%E3%80%81%E6%9C%89%E8%B5%9E%E3%80%81%E9%98%BF%E9%87%8C%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/">一年半经验，百度、有赞、阿里前端面试总结</a>
-    </h1>
-  
-
-        
-        <a href="/2018/11/18/%E4%B8%80%E5%B9%B4%E5%8D%8A%E7%BB%8F%E9%AA%8C%EF%BC%8C%E7%99%BE%E5%BA%A6%E3%80%81%E6%9C%89%E8%B5%9E%E3%80%81%E9%98%BF%E9%87%8C%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/" class="archive-article-date">
-  	<time datetime="2018-11-18T07:22:07.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-18</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>人家都说，前端需要每年定期出来面面试，衡量一下自己当前的技术水平以及价值，本人17年7月份，毕业到现在都没出来试过，也没很想换工作，就出来试试，看看自己水平咋样。</p>
-<p>以下为我现场面试时候的一些回答，部分因人而异的问题我就不回答了，回答的都为参考答案，也有部分错误的地方或者不好的地方，有更好的答案的可以在评论区评论。</p>
-<h2 id="百度-WEB前端工程师-连续五面-全程3约个小时"><a href="#百度-WEB前端工程师-连续五面-全程3约个小时" class="headerlink" title="百度 WEB前端工程师 连续五面 全程3约个小时"></a>百度 WEB前端工程师 连续五面 全程3约个小时</h2><h3 id="一面"><a href="#一面" class="headerlink" title="一面"></a>一面</h3><p>先完成笔试题</p>
-<ol>
-<li>实现一个函数，判断输入是不是回文字符串。</li>
-</ol>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">run</span>(<span class="params">input</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> input !== <span class="string">&#x27;string&#x27;</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  <span class="keyword">return</span> input.split(<span class="string">&#x27;&#x27;</span>).reverse().join(<span class="string">&#x27;&#x27;</span>) === input;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>两种以上方式实现已知或者未知宽度的垂直水平居中。</li>
-</ol>
-<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 1</span></span><br><span class="line"><span class="selector-class">.wrapper</span> &#123;</span><br><span class="line">  <span class="attribute">position</span>: relative;</span><br><span class="line">  <span class="selector-class">.box</span> &#123;</span><br><span class="line">    <span class="attribute">position</span>: absolute;</span><br><span class="line">    <span class="attribute">top</span>: <span class="number">50%</span>;</span><br><span class="line">    <span class="attribute">left</span>: <span class="number">50%</span>;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">100px</span>;</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">100px</span>;</span><br><span class="line">    <span class="attribute">margin</span>: -<span class="number">50px</span> <span class="number">0</span> <span class="number">0</span> -<span class="number">50px</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2</span></span><br><span class="line"><span class="selector-class">.wrapper</span> &#123;</span><br><span class="line">  <span class="attribute">position</span>: relative;</span><br><span class="line">  <span class="selector-class">.box</span> &#123;</span><br><span class="line">    <span class="attribute">position</span>: absolute;</span><br><span class="line">    <span class="attribute">top</span>: <span class="number">50%</span>;</span><br><span class="line">    <span class="attribute">left</span>: <span class="number">50%</span>;</span><br><span class="line">    <span class="attribute">transform</span>: translate(-<span class="number">50%</span>, -<span class="number">50%</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3</span></span><br><span class="line"><span class="selector-class">.wrapper</span> &#123;</span><br><span class="line">  <span class="selector-class">.box</span> &#123;</span><br><span class="line">    <span class="attribute">display</span>: flex;</span><br><span class="line">    <span class="attribute">justify-content</span>:center;</span><br><span class="line">    <span class="attribute">align-items</span>: center;</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">100px</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 4</span></span><br><span class="line"><span class="selector-class">.wrapper</span> &#123;</span><br><span class="line">  <span class="attribute">display</span>: table;</span><br><span class="line">  <span class="selector-class">.box</span> &#123;</span><br><span class="line">    <span class="attribute">display</span>: table-cell;</span><br><span class="line">    <span class="attribute">vertical-align</span>: middle;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<ol start="3">
-<li>实现效果，点击容器内的图标，图标边框变成border 1px solid red，点击空白处重置。</li>
-</ol>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> box = <span class="built_in">document</span>.getElementById(<span class="string">&#x27;box&#x27;</span>);</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isIcon</span>(<span class="params">target</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> target.className.includes(<span class="string">&#x27;icon&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">box.onclick = <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">  e.stopPropagation();</span><br><span class="line">  <span class="keyword">const</span> target = e.target;</span><br><span class="line">  <span class="keyword">if</span> (isIcon(target)) &#123;</span><br><span class="line">    target.style.border = <span class="string">&#x27;1px solid red&#x27;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> doc = <span class="built_in">document</span>;</span><br><span class="line">doc.onclick = <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> children = box.children;</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; children.length; i++) &#123;</span><br><span class="line">    <span class="keyword">if</span> (isIcon(children[i])) &#123;</span><br><span class="line">      children[i].style.border = <span class="string">&#x27;none&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ol start="4">
-<li>请简单实现双向数据绑定mvvm。</li>
-</ol>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">id</span>=<span class="string">&quot;input&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> data = &#123;&#125;;</span><br><span class="line"><span class="keyword">const</span> input = <span class="built_in">document</span>.getElementById(<span class="string">&#x27;input&#x27;</span>);</span><br><span class="line"><span class="built_in">Object</span>.defineProperty(data, <span class="string">&#x27;text&#x27;</span>, &#123;</span><br><span class="line">  <span class="function"><span class="title">set</span>(<span class="params">value</span>)</span> &#123;</span><br><span class="line">    input.value = value;</span><br><span class="line">    <span class="built_in">this</span>.value = value;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line">input.onchange = <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">  data.text = e.target.value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ol start="5">
-<li>实现Storage，使得该对象为单例，并对localStorage进行封装设置值setItem(key,value)和getItem(key)</li>
-</ol>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> instance = <span class="literal">null</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Storage</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="function"><span class="title">getInstance</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!instance) &#123;</span><br><span class="line">      instance = <span class="keyword">new</span> Storage();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.instance;</span><br><span class="line">  &#125;</span><br><span class="line">  setItem = <span class="function">(<span class="params">key, value</span>) =&gt;</span> <span class="built_in">localStorage</span>.setItem(key, value),</span><br><span class="line">  getItem = <span class="function"><span class="params">key</span> =&gt;</span> <span class="built_in">localStorage</span>.getItem(key)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>Q1 你的技术栈主要是react，那你说说你用react有什么坑点？</p>
-</blockquote>
-<p>1、JSX做表达式判断时候，需要强转为boolean类型，如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">render</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> b = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">    &#123;</span></span><br><span class="line"><span class="xml">      !!b &amp;&amp; <span class="tag">&lt;<span class="name">div</span>&gt;</span>这是一段文本<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">    &#125;</span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>如果不使用 !!b 进行强转数据类型，会在页面里面输出 0。</p>
-<p>2、尽量不要在 componentWillReviceProps 里使用 setState，如果一定要使用，那么需要判断结束条件，不然会出现无限重渲染，导致页面崩溃。(实际不是componentWillReviceProps会无限重渲染，而是componentDidUpdate)</p>
-<p>3、给组件添加ref时候，尽量不要使用匿名函数，因为当组件更新的时候，匿名函数会被当做新的prop处理，让ref属性接受到新函数的时候，react内部会先清空ref，也就是会以null为回调参数先执行一次ref这个props，然后在以该组件的实例执行一次ref，所以用匿名函数做ref的时候，有的时候去ref赋值后的属性会取到null。<br><a target="_blank" rel="noopener" href="https://reactjs.org/docs/refs-and-the-dom.html#caveats">详情见</a></p>
-<p>4、遍历子节点的时候，不要用 index 作为组件的 key 进行传入。</p>
-<blockquote>
-<p>Q2 我现在有一个button，要用react在上面绑定点击事件，要怎么做？</p>
-</blockquote>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Demo</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;(e)</span> =&gt;</span> &#123;</span></span><br><span class="line"><span class="xml">      alert(&#x27;我点击了按钮&#x27;)</span></span><br><span class="line"><span class="xml">    &#125;&#125;&gt;</span></span><br><span class="line"><span class="xml">      按钮</span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>Q3 接上一个问题，你觉得你这样设置点击事件会有什么问题吗？</p>
-</blockquote>
-<p>由于onClick使用的是匿名函数，所有每次重渲染的时候，会把该onClick当做一个新的prop来处理，会将内部缓存的onClick事件进行重新赋值，所以相对直接使用函数来说，可能有一点的性能下降（个人认为）。</p>
-<p>修改</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Demo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  onClick = <span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span><br><span class="line">    alert(<span class="string">&#x27;我点击了按钮&#x27;</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;this.onClick&#125;</span>&gt;</span></span></span><br><span class="line"><span class="xml">      按钮</span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>当然你在内部声明的不是箭头函数，然后你可能需要在设置onClick的时候使用bind绑定上下文，这样的效果和先前的使用匿名函数差不多，因为bind会返回新的函数，也会被react认为是一个新的prop。</p>
-<blockquote>
-<p>Q4 你说说event loop吧</p>
-</blockquote>
-<p>首先，js是单线程的，主要的任务是处理用户的交互，而用户的交互无非就是响应DOM的增删改，使用事件队列的形式，一次事件循环只处理一个事件响应，使得脚本执行相对连续，所以有了事件队列，用来储存待执行的事件，那么事件队列的事件从哪里被push进来的呢。那就是另外一个线程叫事件触发线程做的事情了，他的作用主要是在定时触发器线程、异步HTTP请求线程满足特定条件下的回调函数push到事件队列中，等待js引擎空闲的时候去执行，当然js引擎执行过程中有优先级之分，首先js引擎在一次事件循环中，会先执行js线程的主任务，然后会去查找是否有微任务microtask（promise），如果有那就优先执行微任务，如果没有，在去查找宏任务macrotask（setTimeout、setInterval）进行执行。</p>
-<blockquote>
-<p>Q5 说说事件流吧</p>
-</blockquote>
-<p>事件流分为两种，捕获事件流和冒泡事件流。<br>捕获事件流从根节点开始执行，一直往子节点查找执行，直到查找执行到目标节点。<br>冒泡事件流从目标节点开始执行，一直往父节点冒泡查找执行，直到查到到根节点。</p>
-<p>DOM事件流分为三个阶段，一个是捕获节点，一个是处于目标节点阶段，一个是冒泡阶段。</p>
-<blockquote>
-<p>Q6 我现在有一个进度条，进度条中间有一串文字，当我的进度条覆盖了文字之后，文字要与进度条反色，怎么实现？</p>
-</blockquote>
-<p>。。。当时我给的是js的方案，在进度条宽度变化的时候，计算盖过每一个文字的50%，如果超过，设置文字相反颜色。</p>
-<p>当然css也有对应的方案，也就是 mix-blend-mode，我并没有接触过。</p>
-<p>对应html也有对应方案，也就设置两个相同位置但是颜色相反的dom结构在重叠在一起，顶层覆盖底层，最顶层的进度条取overflow为hidden，其宽度就为进度。</p>
-<h3 id="二面"><a href="#二面" class="headerlink" title="二面"></a>二面</h3><blockquote>
-<p>Q1 你为什么要离开上一家公司？</p>
-</blockquote>
-<p>-</p>
-<blockquote>
-<p>Q2 你觉得理想的前端地位是什么？</p>
-</blockquote>
-<p>-</p>
-<blockquote>
-<p>Q3 那你意识到问题所在，你又尝试过解决问题吗？</p>
-</blockquote>
-<p>-</p>
-<h3 id="三面"><a href="#三面" class="headerlink" title="三面"></a>三面</h3><blockquote>
-<p>Q1 说一下你上一家公司的一个整体开发流程吧</p>
-</blockquote>
-<p>-</p>
-<blockquote>
-<p>Q2 react 的虚拟dom是怎么实现的</p>
-</blockquote>
-<p>首先说说为什么要使用Virturl DOM，因为操作真实DOM的耗费的性能代价太高，所以react内部使用js实现了一套dom结构，在每次操作在和真实dom之前，使用实现好的diff算法，对虚拟dom进行比较，递归找出有变化的dom节点，然后对其进行更新操作。为了实现虚拟DOM，我们需要把每一种节点类型抽象成对象，每一种节点类型有自己的属性，也就是prop，每次进行diff的时候，react会先比较该节点类型，假如节点类型不一样，那么react会直接删除该节点，然后直接创建新的节点插入到其中，假如节点类型一样，那么会比较prop是否有更新，假如有prop不一样，那么react会判定该节点有更新，那么重渲染该节点，然后在对其子节点进行比较，一层一层往下，直到没有子节点。</p>
-<blockquote>
-<p>Q3 react 的渲染过程中，兄弟节点之间是怎么处理的？也就是key值不一样的时候。</p>
-</blockquote>
-<p>通常我们输出节点的时候都是map一个数组然后返回一个ReactNode，为了方便react内部进行优化，我们必须给每一个reactNode添加key，这个key prop在设计值处不是给开发者用的，而是给react用的，大概的作用就是给每一个reactNode添加一个身份标识，方便react进行识别，在重渲染过程中，如果key一样，若组件属性有所变化，则react只更新组件对应的属性；没有变化则不更新，如果key不一样，则react先销毁该组件，然后重新创建该组件。</p>
-<blockquote>
-<p>Q4 我现在有一个数组[1,2,3,4]，请实现算法，得到这个数组的全排列的数组，如[2,1,3,4]，[2,1,4,3]。。。。你这个算法的时间复杂度是多少</p>
-</blockquote>
-<p>这个我没写出来，大概给了个思路，将每一个数组拆除俩个小数组进行求它的全排列，然后得到的结果互相之间又进行全排列，然后把最后的结果连接起来。。。</p>
-<p>感兴趣的同学见<a target="_blank" rel="noopener" href="https://blog.csdn.net/k346k346/article/details/51154786">数组全排列</a></p>
-<blockquote>
-<p>Q5 我现在有一个背包，容量为m，然后有n个货物，重量分别为w1,w2,w3…wn，每个货物的价值是v1,v2,v3…vn，w和v没有任何关系，请求背包能装下的最大价值。</p>
-</blockquote>
-<p>这个我也没写出来，也给了个思路，首先使用Q4的方法得到货物重量数组的全组合（包括拆分成小数组的全组合），然后计算每一个组合的价值，并进行排序，然后遍历数组，找到价值较高切刚好能装进背包m的组合。</p>
-<p>本题<code>动态规划面试题</code>，感兴趣的同学请自行百度或者谷歌。</p>
-<h3 id="四面"><a href="#四面" class="headerlink" title="四面"></a>四面</h3><blockquote>
-<p>Q1 请说一下你的上一家公司的研发发布流程。</p>
-</blockquote>
-<p>-</p>
-<blockquote>
-<p>Q2 你说一下webpack的一些plugin，怎么使用webpack对项目进行优化。</p>
-</blockquote>
-<p>正好最近在做webpack构建优化和性能优化的事儿，当时吹了大概15~20分钟吧，插件请见<a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000016816813">webpack插件归纳总结</a>。</p>
-<p>构建优化<br>1、减少编译体积 ContextReplacementPugin、IgnorePlugin、babel-plugin-import、babel-plugin-transform-runtime。<br>2、并行编译 happypack、thread-loader、uglifyjsWebpackPlugin开启并行<br>3、缓存 cache-loader、hard-source-webpack-plugin、uglifyjsWebpackPlugin开启缓存、babel-loader开启缓存<br>4、预编译 dllWebpackPlugin &amp;&amp; DllReferencePlugin、auto-dll-webapck-plugin</p>
-<p>性能优化<br>1、减少编译体积 Tree-shaking、Scope Hositing。<br>2、hash缓存 webpack-md5-plugin<br>3、拆包 splitChunksPlugin、import()、require.ensure</p>
-<blockquote>
-<p>Q3 es6 class 的new实例和es5的new实例有什么区别</p>
-</blockquote>
-<p>这个我觉得是一样的（当时因为很少看babel编译之后的结果），面试官说不一样。。。后来我看了一下babel的编译结果，发现只是类的方法声明的过程不一样而已，最后new的结果是一样的。。。具体答案现在我也不知道。。。</p>
-<blockquote>
-<p>Q4 看你简历上写了canvas，你说一下为什么canvas的图片为什么过有跨域问题。</p>
-</blockquote>
-<p>canvas图片为什么跨域我不知道，至今没查出来，也差不多，大概跨域原因和浏览器跨域的原因是一样的吧。</p>
-<blockquote>
-<p>Q5 我现在有一个canvas，上面随机布着一些黑块，请实现方法，计算canvas上有多少个黑块。</p>
-</blockquote>
-<p>使用getImageData获取像素数组，然后遍历数组，把在遍历节点的过程中，查看节点上下左右的像素颜色是否相同，如果相同，然后设置标识，最后groupBy一下所有像素。（这是我当时的方案）</p>
-<p>其他更好的答案<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/f54d265f7aa4">见地址</a></p>
-<blockquote>
-<p>Q6 请手写实现一个promise</p>
-</blockquote>
-<p>这个就不写了，详情见<a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000013396601">promise实现原理</a></p>
-<p>注：四面是一个超级可爱的小姐姐，电脑给我让我写完之后，我说我写得差不多了，然后电脑给她，然后她竟然默默的在看我的代码，尝试寻找我的思路，也没有问我实现思路是啥，然后我就问她，你不应该是让我给你解释我的代码思路吗。。。你竟然在尝试寻找我的思路，我自己都不知道我自己是思路是啥。。。然后我两都笑了，哈哈哈。最后结束的时候我说我午饭还没吃，她还叫了另外一个小哥哥先带了下去吃饭，真是一个善良的小姐姐，非常感谢。</p>
-<h3 id="五面"><a href="#五面" class="headerlink" title="五面"></a>五面</h3><blockquote>
-<p>Q1 你说一下你的技术有什么特点</p>
-</blockquote>
-<p>-</p>
-<blockquote>
-<p>Q2 说一下你觉得你最得意的一个项目？你这个项目有什么缺陷，弊端吗？</p>
-</blockquote>
-<p>-</p>
-<blockquote>
-<p>Q3 现在有那么一个团队，假如让你来做技术架构，你会怎么做？</p>
-</blockquote>
-<p>考虑到团队每一个前端的技术栈可能不一致，这个时候我可能选择微前端架构，让每个人负责的模块可以单独开发，单独部署，单独回滚，不依赖于其他项目模块，在尽可能的情况下节约团队成员之间的学习成本，当然这肯定也有缺点，那就是每个模块都需要一个前端项目，单独部署，单独回滚无疑也加大了运维成本。</p>
-<blockquote>
-<p>Q4 说一下你上一家公司的主要业务流程，你参与到其中了吗？</p>
-</blockquote>
-<p>-</p>
-<h2 id="杭州有赞"><a href="#杭州有赞" class="headerlink" title="杭州有赞"></a>杭州有赞</h2><h3 id="一面-WEB前端工程师-电话面-全程43分钟"><a href="#一面-WEB前端工程师-电话面-全程43分钟" class="headerlink" title="一面 WEB前端工程师 电话面 全程43分钟"></a>一面 WEB前端工程师 电话面 全程43分钟</h3><blockquote>
-<p>Q1 自我介绍</p>
-</blockquote>
-<p>-</p>
-<blockquote>
-<p>Q2 说说从输入URL到看到页面发生的全过程，越详细越好。</p>
-</blockquote>
-<ol>
-<li>首先浏览器主进程接管，开了一个下载线程。</li>
-<li>然后进行HTTP请求（DNS查询、IP寻址等等），中间会有三次捂手，等待响应，开始下载响应报文。</li>
-<li>将下载完的内容转交给Renderer进程管理。</li>
-<li>Renderer进程开始解析css rule tree和dom tree，这两个过程是并行的，所以一般我会把link标签放在页面顶部。</li>
-<li>解析绘制过程中，当浏览器遇到link标签或者script、img等标签，浏览器会去下载这些内容，遇到时候缓存的使用缓存，不适用缓存的重新下载资源。</li>
-<li>css rule tree和dom tree生成完了之后，开始合成render tree，这个时候浏览器会进行layout，开始计算每一个节点的位置，然后进行绘制。</li>
-<li>绘制结束后，关闭TCP连接，过程有四次挥手。</li>
-</ol>
-<blockquote>
-<p>Q3 你刚刚说了三次握手，四次挥手，那你描述一下？</p>
-</blockquote>
-<p>本人对计算机网络的这些概念一直不是很熟悉，所以这个问题回答不会，这里mark下文章，感兴趣的同学查看<a target="_blank" rel="noopener" href="https://blog.csdn.net/qzcsu/article/details/72861891">地址</a></p>
-<blockquote>
-<p>Q4 刚刚Q2中说的CSS和JS的位置会影响页面效率，为什么？</p>
-</blockquote>
-<p>css在加载过程中不会影响到DOM树的生成，但是会影响到Render树的生成，进而影响到layout，所以一般来说，style的link标签需要尽量放在head里面，因为在解析DOM树的时候是自上而下的，而css样式又是通过异步加载的，这样的话，解析DOM树下的body节点和加载css样式能尽可能的并行，加快Render树的生成的速度。</p>
-<p>js脚本应该放在底部，原因在于js线程与GUI渲染线程是互斥的关系，如果js放在首部，当下载执行js的时候，会影响渲染行程绘制页面，js的作用主要是处理交互，而交互必须得先让页面呈现才能进行，所以为了保证用户体验，尽量让页面先绘制出来。</p>
-<blockquote>
-<p>Q5 现在有一个函数A和函数B，请你实现B继承A</p>
-</blockquote>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 方式1</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">B</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">B.prototype = <span class="keyword">new</span> A();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方式2</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">B</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  A.call(<span class="built_in">this</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方式3</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">B</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">B.prototype = <span class="keyword">new</span> A();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">B</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  A.call(<span class="built_in">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>Q6 刚刚你在Q5中说的几种继承的方式，分别说说他们的优缺点</p>
-</blockquote>
-<p>方式1：简单易懂，但是无法实现多继承，父类新增原型方法/原型属性，子类都能访问到<br>方式2：可以实现多继承，但是只能继承父类的实例属性和方法，不能继承原型属性/方法<br>方式3：可以继承实例属性/方法，也可以继承原型属性/方法，但是示例了两个A的构造函数</p>
-<blockquote>
-<p>Q7 说说CSS中几种垂直水平居中的方式</p>
-</blockquote>
-<p>参考前面百度一面笔试题Q2</p>
-<blockquote>
-<p>Q8 Q7中说的flex布局，垂直水平居中必须知道宽度吗？</p>
-</blockquote>
-<p>是的，必须知道高度(脑子进水了回答了必须知道，其实答案是不需要知道高度的)</p>
-<blockquote>
-<p>Q9 描述一下this</p>
-</blockquote>
-<p>this，函数执行的上下文，可以通过apply，call，bind改变this的指向。对于匿名函数或者直接调用的函数来说，this指向全局上下文（浏览器为window，nodejs为global），剩下的函数调用，那就是谁调用它，this就指向谁。当然还有es6的箭头函数，箭头函数的指向取决于该箭头函数声明的位置，在哪里声明，this就指向哪里。</p>
-<blockquote>
-<p>Q10 说一下浏览器的缓存机制</p>
-</blockquote>
-<p>浏览器缓存机制有两种，一种为强缓存，一种为协商缓存。<br>对于强缓存，浏览器在第一次请求的时候，会直接下载资源，然后缓存在本地，第二次请求的时候，直接使用缓存。<br>对于协商缓存，第一次请求缓存且保存缓存标识与时间，重复请求向服务器发送缓存标识和最后缓存时间，服务端进行校验，如果失效则使用缓存。</p>
-<p>强缓存方案</p>
-<p>Exprires：服务端的响应头，第一次请求的时候，告诉客户端，该资源什么时候会过期。Exprires的缺陷是必须保证服务端时间和客户端时间严格同步。<br>Cache-control：max-age，表示该资源多少时间后过期，解决了客户端和服务端时间必须同步的问题，</p>
-<p>协商缓存方案<br>If-None-Match/ETag：缓存标识，对比缓存时使用它来标识一个缓存，第一次请求的时候，服务端会返回该标识给客户端，客户端在第二次请求的时候会带上该标识与服务端进行对比并返回If-None-Match标识是否表示匹配。<br>Last-modified/If-Modified-Since：第一次请求的时候服务端返回Last-modified表明请求的资源上次的修改时间，第二次请求的时候客户端带上请求头If-Modified-Since，表示资源上次的修改时间，服务端拿到这两个字段进行对比。</p>
-<blockquote>
-<p>Q11 ETag是这个字符串是怎么生成的？</p>
-</blockquote>
-<p>没答出来，我当时猜是根据文件内容或者最后修改时间进行的加密算法。其实官方没有明确指定生成ETag值的方法。 通常，使用内容的散列，最后修改时间戳的哈希值，或简单地使用版本号。</p>
-<blockquote>
-<p>Q12 现在要你完成一个Dialog组件，说说你设计的思路？它应该有什么功能？</p>
-</blockquote>
-<ol>
-<li>该组件需要提供hook指定渲染位置，默认渲染在body下面。</li>
-<li>然后改组件可以指定外层样式，如宽度等</li>
-<li>组件外层还需要一层mask来遮住底层内容，点击mask可以执行传进来的onCancel函数关闭Dialog。</li>
-<li>另外组件是可控的，需要外层传入visible表示是否可见。</li>
-<li>然后Dialog可能需要自定义头head和底部footer，默认有头部和底部，底部有一个确认按钮和取消按钮，确认按钮会执行外部传进来的onOk事件，然后取消按钮会执行外部传进来的onCancel事件。</li>
-<li>当组件的visible为true时候，设置body的overflow为hidden，隐藏body的滚动条，反之显示滚动条。</li>
-<li>组件高度可能大于页面高度，组件内部需要滚动条。</li>
-<li>只有组件的visible有变化且为ture时候，才重渲染组件内的所有内容。</li>
-</ol>
-<blockquote>
-<p>Q13 你觉得你做过的你觉得最值得炫耀的项目？</p>
-</blockquote>
-<h2 id="蚂蚁金服-体验技术部-资深数据可视化研发工程师"><a href="#蚂蚁金服-体验技术部-资深数据可视化研发工程师" class="headerlink" title="蚂蚁金服-体验技术部 资深数据可视化研发工程师"></a>蚂蚁金服-体验技术部 资深数据可视化研发工程师</h2><h3 id="一面-电话面-全程1小时24分钟"><a href="#一面-电话面-全程1小时24分钟" class="headerlink" title="一面 电话面 全程1小时24分钟"></a>一面 电话面 全程1小时24分钟</h3><blockquote>
-<p>Q1 描述一下你最近做的可视化的项目</p>
-</blockquote>
-<p>-</p>
-<blockquote>
-<p>Q2 刚刚说的java调用js离线生成数据报告？java调用js的promise异步返回结果怎么实现的？</p>
-</blockquote>
-<p>使用java的js引擎Nashorn，Nashorn不支持事件队列，是要引进polyfill，然后java调用js方法获得java的promise对象，然后在调用该对象的then方法，回调函数为java中的某各类的某个方法，然后while一个表示是否已执行回调的变量，如果未执行，则让java主线程sleep，如果已经执行，则跳出循环，表示是否已执行回调的变量在传入promise的回调函数中设置更改。详情代码<a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000012916021">见地址</a></p>
-<blockquote>
-<p>Q3 说说svg和canvas各自的优缺点？</p>
-</blockquote>
-<p>共同点：都是有效的图形工具，对于数据较小的情况下，都很又高的性能，它们都使用 JavaScript 和 HTML；它们都遵守万维网联合会 (W3C) 标准。</p>
-<p>svg优点：<br>矢量图，不依赖于像素，无限放大后不会失真。<br>以dom的形式表示，事件绑定由浏览器直接分发到节点上。<br>svg缺点：<br>dom形式，涉及到动画时候需要更新dom，性能较低。</p>
-<p>canvas优点：<br>定制型更强，可以绘制绘制自己想要的东西。<br>非dom结构形式，用JavaScript进行绘制，涉及到动画性能较高。<br>canvas缺点：<br>事件分发由canvas处理，绘制的内容的事件需要自己做处理。<br>依赖于像素，无法高效保真，画布较大时候性能较低。</p>
-<blockquote>
-<p>Q4 你刚刚说的canvas渲染较大画布的时候性能会较低？为什么？</p>
-</blockquote>
-<p>因为canvas依赖于像素，在绘制过程中是一个一个像素去绘制的，当画布足够大，像素点也就会足够多，那么想能就会足够低。</p>
-<blockquote>
-<p>Q6 假设我现在有5000个圆，完全绘制出来，点击某一个圆，该圆高亮，另外4999个圆设为半透明，分别说说用svg和canvas怎么实现？</p>
-</blockquote>
-<p>首先，从数据出发，我们的每个圆是一个数据，这个数据有圆的x、y、radius、isHighlight如果是svg，直接渲染节点即可，然后往节点上边绑定点击事件，点击改变所有数据的高亮属性（必须同步执行完成），然后让浏览器进行绘制。如果是canvas，我们需要自己绑定事件到canvans标签上，然后点击的时候判断点击的位置是否在圆内，如果在某个圆内，则更新所有数据的高亮属性，之后在进行一次性绘制。</p>
-<blockquote>
-<p>Q7 刚刚说的canvas的点击事件，怎么样实现？假如不是圆，这些图形是正方形、长方形、规则图形、不规则图形呢。</p>
-</blockquote>
-<p>针对于每一个形状，将其抽象成shape类，每一个类有自己的方法isPointInSide来判断节点是否在图形内，对于不规则图形，当做矩形处理，点击的时候执行该方法判断点击位置是否在图形内。</p>
-<blockquote>
-<p>Q8 那假如我的图形可能有变形、放大、偏移、旋转的需求呢？你的这个isPointInSide怎么处理？</p>
-</blockquote>
-<p>这个我答不出来，据面试官提示，好像有相应的API处理变形、旋转、放大等等之后的位置映射关系。</p>
-<blockquote>
-<p>Q9 那个这个canvas的点击事件，点击的时候怎么样快速的从这5000个圆中找到你点击的那个圆（不完全遍历5000个节点）？</p>
-</blockquote>
-<p>可以通过预查找的形式，当鼠标划过的时候预先查找到鼠标附近的一些节点，当点击的时候在从这些预先筛选好的节点里查找点击下来的节点，当然这个方法的前提是不能影响js主线程的执行，必须是异步的形式。</p>
-<blockquote>
-<p>Q10 那你用过@antv/g6，里面有一个tree，说说你大学时候接触到的tree的数据结构是怎么实现的？</p>
-</blockquote>
-<p>毕业一年多，tree的结构大概忘记了，我当时是这么回答的：</p>
-<p>大学使用的是C++学的数据结构，是用指针的形式，首先有一个根节点，根节点里有一个指针数组指向它的所有子节点，然后每一个子节点也是，拥有着子节点的指针数组，一层一层往下，直到为叶子节点，指针数组指向为空。</p>
-<blockquote>
-<p>Q11 还记得二叉树吗？描述二叉树的几种遍历方式？</p>
-</blockquote>
-<p>先序遍历：若二叉树非空，访问根结点，遍历左子树，遍历右子树。<br>中序遍历：若二叉树非空，遍历左子树；访问根结点；遍历右子树。<br>后序遍历：若二叉树非空，遍历左子树；遍历右子树；访问根结点。</p>
-<p>所有遍历是以递归的形似，直到没有子节点。</p>
-<blockquote>
-<p>Q12 说说你记得的所有的排序，他们的原理是什么？</p>
-</blockquote>
-<p>冒泡排序：双层遍历，对比前后两个节点，如果满足条件，位置互换，直到遍历结束。<br>快速排序：去数组中间的那一个数，然后遍历所有数，小于该数的push到一个数组，大于该数的push到另外一个数组，然后递归去排序这两个数组，最后将所有结果连接起来。<br>选择排序：声明一个数组，每次去输入数组里面找数组中的最大值或者最小值，取出来后push到声明的数组中，直到输入数组为空。</p>
-<blockquote>
-<p>Q13 说一下你觉得你做过的最复杂的项目？中间遇到的困难，以及你是怎么解决的？</p>
-</blockquote>
-<hr>
-<p>面试官：我这边问题差不多问完了，你还有什么问题？</p>
-<p>我：很惊讶今天全都是问可视化相关的，没怎么问js，css，html。</p>
-<p>面试官：那我们继续吧</p>
-<p>我：。。。</p>
-<hr>
-<blockquote>
-<p>Q14 那给我介绍一下react吧（面试官是做可视化开发的，根本不懂react）</p>
-</blockquote>
-<p>以前我们没有jquery的时候，我们大概的流程是从后端通过ajax获取到数据然后使用jquery生成dom结果然后更新到页面当中，但是随着业务发展，我们的项目可能会越来越复杂，我们每次请求到数据，或则数据有更改的时候，我们又需要重新组装一次dom结构，然后更新页面，这样我们手动同步dom和数据的成本就越来越高，而且频繁的操作dom，也使我我们页面的性能慢慢的降低。</p>
-<p>这个时候mvvm出现了，mvvm的双向数据绑定可以让我们在数据修改的同时同步dom的更新，dom的更新也可以直接同步我们数据的更改，这个特定可以大大降低我们手动去维护dom更新的成本，mvvm为react的特性之一，虽然react属于单项数据流，需要我们手动实现双向数据绑定。</p>
-<p>有了mvvm还不够，因为如果每次有数据做了更改，然后我们都全量更新dom结构的话，也没办法解决我们频繁操作dom结构(降低了页面性能)的问题，为了解决这个问题，react内部实现了一套虚拟dom结构，也就是用js实现的一套dom结构，他的作用是讲真实dom在js中做一套缓存，每次有数据更改的时候，react内部先使用算法，也就是鼎鼎有名的diff算法对dom结构进行对比，找到那些我们需要新增、更新、删除的dom节点，然后一次性对真实DOM进行更新，这样就大大降低了操作dom的次数。</p>
-<p>那么diff算法是怎么运作的呢，首先，diff针对类型不同的节点，会直接判定原来节点需要卸载并且用新的节点来装载卸载的节点的位置；针对于节点类型相同的节点，会对比这个节点的所有属性，如果节点的所有属性相同，那么判定这个节点不需要更新，如果节点属性不相同，那么会判定这个节点需要更新，react会更新并重渲染这个节点。</p>
-<p>react设计之初是主要负责UI层的渲染，虽然每个组件有自己的state，state表示组件的状态，当状态需要变化的时候，需要使用setState更新我们的组件，但是，我们想通过一个组件重渲染它的兄弟组件，我们就需要将组件的状态提升到父组件当中，让父组件的状态来控制这两个组件的重渲染，当我们组件的层次越来越深的时候，状态需要一直往下传，无疑加大了我们代码的复杂度，我们需要一个状态管理中心，来帮我们管理我们状态state。</p>
-<p>这个时候，redux出现了，我们可以将所有的state交给redux去管理，当我们的某一个state有变化的时候，依赖到这个state的组件就会进行一次重渲染，这样就解决了我们的我们需要一直把state往下传的问题。redux有action、reducer的概念，action为唯一修改state的来源，reducer为唯一确定state如何变化的入口，这使得redux的数据流非常规范，同时也暴露出了redux代码的复杂，本来那么简单的功能，却需要完成那么多的代码。</p>
-<p>后来，社区就出现了另外一套解决方案，也就是mobx，它推崇代码简约易懂，只需要定义一个可观测的对象，然后哪个组价使用到这个可观测的对象，并且这个对象的数据有更改，那么这个组件就会重渲染，而且mobx内部也做好了是否重渲染组件的生命周期shouldUpdateComponent，不建议开发者进行更改，这使得我们使用mobx开发项目的时候可以简单快速的完成很多功能，连redux的作者也推荐使用mobx进行项目开发。但是，随着项目的不断变大，mobx也不断暴露出了它的缺点，就是数据流太随意，出了bug之后不好追溯数据的流向，这个缺点正好体现出了redux的优点所在，所以针对于小项目来说，社区推荐使用mobx，对大项目推荐使用redux。</p>
-<blockquote>
-<p>Q15 假如我一个组件有一个状态count为1，然后我在componentDidMount()里面执行执行了两次this.setState({count: ++this.state.count})，然后又执行了两次setTimeout(() =&gt; { this.setState({count: ++this.state.count}) }, 0)，最后count为多少？为什么？</p>
-</blockquote>
-<p>count为4，因为第二次执行setState的时候，取不到第一次++this.state.count的结果，react在一轮生命周期结束后才会更新内部的state，如果在一轮生命周期内多次使用了setState，react内部会有一个字段isBatchUpdate标识本次更新为批量更新，然后在最后render的时候将所有setState的结果提交到state中，一次性进行更新，并且把isBatchUpdate这个字段设置为false。</p>
-<p>备注：这个count的答案似乎有疑问，写了个demo，答案并不是4，Demo地址 <a target="_blank" rel="noopener" href="https://jsfiddle.net/yacan8/5gspLrda/13/">https://jsfiddle.net/yacan8/5gspLrda/13/</a></p>
-<p>针对于两次setTimeout，js引擎会把这两个setState丢到事件队列中，等待js空闲了去执行，而我们的渲染函数render是同步执行的（react16版本默认没有开启异步渲染），所以等我们render执行完全，也就是我们的state被同步完后，在取事件队列里面的setState进行执行，setTimeout的第二个setState也是一样的，所以最后结果是4。</p>
-<blockquote>
-<p>Q16 说一下你觉得你做过的最值得你说的吧</p>
-</blockquote>
-<p>-</p>
-<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>这几轮面试的面试官都非常和蔼好交流，百度的五轮面试不知道过了没有，只记得五面的面试官说，你稍等一下，我去问一下其他人对你还有什么其他要求，然后过了一会儿HR就喊我先回去了，叫我等HR面的消息，如果没通过，也不会在联系我了，已经过了四天了，但愿后面有消息吧。然后有赞、蚂蚁金服的两个一面都过了，因为每次面完试面试官问我还有什么问题吗？我都会询问一下本次面试面试官对我的评论是啥。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">react</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">前端</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">webpack</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">面试</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/11/18/%E4%B8%80%E5%B9%B4%E5%8D%8A%E7%BB%8F%E9%AA%8C%EF%BC%8C%E7%99%BE%E5%BA%A6%E3%80%81%E6%9C%89%E8%B5%9E%E3%80%81%E9%98%BF%E9%87%8C%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-webpack插件总结" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/10/26/webpack%E6%8F%92%E4%BB%B6%E6%80%BB%E7%BB%93/">webpack 插件总结归类</a>
-    </h1>
-  
-
-        
-        <a href="/2018/10/26/webpack%E6%8F%92%E4%BB%B6%E6%80%BB%E7%BB%93/" class="archive-article-date">
-  	<time datetime="2018-10-26T08:33:51.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="功能类"><a href="#功能类" class="headerlink" title="功能类"></a>功能类</h2><h3 id="html-webpack-plugin"><a href="#html-webpack-plugin" class="headerlink" title="html-webpack-plugin"></a>html-webpack-plugin</h3><p>自动生成html，基本用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> HtmlWebpackPlugin(&#123;</span><br><span class="line">  <span class="attr">filename</span>: <span class="string">&#x27;index.html&#x27;</span>, <span class="comment">// 生成文件名</span></span><br><span class="line">  <span class="attr">template</span>: path.join(process.cwd(), <span class="string">&#x27;./index.html&#x27;</span>) <span class="comment">// 模班文件</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-
-<h3 id="copy-webpack-plugin"><a href="#copy-webpack-plugin" class="headerlink" title="copy-webpack-plugin"></a>copy-webpack-plugin</h3><p>拷贝资源插件</p>
-<p>基本用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> CopyWebpackPlugin([</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">from</span>: path.join(process.cwd(), <span class="string">&#x27;./vendor/&#x27;</span>),</span><br><span class="line">    <span class="attr">to</span>: path.join(process.cwd(), <span class="string">&#x27;./dist/&#x27;</span>),</span><br><span class="line">    <span class="attr">ignore</span>: [<span class="string">&#x27;*.json&#x27;</span>]</span><br><span class="line">  &#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="webpack-manifest-plugin-amp-amp-assets-webpack-plugin"><a href="#webpack-manifest-plugin-amp-amp-assets-webpack-plugin" class="headerlink" title="webpack-manifest-plugin &amp;&amp; assets-webpack-plugin"></a>webpack-manifest-plugin &amp;&amp; assets-webpack-plugin</h3><p>俩个插件效果一致，都是生成编译结果的资源单，只是资源单的数据结构不一致而已。</p>
-<p>webpack-manifest-plugin 基本用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="keyword">new</span> ManifestPlugin()</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>assets-webpack-plugin 基本用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="keyword">new</span> AssetsPlugin()</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="clean-webpack-plugin"><a href="#clean-webpack-plugin" class="headerlink" title="clean-webpack-plugin"></a>clean-webpack-plugin</h3><p>在编译之前清理指定目录指定内容。</p>
-<p>基本用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 清理目录</span></span><br><span class="line"><span class="keyword">const</span> pathsToClean = [</span><br><span class="line">  <span class="string">&#x27;dist&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;build&#x27;</span></span><br><span class="line">]</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 清理参数</span></span><br><span class="line"><span class="keyword">const</span> cleanOptions = &#123;</span><br><span class="line">  <span class="attr">exclude</span>:  [<span class="string">&#x27;shared.js&#x27;</span>], <span class="comment">// 跳过文件</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="keyword">new</span> CleanWebpackPlugin(pathsToClean, cleanOptions)</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="compression-webpack-plugin"><a href="#compression-webpack-plugin" class="headerlink" title="compression-webpack-plugin"></a>compression-webpack-plugin</h3><p>提供带 Content-Encoding 编码的压缩版的资源。</p>
-<p>基本用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="keyword">new</span> CompressionPlugin()</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="progress-bar-webpack-plugin"><a href="#progress-bar-webpack-plugin" class="headerlink" title="progress-bar-webpack-plugin"></a>progress-bar-webpack-plugin</h3><p>编译进度条插件</p>
-<p>基本用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="keyword">new</span> ProgressBarPlugin()</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="代码相关类"><a href="#代码相关类" class="headerlink" title="代码相关类"></a>代码相关类</h2><h3 id="webpack-ProvidePlugin"><a href="#webpack-ProvidePlugin" class="headerlink" title="webpack.ProvidePlugin"></a>webpack.ProvidePlugin</h3><p>自动加载模块，如 $ 出现，就会自动加载模块；$ 默认为’jquery’的exports</p>
-<p>用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> webpack.ProvidePlugin(&#123;</span><br><span class="line">  <span class="attr">$</span>: <span class="string">&#x27;jquery&#x27;</span>,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-
-<h3 id="webpack-DefinePlugin"><a href="#webpack-DefinePlugin" class="headerlink" title="webpack.DefinePlugin"></a>webpack.DefinePlugin</h3><p>定义全局常量</p>
-<p>用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> webpack.DefinePlugin(&#123;</span><br><span class="line">  <span class="string">&#x27;process.env&#x27;</span>: &#123;</span><br><span class="line">    <span class="attr">NODE_ENV</span>: <span class="built_in">JSON</span>.stringify(process.env.NODE_ENV)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-
-<h3 id="mini-css-extract-plugin-amp-amp-extract-text-webpack-plugin"><a href="#mini-css-extract-plugin-amp-amp-extract-text-webpack-plugin" class="headerlink" title="mini-css-extract-plugin &amp;&amp; extract-text-webpack-plugin"></a>mini-css-extract-plugin &amp;&amp; extract-text-webpack-plugin</h3><p>提取css样式，对比：</p>
-<ul>
-<li>mini-css-extract-plugin 为webpack4及以上提供的plugin，支持css chunk</li>
-<li>extract-text-webpack-plugin 只能在webpack3 及一下的版本使用，不支持css chunk</li>
-</ul>
-<p>基本用法 extract-text-webpack-plugin：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> ExtractTextPlugin = <span class="built_in">require</span>(<span class="string">&quot;extract-text-webpack-plugin&quot;</span>);</span><br><span class="line"> </span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">module</span>: &#123;</span><br><span class="line">    <span class="attr">rules</span>: [</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">test</span>: <span class="regexp">/\.css$/</span>,</span><br><span class="line">        use: ExtractTextPlugin.extract(&#123;</span><br><span class="line">          <span class="attr">fallback</span>: <span class="string">&quot;style-loader&quot;</span>,</span><br><span class="line">          <span class="attr">use</span>: <span class="string">&quot;css-loader&quot;</span></span><br><span class="line">        &#125;)</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="keyword">new</span> ExtractTextPlugin(<span class="string">&quot;styles.css&quot;</span>),</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>基本用法 mini-css-extract-plugin：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> MiniCssExtractPlugin = <span class="built_in">require</span>(<span class="string">&quot;mini-css-extract-plugin&quot;</span>);</span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    <span class="attr">module</span>: &#123;</span><br><span class="line">    <span class="attr">rules</span>: [</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">test</span>: <span class="regexp">/\.css$/</span>,</span><br><span class="line">        use: [</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="attr">loader</span>: MiniCssExtractPlugin.loader,</span><br><span class="line">            <span class="attr">options</span>: &#123;</span><br><span class="line">              <span class="attr">publicPath</span>: <span class="string">&#x27;/&#x27;</span>  <span class="comment">// chunk publicPath</span></span><br><span class="line">            &#125;</span><br><span class="line">          &#125;,</span><br><span class="line">          <span class="string">&quot;css-loader&quot;</span></span><br><span class="line">        ]</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="keyword">new</span> MiniCssExtractPlugin(&#123;</span><br><span class="line">      <span class="attr">filename</span>: <span class="string">&quot;[name].css&quot;</span>, <span class="comment">// 主文件名</span></span><br><span class="line">      <span class="attr">chunkFilename</span>: <span class="string">&quot;[id].css&quot;</span>  <span class="comment">// chunk文件名</span></span><br><span class="line">    &#125;)</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="编译结果优化类"><a href="#编译结果优化类" class="headerlink" title="编译结果优化类"></a>编译结果优化类</h2><h3 id="wbepack-IgnorePlugin"><a href="#wbepack-IgnorePlugin" class="headerlink" title="wbepack.IgnorePlugin"></a>wbepack.IgnorePlugin</h3><p>忽略regExp匹配的模块</p>
-<p>用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> webpack.IgnorePlugin(<span class="regexp">/^\.\/locale$/</span>, <span class="regexp">/moment$/</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="uglifyjs-webpack-plugin"><a href="#uglifyjs-webpack-plugin" class="headerlink" title="uglifyjs-webpack-plugin"></a>uglifyjs-webpack-plugin</h3><p>代码丑化，用于js压缩</p>
-<p>用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  <span class="attr">optimization</span>: &#123;</span><br><span class="line">    <span class="attr">minimizer</span>: [<span class="keyword">new</span> UglifyJsPlugin(&#123;</span><br><span class="line">      <span class="attr">cache</span>: <span class="literal">true</span>,   <span class="comment">// 开启缓存</span></span><br><span class="line">      <span class="attr">parallel</span>: <span class="literal">true</span>, <span class="comment">// 开启多线程编译</span></span><br><span class="line">      <span class="attr">sourceMap</span>: <span class="literal">true</span>,  <span class="comment">// 是否sourceMap</span></span><br><span class="line">      <span class="attr">uglifyOptions</span>: &#123;  <span class="comment">// 丑化参数</span></span><br><span class="line">        <span class="attr">comments</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="attr">warnings</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="attr">compress</span>: &#123;</span><br><span class="line">          <span class="attr">unused</span>: <span class="literal">true</span>,</span><br><span class="line">          <span class="attr">dead_code</span>: <span class="literal">true</span>,</span><br><span class="line">          <span class="attr">collapse_vars</span>: <span class="literal">true</span>,</span><br><span class="line">          <span class="attr">reduce_vars</span>: <span class="literal">true</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">output</span>: &#123;</span><br><span class="line">          <span class="attr">comments</span>: <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h3 id="optimize-css-assets-webpack-plugin"><a href="#optimize-css-assets-webpack-plugin" class="headerlink" title="optimize-css-assets-webpack-plugin"></a>optimize-css-assets-webpack-plugin</h3><p>css压缩，主要使用 <a target="_blank" rel="noopener" href="https://github.com/cssnano/cssnano">cssnano</a> 压缩器</p>
-<p>用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  <span class="attr">optimization</span>: &#123;</span><br><span class="line">    <span class="attr">minimizer</span>: [<span class="keyword">new</span> OptimizeCssAssetsPlugin(&#123;</span><br><span class="line">      <span class="attr">cssProcessor</span>: <span class="built_in">require</span>(<span class="string">&#x27;cssnano&#x27;</span>),   <span class="comment">// css 压缩优化器</span></span><br><span class="line">      <span class="attr">cssProcessorOptions</span>: &#123; <span class="attr">discardComments</span>: &#123; <span class="attr">removeAll</span>: <span class="literal">true</span> &#125; &#125; <span class="comment">// 去除所有注释</span></span><br><span class="line">    &#125;)]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h3 id="webpack-md5-hash"><a href="#webpack-md5-hash" class="headerlink" title="webpack-md5-hash"></a>webpack-md5-hash</h3><p>使你的chunk根据内容生成md5，用这个md5取代 webpack chunkhash。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> WebpackMd5Hash = <span class="built_in">require</span>(<span class="string">&#x27;webpack-md5-hash&#x27;</span>);</span><br><span class="line"> </span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="attr">output</span>: &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="attr">chunkFilename</span>: <span class="string">&quot;[chunkhash].[id].chunk.js&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="keyword">new</span> WebpackMd5Hash()</span><br><span class="line">  ]</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h3 id="SplitChunksPlugin"><a href="#SplitChunksPlugin" class="headerlink" title="SplitChunksPlugin"></a>SplitChunksPlugin</h3><p>CommonChunkPlugin 的后世，用于chunk切割。</p>
-<p>webpack 把 chunk 分为两种类型，一种是初始加载initial chunk，另外一种是异步加载 async chunk，如果不配置SplitChunksPlugin，webpack会在production的模式下自动开启，默认情况下，webpack会将 node_modules 下的所有模块定义为异步加载模块，并分析你的 entry、动态加载（import()、require.ensure）模块，找出这些模块之间共用的node_modules下的模块，并将这些模块提取到单独的chunk中，在需要的时候异步加载到页面当中，其中默认配置如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  <span class="attr">optimization</span>: &#123;</span><br><span class="line">    <span class="attr">splitChunks</span>: &#123;</span><br><span class="line">      <span class="attr">chunks</span>: <span class="string">&#x27;async&#x27;</span>, <span class="comment">// 异步加载chunk</span></span><br><span class="line">      <span class="attr">minSize</span>: <span class="number">30000</span>,</span><br><span class="line">      <span class="attr">maxSize</span>: <span class="number">0</span>,</span><br><span class="line">      <span class="attr">minChunks</span>: <span class="number">1</span>,</span><br><span class="line">      <span class="attr">maxAsyncRequests</span>: <span class="number">5</span>,</span><br><span class="line">      <span class="attr">maxInitialRequests</span>: <span class="number">3</span>,</span><br><span class="line">      <span class="attr">automaticNameDelimiter</span>: <span class="string">&#x27;~&#x27;</span>, <span class="comment">// 文件名中chunk分隔符</span></span><br><span class="line">      <span class="attr">name</span>: <span class="literal">true</span>,</span><br><span class="line">      <span class="attr">cacheGroups</span>: &#123;</span><br><span class="line">        <span class="attr">vendors</span>: &#123;</span><br><span class="line">          <span class="attr">test</span>: <span class="regexp">/[\\/]node_modules[\\/]/</span>,  <span class="comment">// </span></span><br><span class="line">          priority: -<span class="number">10</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">default</span>: &#123;</span><br><span class="line">          <span class="attr">minChunks</span>: <span class="number">2</span>,  <span class="comment">// 最小的共享chunk数</span></span><br><span class="line">          <span class="attr">priority</span>: -<span class="number">20</span>,</span><br><span class="line">          <span class="attr">reuseExistingChunk</span>: <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h2 id="编译优化类"><a href="#编译优化类" class="headerlink" title="编译优化类"></a>编译优化类</h2><h3 id="DllPlugin-amp-amp-DllReferencePlugin-amp-amp-autodll-webpack-plugin"><a href="#DllPlugin-amp-amp-DllReferencePlugin-amp-amp-autodll-webpack-plugin" class="headerlink" title="DllPlugin &amp;&amp; DllReferencePlugin &amp;&amp; autodll-webpack-plugin"></a>DllPlugin &amp;&amp; DllReferencePlugin &amp;&amp; autodll-webpack-plugin</h3><p>dllPlugin 将模块预先编译，DllReferencePlugin 将预先编译好的模块关联到当前编译中，当 webpack 解析到这些模块时，会直接使用预先编译好的模块。</p>
-<p>autodll-webpack-plugin 相当于 dllPlugin 和 DllReferencePlugin 的简化版，其实本质也是使用 dllPlugin &amp;&amp; DllReferencePlugin，它会在第一次编译的时候将配置好的需要预先编译的模块编译在缓存中，第二次编译的时候，解析到这些模块就直接使用缓存，而不是去编译这些模块。</p>
-<p>dllPlugin 基本用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> output = &#123;</span><br><span class="line">  <span class="attr">filename</span>: <span class="string">&#x27;[name].js&#x27;</span>,</span><br><span class="line">  <span class="attr">library</span>: <span class="string">&#x27;[name]_library&#x27;</span>,</span><br><span class="line">  <span class="attr">path</span>: <span class="string">&#x27;./vendor/&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">entry</span>: &#123;</span><br><span class="line">    <span class="attr">vendor</span>: [<span class="string">&#x27;react&#x27;</span>, <span class="string">&#x27;react-dom&#x27;</span>]  <span class="comment">// 我们需要事先编译的模块，用entry表示</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">output</span>: output,</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="keyword">new</span> webpack.DllPlugin(&#123;  <span class="comment">// 使用dllPlugin</span></span><br><span class="line">      <span class="attr">path</span>: path.join(output.path, <span class="string">`<span class="subst">$&#123;output.filename&#125;</span>.json`</span>),</span><br><span class="line">      <span class="attr">name</span>: output.library <span class="comment">// 全局变量名， 也就是 window 下 的 [output.library]</span></span><br><span class="line">    &#125;)</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>DllReferencePlugin 基本用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> manifest = path.resolve(process.cwd(), <span class="string">&#x27;vendor&#x27;</span>, <span class="string">&#x27;vendor.js.json&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="keyword">new</span> webpack.DllReferencePlugin(&#123;</span><br><span class="line">      <span class="attr">manifest</span>: <span class="built_in">require</span>(manifest), <span class="comment">// 引进dllPlugin编译的json文件</span></span><br><span class="line">      <span class="attr">name</span>: <span class="string">&#x27;vendor_library&#x27;</span> <span class="comment">// 全局变量名，与dllPlugin声明的一致</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>autodll-webpack-plugin 基本用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="keyword">new</span> AutoDllPlugin(&#123;</span><br><span class="line">      <span class="attr">inject</span>: <span class="literal">true</span>, <span class="comment">// 与 html-webpack-plugin 结合使用，注入html中</span></span><br><span class="line">      <span class="attr">filename</span>: <span class="string">&#x27;[name].js&#x27;</span>,</span><br><span class="line">      <span class="attr">entry</span>: &#123;</span><br><span class="line">        <span class="attr">vendor</span>: [</span><br><span class="line">          <span class="string">&#x27;react&#x27;</span>,</span><br><span class="line">          <span class="string">&#x27;react-dom&#x27;</span></span><br><span class="line">        ]</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="happypack-amp-amp-thread-loader"><a href="#happypack-amp-amp-thread-loader" class="headerlink" title="happypack &amp;&amp; thread-loader"></a>happypack &amp;&amp; thread-loader</h3><p>多线程编译，加快编译速度，thread-loader不可以和 mini-css-extract-plugin 结合使用。</p>
-<p>happypack 基本用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">const</span> HappyPack = <span class="built_in">require</span>(<span class="string">&#x27;happypack&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> os = <span class="built_in">require</span>(<span class="string">&#x27;os&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> happyThreadPool = HappyPack.ThreadPool(&#123; <span class="attr">size</span>: os.cpus().length &#125;);</span><br><span class="line"><span class="keyword">const</span> happyLoaderId = <span class="string">&#x27;happypack-for-react-babel-loader&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">module</span>: &#123;</span><br><span class="line">    <span class="attr">rules</span>: [&#123;</span><br><span class="line">      <span class="attr">test</span>: <span class="regexp">/\.jsx?$/</span>,</span><br><span class="line">      loader: <span class="string">&#x27;happypack/loader&#x27;</span>,</span><br><span class="line">      <span class="attr">query</span>: &#123;</span><br><span class="line">        <span class="attr">id</span>: happyLoaderId</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">include</span>: [path.resolve(process.cwd(), <span class="string">&#x27;src&#x27;</span>)]</span><br><span class="line">    &#125;]</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">plugins</span>: [<span class="keyword">new</span> HappyPack(&#123;</span><br><span class="line">    <span class="attr">id</span>: happyLoaderId,</span><br><span class="line">    <span class="attr">threadPool</span>: happyThreadPool,</span><br><span class="line">    <span class="attr">loaders</span>: [<span class="string">&#x27;babel-loader&#x27;</span>]</span><br><span class="line">  &#125;)]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>thread-loader 基本用法:</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">module</span>: &#123;</span><br><span class="line">    <span class="attr">rules</span>: [</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">test</span>: <span class="regexp">/\.js$/</span>,</span><br><span class="line">        include: path.resolve(<span class="string">&quot;src&quot;</span>),</span><br><span class="line">        <span class="attr">use</span>: [</span><br><span class="line">          <span class="string">&quot;thread-loader&quot;</span>,</span><br><span class="line">          <span class="comment">// your expensive loader (e.g babel-loader)</span></span><br><span class="line">          <span class="string">&quot;babel-loader&quot;</span></span><br><span class="line">        ]</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="hard-source-webpack-plugin-amp-amp-cache-loader"><a href="#hard-source-webpack-plugin-amp-amp-cache-loader" class="headerlink" title="hard-source-webpack-plugin &amp;&amp; cache-loader"></a>hard-source-webpack-plugin &amp;&amp; cache-loader</h3><p>使用模块编译缓存，加快编译速度。</p>
-<p>hard-source-webpack-plugin 基本用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="keyword">new</span> HardSourceWebpackPlugin()</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>cache-loader 基本用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">module</span>: &#123;</span><br><span class="line">    <span class="attr">rules</span>: [</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">test</span>: <span class="regexp">/\.ext$/</span>,</span><br><span class="line">        use: [</span><br><span class="line">          <span class="string">&#x27;cache-loader&#x27;</span>,</span><br><span class="line">          ...loaders</span><br><span class="line">        ],</span><br><span class="line">        <span class="attr">include</span>: path.resolve(<span class="string">&#x27;src&#x27;</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="编译分析类"><a href="#编译分析类" class="headerlink" title="编译分析类"></a>编译分析类</h2><h3 id="webpack-bundle-analyzer"><a href="#webpack-bundle-analyzer" class="headerlink" title="webpack-bundle-analyzer"></a>webpack-bundle-analyzer</h3><p>编译模块分析插件</p>
-<p>基本用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> BundleAnalyzerPlugin(&#123;</span><br><span class="line">  <span class="attr">analyzerMode</span>: <span class="string">&#x27;server&#x27;</span>,</span><br><span class="line">  <span class="attr">analyzerHost</span>: <span class="string">&#x27;127.0.0.1&#x27;</span>,</span><br><span class="line">  <span class="attr">analyzerPort</span>: <span class="number">8889</span>,</span><br><span class="line">  <span class="attr">reportFilename</span>: <span class="string">&#x27;report.html&#x27;</span>,</span><br><span class="line">  <span class="attr">defaultSizes</span>: <span class="string">&#x27;parsed&#x27;</span>,</span><br><span class="line">  <span class="attr">generateStatsFile</span>: <span class="literal">false</span>,</span><br><span class="line">  <span class="attr">statsFilename</span>: <span class="string">&#x27;stats.json&#x27;</span>,</span><br><span class="line">  <span class="attr">statsOptions</span>: <span class="literal">null</span>,</span><br><span class="line">  <span class="attr">logLevel</span>: <span class="string">&#x27;info&#x27;</span></span><br><span class="line">&#125;),</span><br></pre></td></tr></table></figure>
-
-<h3 id="stats-webpack-plugin-amp-amp-PrefetchPlugin"><a href="#stats-webpack-plugin-amp-amp-PrefetchPlugin" class="headerlink" title="stats-webpack-plugin &amp;&amp; PrefetchPlugin"></a>stats-webpack-plugin &amp;&amp; PrefetchPlugin</h3><p>stats-webpack-plugin 将构建的统计信息写入文件，该文件可在 <a target="_blank" rel="noopener" href="http://webpack.github.io/analyse">http://webpack.github.io/analyse</a>中上传进行编译分析，并根据分析结果，可使用 PrefetchPlugin 对部分模块进行预解析编译（本人也不理解这个plugin，据说优化效果不明显，有兴趣的同学请见 <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/32923085/how-to-optimize-webpacks-build-time-using-prefetchplugin-analyse-tool/33415019#33415019">how-to-optimize-webpacks-build-time-using-prefetchplugin-analyse-tool</a>）。</p>
-<p>stats-webpack-plugin 基本用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="keyword">new</span> StatsPlugin(<span class="string">&#x27;stats.json&#x27;</span>, &#123;</span><br><span class="line">      <span class="attr">chunkModules</span>: <span class="literal">true</span>,</span><br><span class="line">      <span class="attr">exclude</span>: [<span class="regexp">/node_modules[\\\/]react/</span>]</span><br><span class="line">    &#125;)</span><br><span class="line">  ]</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>PrefetchPlugin 基本用法：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="keyword">new</span> webpack.PrefetchPlugin(<span class="string">&#x27;/web/&#x27;</span>, <span class="string">&#x27;app/modules/HeaderNav.jsx&#x27;</span>),</span><br><span class="line">    <span class="keyword">new</span> webpack.PrefetchPlugin(<span class="string">&#x27;/web/&#x27;</span>, <span class="string">&#x27;app/pages/FrontPage.jsx&#x27;</span>)</span><br><span class="line">];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="speed-measure-webpack-plugin"><a href="#speed-measure-webpack-plugin" class="headerlink" title="speed-measure-webpack-plugin"></a>speed-measure-webpack-plugin</h3><p>统计编译过程中，各loader和plugin使用的时间。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> SpeedMeasurePlugin = <span class="built_in">require</span>(<span class="string">&quot;speed-measure-webpack-plugin&quot;</span>);</span><br><span class="line"> </span><br><span class="line"><span class="keyword">const</span> smp = <span class="keyword">new</span> SpeedMeasurePlugin();</span><br><span class="line"> </span><br><span class="line"><span class="keyword">const</span> webpackConfig = &#123;</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="keyword">new</span> MyPlugin(),</span><br><span class="line">    <span class="keyword">new</span> MyOtherPlugin()</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">module</span>.exports = smp.wrap(webpackConfig);</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://raw.githubusercontent.com/stephencookdev/speed-measure-webpack-plugin/HEAD/preview.png" alt="speed-measure-webpack-plugin"></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">前端构建</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">webpack</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/10/26/webpack%E6%8F%92%E4%BB%B6%E6%80%BB%E7%BB%93/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-Canvas_API" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1663,6 +1099,219 @@ var _hmt = _hmt || [];
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2018/05/13/JavaScript%E5%8E%9F%E5%9E%8B%E4%B8%8E%E5%8E%9F%E5%9E%8B%E9%93%BE%E7%9A%84%E7%90%86%E8%A7%A3/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-antd源码解析(二)Tooltip组件解析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/05/01/antd%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90(%E4%BA%8C)Tooltip%E7%BB%84%E4%BB%B6%E8%A7%A3%E6%9E%90/">antd源码解读（二）Tooltip组件解析</a>
+    </h1>
+  
+
+        
+        <a href="/2018/05/01/antd%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90(%E4%BA%8C)Tooltip%E7%BB%84%E4%BB%B6%E8%A7%A3%E6%9E%90/" class="archive-article-date">
+  	<time datetime="2018-05-01T12:00:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-05-01</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h3><p>antd的Tooltip组件在<a target="_blank" rel="noopener" href="https://github.com/react-component/trigger">react-componment/trigger</a>的基础上进行封装，而组件Popover和Popconfirm是使用Tooltip组件的进行pop，在<a target="_blank" rel="noopener" href="https://github.com/react-component">react-componment</a>中，使用到组件<code>tc-trigger</code>的还有menu、select、dropdown、time-picker、calendar等，本文主要对<code>tc-trigger</code>源码进行解读。</p>
+<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p>项目结构如下：</p>
+<p><img src="../images/antd%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E4%BA%8C%EF%BC%89Tooltip%E7%BB%84%E4%BB%B6%E8%A7%A3%E6%9E%90/1.jpeg" alt="项目结构"></p>
+<ul>
+<li>index.js，负责外层封装，负责事件绑定与dom渲染控制。</li>
+<li>LazyRenderBox.js，pop内容懒加载warp。</li>
+<li>mock.js 未使用。</li>
+<li>Popup.js，pop的warp，负责控制pop的对齐、动画、宽高。</li>
+<li>PopupInner.js，pop内容warp。</li>
+</ul>
+<h3 id="index-js"><a href="#index-js" class="headerlink" title="index.js"></a>index.js</h3><p>从render方法入手，需要渲染控制pop显示的节点和pop内容节点两个节点，而pop内容节点一般渲染到body里面，不属于控制pop显示的节点内，render方法代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">const trigger = React.cloneElement(child, newChildProps);</span><br><span class="line">if (!IS_REACT_16) &#123;</span><br><span class="line">  return (</span><br><span class="line">    <span class="tag">&lt;<span class="name">ContainerRender</span></span></span><br><span class="line"><span class="tag">      <span class="attr">parent</span>=<span class="string">&#123;this&#125;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">visible</span>=<span class="string">&#123;popupVisible&#125;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">autoMount</span>=<span class="string">&#123;false&#125;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">forceRender</span>=<span class="string">&#123;props.forceRender&#125;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">getComponent</span>=<span class="string">&#123;this.getComponent&#125;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">getContainer</span>=<span class="string">&#123;this.getContainer&#125;</span></span></span><br><span class="line"><span class="tag">    &gt;</span></span><br><span class="line">      &#123;(&#123; renderComponent &#125;) =&gt; &#123;</span><br><span class="line">        this.renderComponent = renderComponent;</span><br><span class="line">        return trigger;</span><br><span class="line">      &#125;&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">ContainerRender</span>&gt;</span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">let portal;</span><br><span class="line">// prevent unmounting after it&#x27;s rendered</span><br><span class="line">if (popupVisible || this._component || props.forceRender) &#123;</span><br><span class="line">  portal = (</span><br><span class="line">    <span class="tag">&lt;<span class="name">Portal</span></span></span><br><span class="line"><span class="tag">      <span class="attr">key</span>=<span class="string">&quot;portal&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">getContainer</span>=<span class="string">&#123;this.getContainer&#125;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">didUpdate</span>=<span class="string">&#123;this.handlePortalUpdate&#125;</span></span></span><br><span class="line"><span class="tag">    &gt;</span></span><br><span class="line">      &#123;this.getComponent()&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">Portal</span>&gt;</span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">return [</span><br><span class="line">  trigger,</span><br><span class="line">  portal,</span><br><span class="line">];</span><br></pre></td></tr></table></figure>
+<p>可以看到，index.js渲染了两个节点，trigger和portal，trigger即为通过事件控制portal显示状态的节点，如果react的版本不是16以上，返回ContainerRender组件，ContainerRender组件来自<code>rc-util</code>，该组件主要做的事情就是使用<code>ReactDOM.unstable_renderSubtreeIntoContainer</code>函数，将pop内容渲染到trigger节点之外，与react16提供的API<code>createPortal</code>作用一致，如果是React16，返回了Portal组件，该组件正是利用了createPortal，将组件渲染到特定的dom节点内，但是不管是不是react16，都进行了pop渲染的判断，即<code>popupVisible || this._component || props.forceRender</code>，如果portal不显示且不强制第一次渲染<code>forceRender</code>，portal将不会被渲染到dom中，直到判断为真。</p>
+<p>trigger节点通过props决定事件绑定情况，即通过<code>props.trigger</code>属性绑定事件情况，事件控制Popup组件的visible属性，这里就不详细说了。</p>
+<h3 id="Popup-js"><a href="#Popup-js" class="headerlink" title="Popup.js"></a>Popup.js</h3><p>该组件是pop的warp，渲染在trigger节点之外，通过<code>ReactDOM.unstable_renderSubtreeIntoContainer</code>或<code>createPortal</code>指定渲染的目标节点，也是render方法入手：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">render() &#123;</span><br><span class="line">  return (</span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">      &#123;this.getMaskElement()&#125;</span><br><span class="line">      &#123;this.getPopupElement()&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>返回两个内容，<code>getMaskElement</code>获取遮罩，<code>getPopupElement</code>返回Pop节点，getMaskElement这里就不说了，渲染的视觉效果，绑定了控制pop节点的事件。</p>
+<p>getPopupElement返回pop节点，render返回代码如下:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Animate</span></span></span><br><span class="line"><span class="tag">  <span class="attr">component</span>=<span class="string">&quot;&quot;</span></span></span><br><span class="line"><span class="tag">  <span class="attr">exclusive</span></span></span><br><span class="line"><span class="tag">  <span class="attr">transitionAppear</span></span></span><br><span class="line"><span class="tag">  <span class="attr">transitionName</span>=<span class="string">&#123;this.getTransitionName()&#125;</span></span></span><br><span class="line"><span class="tag">  <span class="attr">showProp</span>=<span class="string">&quot;xVisible&quot;</span></span></span><br><span class="line"><span class="tag">&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">Align</span></span></span><br><span class="line"><span class="tag">    <span class="attr">target</span>=<span class="string">&#123;this.getTarget&#125;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">key</span>=<span class="string">&quot;popup&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">ref</span>=<span class="string">&#123;this.saveAlignRef&#125;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">monitorWindowResize</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xVisible</span>=<span class="string">&#123;visible&#125;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">childrenProps</span>=<span class="string">&#123;&#123;</span> <span class="attr">visible:</span> &#x27;<span class="attr">xVisible</span>&#x27; &#125;&#125;</span></span><br><span class="line"><span class="tag">    <span class="attr">disabled</span>=<span class="string">&#123;!visible&#125;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">align</span>=<span class="string">&#123;align&#125;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">onAlign</span>=<span class="string">&#123;this.onAlign&#125;</span></span></span><br><span class="line"><span class="tag">  &gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">PopupInner</span></span></span><br><span class="line"><span class="tag">      <span class="attr">hiddenClassName</span>=<span class="string">&#123;hiddenClassName&#125;</span></span></span><br><span class="line"><span class="tag">      &#123;<span class="attr">...popupInnerProps</span>&#125;</span></span><br><span class="line"><span class="tag">    &gt;</span></span><br><span class="line">      &#123;children&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">PopupInner</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">Align</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Animate</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>Animate来自组件<a target="_blank" rel="noopener" href="https://github.com/react-component/animate">rc-animate</a>，主要负责显示状态切换时候的动态效果，其中原理是监听控制状态变化的prop属性，即代码中的<code>showProp=&quot;xVisible&quot;</code>，当状态变化的时候，延时改变dom的class，一般会有三个状态，分别表示进入中enter-active，消失中leave-active，隐藏hidden三个状态，进入中状态会添加<code>transitionName-enter transitionName-enter-active</code>两个class，消失中会添加<code>transitionName-leave transitionName-leave-active</code>两个class，隐藏状态不添加class，transitionName通过外部传入。</p>
+<p>Align来自组件<a target="_blank" rel="noopener" href="https://github.com/react-component/align">rc-align</a>，主要控制节点的相对于trigger的显示位置，根据传入的target与align决定最后PopupInner显示的位置，此处target是来自于index.js的trigger节点，align也是来自于index.js，主要由index.js的prop.popupPlacement、prop.popupAlign两个属性决定，即方向与偏移量。</p>
+<p>最后是PopupInner组件，该组件是也就pop内容组件，内容通过LazyRenderBox包裹。。。</p>
+<p>另外，Popup.js还有两个state，targetWidth与targetHeight，即pop的宽高，该属性如果设置有prop.stretch，则计算trigger真是dom节点的宽高，然后对齐。</p>
+<h3 id="PopupInner-js"><a href="#PopupInner-js" class="headerlink" title="PopupInner.js"></a>PopupInner.js</h3><p>为隐藏状态下的pop添加hidden的class，并包裹懒加载组件LazyRenderBox。</p>
+<h3 id="LazyRenderBox-js"><a href="#LazyRenderBox-js" class="headerlink" title="LazyRenderBox.js"></a>LazyRenderBox.js</h3><p>只做一件事情，就是将popupInner的chidren进行包裹，当子节点数大于1时，包一层div以方便隐藏状态时候class控制，不用每个节点都添加hidden的class，关键如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">render</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; hiddenClassName, visible, ...props &#125; = <span class="built_in">this</span>.props;</span><br><span class="line">  <span class="keyword">if</span> (hiddenClassName || React.Children.count(props.children) &gt; <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!visible &amp;&amp; hiddenClassName) &#123;</span><br><span class="line">      props.className += <span class="string">` <span class="subst">$&#123;hiddenClassName&#125;</span>`</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span> &#123;<span class="attr">...props</span>&#125;/&gt;</span></span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> React.Children.only(props.children);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>该组件主要的实现难点在于<a target="_blank" rel="noopener" href="https://github.com/react-component/animate">rc-animate</a>与<a target="_blank" rel="noopener" href="https://github.com/react-component/align">rc-align</a>，其他的主要在做事件绑定与class处理。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">react</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">前端</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">antd</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/05/01/antd%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90(%E4%BA%8C)Tooltip%E7%BB%84%E4%BB%B6%E8%A7%A3%E6%9E%90/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-antd源码解析(一)Form组件解析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/04/15/antd%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90(%E4%B8%80)Form%E7%BB%84%E4%BB%B6%E8%A7%A3%E6%9E%90/">antd源码解读（一）Form组件解析</a>
+    </h1>
+  
+
+        
+        <a href="/2018/04/15/antd%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90(%E4%B8%80)Form%E7%BB%84%E4%BB%B6%E8%A7%A3%E6%9E%90/" class="archive-article-date">
+  	<time datetime="2018-04-15T07:53:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-04-15</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h3><p>看过antd源码的都知道，antd其实是在一组<a target="_blank" rel="noopener" href="https://github.com/react-component">react-componment</a>组件的基础上进行了一层ui封装，本文主要解读antd组件Form的基础组件<a target="_blank" rel="noopener" href="https://github.com/react-component/form">react-componment/form</a>，另外会略过<code>development</code>模式下的warning代码。</p>
+<h3 id="Form-create"><a href="#Form-create" class="headerlink" title="Form.create"></a>Form.create</h3><p>解读源码首先要从自己最常用的或者感兴趣的入手，首先form组件最主要的还是在<code>Form.create(&#123;options&#125;)</code>这个装饰器入手。找到项目下的文件<code>createForm.js</code>，这个文件还是主要主要对<code>createBaseForm.js</code>文件进行了一层封装，提供了一些默认配置参数，下看查看<code>createBaseForm.js</code>里的createBaseForm方法，改方法主要是一个装饰器作用，包装一个高阶React组件，在props里注入一个值为<code>formPropName(默认为form)</code>变量，所有功能在这个变量里完成，主要内容如下</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">render</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; wrappedComponentRef, ...restProps &#125; = <span class="built_in">this</span>.props;</span><br><span class="line">  <span class="keyword">const</span> formProps = &#123;</span><br><span class="line">    [formPropName]: <span class="built_in">this</span>.getForm(), <span class="comment">// 来在 formPropName默认为form，getForm方法来自`createForm.js`</span></span><br><span class="line">  &#125;;</span><br><span class="line">  <span class="keyword">if</span> (withRef) &#123;</span><br><span class="line">    formProps.ref = <span class="string">&#x27;wrappedComponent&#x27;</span>;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (wrappedComponentRef) &#123;</span><br><span class="line">    formProps.ref = wrappedComponentRef;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> props = mapProps.call(<span class="built_in">this</span>, &#123;</span><br><span class="line">    ...formProps,</span><br><span class="line">    ...restProps,</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">WrappedComponent</span> &#123;<span class="attr">...props</span>&#125; /&gt;</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在装饰器初始化的时候，Form初始化了一个只属于该组件实例的store，用来存放当前Form组件的一些输入的数据，主要代码如下:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fields = mapPropsToFields &amp;&amp; mapPropsToFields(<span class="built_in">this</span>.props);  <span class="comment">// mapPropsToFields来自于Form.create的配置参数，用来转化来自mobx或者redux等真正的store来源的value，以初始化该Form实例的fieldsStore</span></span><br><span class="line"><span class="built_in">this</span>.fieldsStore = createFieldsStore(fields || &#123;&#125;);  <span class="comment">// createFieldsStore来自于文件`createFieldsStore.js`文件</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="getFieldDecorator"><a href="#getFieldDecorator" class="headerlink" title="getFieldDecorator"></a>getFieldDecorator</h3><p>柯里化函数，通过id与参数声明的输入，返回一个函数以输入组件为入参的函数，通过该函数声明的输入组件与表单Form双向数据绑定。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="function"><span class="title">getFieldDecorator</span>(<span class="params">name, fieldOption</span>)</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> props = <span class="built_in">this</span>.getFieldProps(name, fieldOption);  <span class="comment">// 初始化一个field</span></span><br><span class="line">  <span class="keyword">return</span> <span class="function">(<span class="params">fieldElem</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> fieldMeta = <span class="built_in">this</span>.fieldsStore.getFieldMeta(name);  <span class="comment">// 获取变化（Form的onChange）后的field数据</span></span><br><span class="line">    <span class="keyword">const</span> originalProps = fieldElem.props;</span><br><span class="line">    fieldMeta.originalProps = originalProps;  <span class="comment">// 输入组件初始化时保存的Prop</span></span><br><span class="line">    fieldMeta.ref = fieldElem.ref;</span><br><span class="line">    <span class="keyword">return</span> React.cloneElement(fieldElem, &#123;</span><br><span class="line">      ...props,</span><br><span class="line">      ...this.fieldsStore.getFieldValuePropValue(fieldMeta),  <span class="comment">// 获取prop属性 value</span></span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h3 id="getFieldProps"><a href="#getFieldProps" class="headerlink" title="getFieldProps"></a>getFieldProps</h3><p>查看函数 <code>getFieldProps</code>，主要用来初始化输入组件的props，将特定的函数缓存在内部，如onChange事件，另外初次保存field到store中</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="function"><span class="title">getFieldProps</span>(<span class="params">name, usersFieldOption = &#123;&#125;</span>)</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (!name) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&#x27;Must call `getFieldProps` with valid name string!&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">delete</span> <span class="built_in">this</span>.clearedFieldMetaCache[name];</span><br><span class="line">  <span class="keyword">const</span> fieldOption = &#123;</span><br><span class="line">    name,</span><br><span class="line">    <span class="attr">trigger</span>: DEFAULT_TRIGGER,</span><br><span class="line">    <span class="attr">valuePropName</span>: <span class="string">&#x27;value&#x27;</span>,</span><br><span class="line">    <span class="attr">validate</span>: [],</span><br><span class="line">    ...usersFieldOption, <span class="comment">// 用户输入，如rules，initialValue</span></span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> &#123;</span><br><span class="line">    rules,</span><br><span class="line">    trigger,</span><br><span class="line">    validateTrigger = trigger,</span><br><span class="line">    validate,</span><br><span class="line">  &#125; = fieldOption;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> fieldMeta = <span class="built_in">this</span>.fieldsStore.getFieldMeta(name);</span><br><span class="line">  <span class="keyword">if</span> (<span class="string">&#x27;initialValue&#x27;</span> <span class="keyword">in</span> fieldOption) &#123;</span><br><span class="line">    fieldMeta.initialValue = fieldOption.initialValue;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> inputProps = &#123;</span><br><span class="line">    ...this.fieldsStore.getFieldValuePropValue(fieldOption), <span class="comment">// 获取输入组件的value，如果没有，返回initialValue</span></span><br><span class="line">    <span class="attr">ref</span>: <span class="built_in">this</span>.getCacheBind(name, <span class="string">`<span class="subst">$&#123;name&#125;</span>__ref`</span>, <span class="built_in">this</span>.saveRef),</span><br><span class="line">  &#125;;</span><br><span class="line">  <span class="keyword">if</span> (fieldNameProp) &#123; <span class="comment">// 及value</span></span><br><span class="line">    inputProps[fieldNameProp] = name;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> validateRules = normalizeValidateRules(validate, rules, validateTrigger); <span class="comment">// 校验规则标准化</span></span><br><span class="line">  <span class="keyword">const</span> validateTriggers = getValidateTriggers(validateRules);</span><br><span class="line">  validateTriggers.forEach(<span class="function">(<span class="params">action</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (inputProps[action]) <span class="keyword">return</span>;</span><br><span class="line">    inputProps[action] = <span class="built_in">this</span>.getCacheBind(name, action, <span class="built_in">this</span>.onCollectValidate); <span class="comment">// 如果设置了输入校验rules，绑定onChange事件`this.onCollectValidate`</span></span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// make sure that the value will be collect</span></span><br><span class="line">  <span class="keyword">if</span> (trigger &amp;&amp; validateTriggers.indexOf(trigger) === -<span class="number">1</span>) &#123;</span><br><span class="line">    inputProps[trigger] = <span class="built_in">this</span>.getCacheBind(name, trigger, <span class="built_in">this</span>.onCollect); <span class="comment">// 如果没有绑定rules校验，绑定默认的onChange事件</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> meta = &#123;</span><br><span class="line">    ...fieldMeta,</span><br><span class="line">    ...fieldOption,</span><br><span class="line">    <span class="attr">validate</span>: validateRules,</span><br><span class="line">  &#125;;</span><br><span class="line">  <span class="built_in">this</span>.fieldsStore.setFieldMeta(name, meta);  <span class="comment">// 保存field到store中</span></span><br><span class="line">  <span class="keyword">if</span> (fieldMetaProp) &#123;</span><br><span class="line">    inputProps[fieldMetaProp] = meta;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (fieldDataProp) &#123;</span><br><span class="line">    inputProps[fieldDataProp] = <span class="built_in">this</span>.fieldsStore.getField(name);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> inputProps;</span><br><span class="line">&#125;,</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h3 id="getCacheBind"><a href="#getCacheBind" class="headerlink" title="getCacheBind"></a>getCacheBind</h3><p><code>getCacheBind</code>方法，缓存函数，使用bind方法绑定上下文并缓存部分参数，返回一个新的函数，用做onChange及数据校验。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="function"><span class="title">getCacheBind</span>(<span class="params">name, action, fn</span>)</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (!<span class="built_in">this</span>.cachedBind[name]) &#123;</span><br><span class="line">    <span class="built_in">this</span>.cachedBind[name] = &#123;&#125;;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> cache = <span class="built_in">this</span>.cachedBind[name];</span><br><span class="line">  <span class="keyword">if</span> (!cache[action]) &#123;</span><br><span class="line">    cache[action] = fn.bind(<span class="built_in">this</span>, name, action); <span class="comment">// 绑定参数并返回</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> cache[action];</span><br><span class="line">&#125;,</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h3 id="onCollectCommon"><a href="#onCollectCommon" class="headerlink" title="onCollectCommon"></a>onCollectCommon</h3><p>在<code>getFieldProps</code>方法中看到利用<code>getCacheBind</code>方法当无rules的时候绑定了一个<code>onCollect</code>方法，onCollect方法主要调用<code>onCollectCommon</code>方法，并将得到的结果保存到store。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">onCollectCommon</span>(<span class="params">name, action, args</span>)</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> fieldMeta = <span class="built_in">this</span>.fieldsStore.getFieldMeta(name);</span><br><span class="line">  <span class="keyword">if</span> (fieldMeta[action]) &#123;  <span class="comment">// 如果getFieldDecorator方法中的参数定义了onChange，则触发改onChange</span></span><br><span class="line">    fieldMeta[action](...args);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (fieldMeta.originalProps &amp;&amp; fieldMeta.originalProps[action]) &#123; <span class="comment">// 如果输入组件绑定了onChange，则触发该onChange</span></span><br><span class="line">    fieldMeta.originalProps[action](...args);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> value = fieldMeta.getValueFromEvent ?  <span class="comment">// 获取更新后的value，兼容原生组件e.target.value</span></span><br><span class="line">    fieldMeta.getValueFromEvent(...args) :</span><br><span class="line">    getValueFromEvent(...args);</span><br><span class="line">  <span class="keyword">if</span> (onValuesChange &amp;&amp; value !== <span class="built_in">this</span>.fieldsStore.getFieldValue(name)) &#123;  <span class="comment">// 如果Form.create时用户定义有onValuesChange，则触发</span></span><br><span class="line">    <span class="keyword">const</span> valuesAll = <span class="built_in">this</span>.fieldsStore.getAllValues();</span><br><span class="line">    <span class="keyword">const</span> valuesAllSet = &#123;&#125;;</span><br><span class="line">    valuesAll[name] = value;</span><br><span class="line">    <span class="built_in">Object</span>.keys(valuesAll).forEach(<span class="function"><span class="params">key</span> =&gt;</span> set(valuesAllSet, key, valuesAll[key]));</span><br><span class="line">    onValuesChange(<span class="built_in">this</span>.props, set(&#123;&#125;, name, value), valuesAllSet);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> field = <span class="built_in">this</span>.fieldsStore.getField(name);    <span class="comment">// 获取合并field，并返回</span></span><br><span class="line">  <span class="keyword">return</span> (&#123; name, <span class="attr">field</span>: &#123; ...field, value, <span class="attr">touched</span>: <span class="literal">true</span> &#125;, fieldMeta &#125;);</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+
+<h3 id="onCollectValidate"><a href="#onCollectValidate" class="headerlink" title="onCollectValidate"></a>onCollectValidate</h3><p>在有输入rules的时候<code>getCacheBind</code>方法绑定<code>onCollectValidate</code>作为onChange事件，该方法做了除了调用了onCollectCommon事件以外，还调用了校验方法<code>validateFieldsInternal</code>。</p>
+<h3 id="validateFieldsInternal"><a href="#validateFieldsInternal" class="headerlink" title="validateFieldsInternal"></a>validateFieldsInternal</h3><p>该方法主要是从store中获取rules校验规则并标准化后，使用<code>async-validator</code>模块进行校验，并把结果保存到store中，本文不做讲解。</p>
+<h3 id="setFields"><a href="#setFields" class="headerlink" title="setFields"></a>setFields</h3><p>该方法主要是设置store中的field，因为store的数据是不可观测的数据，不会引起页面的重渲染，该方法也负责调用<code>forceUpdate()</code>强制更新页面。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">setFields</span>(<span class="params">maybeNestedFields, callback</span>)</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> fields = <span class="built_in">this</span>.fieldsStore.flattenRegisteredFields(maybeNestedFields); <span class="comment">// 处理field嵌套问题</span></span><br><span class="line">  <span class="built_in">this</span>.fieldsStore.setFields(fields);</span><br><span class="line">  <span class="keyword">if</span> (onFieldsChange) &#123;  <span class="comment">// 如果设置有FieldsChange事件监听事件变化，则触发事件</span></span><br><span class="line">    <span class="keyword">const</span> changedFields = <span class="built_in">Object</span>.keys(fields)</span><br><span class="line">      .reduce(<span class="function">(<span class="params">acc, name</span>) =&gt;</span> set(acc, name, <span class="built_in">this</span>.fieldsStore.getField(name)), &#123;&#125;);</span><br><span class="line">    onFieldsChange(<span class="built_in">this</span>.props, changedFields, <span class="built_in">this</span>.fieldsStore.getNestedAllFields());</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">this</span>.forceUpdate(callback);  <span class="comment">// 强制更新视图</span></span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>主要方法大概就上面这些，其中流程差不多在每次setFields之前，会在store中存一个field的变化字段<code>fieldMeta</code>，在最后强制更新页面的时候，将该变量取出来做处理后覆盖到field，所有数据保存在field中，并提供了一些hock方法如<code>setFieldsValue</code>、<code>validateFields</code>等方法设置和获取store中的field字段和值。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">react</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">前端</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">antd</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/04/15/antd%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90(%E4%B8%80)Form%E7%BB%84%E4%BB%B6%E8%A7%A3%E6%9E%90/">展开全文 >></a>
         </p>
       
 

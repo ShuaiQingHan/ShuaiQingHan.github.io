@@ -151,341 +151,6 @@ var _hmt = _hmt || [];
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-关于回流与重绘优化的探索" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>看到大佬在群里发了一篇文章<a target="_blank" rel="noopener" href="https://juejin.im/post/5c0c7f28f265da612e2875de">你应该要知道的重绘与重排</a>，文章里有一段骚操作，就是为了减少重绘与重排，合并样式操作，这个骚操作成功的引起了我的注意，然后开启了我的探索。</p>
-<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><p>前言中描述的合并样式的骚操作是如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> el = <span class="built_in">document</span>.querySelector(<span class="string">&#x27;div&#x27;</span>);</span><br><span class="line">el.style.borderLeft = <span class="string">&#x27;1px&#x27;</span>;</span><br><span class="line">el.style.borderRight = <span class="string">&#x27;2px&#x27;</span>;</span><br><span class="line">el.style.padding = <span class="string">&#x27;5px&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<p>原文描述的大概意思是这段代码多次对 DOM 的修改和对样式的修改，页面会进行多次回流或者重绘，应该进行如下优化：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> el = <span class="built_in">document</span>.querySelector(<span class="string">&#x27;div&#x27;</span>);</span><br><span class="line">el.style.cssText = <span class="string">&#x27;border-left: 1px; border-right: 1px; padding: 5px;&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p>这样的优化在以前我刚开始学习前端的时候，经常也在一些相关的性能优化的文章里看到，因为一直没有探究过，概念里一直觉得自己应该把多次 DOM 的样式的修改合并在一起，这样效率会更高，直到后来，自己对浏览器的进程与线程慢慢有了了解，曾经也写过一篇博客，<a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000013083967">浅谈浏览器多进程与JS线程</a>，其中有一个概念是，<code>JS线程与GUI渲染线程是互斥关系</code>，大概的意思就是当js引擎在执行js代码的时候，浏览器的渲染引擎是被冻结了的，无法渲染页面的，必须等待js引擎空闲了才能渲染页面。</p>
-<p>这个概念，<code>JS线程与GUI渲染线程是互斥关系</code>与上面描述的骚操作似乎有点冲突，也就是当我们对<code>el.style</code>进行一些列赋值的时候，渲染引擎是被冻结的状态，怎么会进行多次重绘或者回流？带着这样的疑问，写了一个小demo，代码如下。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">title</span>&gt;</span>测试页<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="css"></span></span><br><span class="line"><span class="css">    <span class="selector-id">#box</span> &#123;</span></span><br><span class="line"><span class="css">      <span class="attribute">width</span>: <span class="number">109px</span>;</span></span><br><span class="line"><span class="css">      <span class="attribute">height</span>: <span class="number">100px</span>;</span></span><br><span class="line"><span class="css">      <span class="attribute">background-color</span>: lightsteelblue;</span></span><br><span class="line"><span class="css">      <span class="attribute">border-style</span>: solid;</span></span><br><span class="line"><span class="css">    &#125;</span></span><br><span class="line"><span class="css">  </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;box&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="keyword">var</span> box = <span class="built_in">document</span>.getElementById(<span class="string">&#x27;box&#x27;</span>);</span></span><br><span class="line"><span class="javascript"><span class="keyword">var</span> toggle = <span class="number">0</span>;</span></span><br><span class="line"><span class="javascript"><span class="keyword">var</span> time = <span class="number">500</span>;</span></span><br><span class="line"><span class="javascript"><span class="function"><span class="keyword">function</span> <span class="title">toggleFun</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">var</span> borderWidth = toggle ? <span class="number">20</span> : <span class="number">0</span>;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">var</span> borderColor = toggle ? <span class="string">&#x27;coral&#x27;</span> : <span class="string">&#x27;transparent&#x27;</span>;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">if</span> (toggle) &#123;</span></span><br><span class="line"><span class="javascript">    box.style.borderWidth = <span class="string">&#x27;50px&#x27;</span>;</span></span><br><span class="line"><span class="javascript">    box.style.borderWidth = borderWidth + <span class="string">&#x27;px&#x27;</span>;</span></span><br><span class="line"><span class="javascript">    box.style.borderColor = borderColor;</span></span><br><span class="line"><span class="javascript">  &#125; <span class="keyword">else</span> &#123;</span></span><br><span class="line"><span class="javascript">    box.style.cssText = <span class="string">&#x27;border: &#x27;</span> + borderWidth + <span class="string">&#x27;px solid&#x27;</span> + borderColor;</span></span><br><span class="line"><span class="javascript">  &#125;</span></span><br><span class="line"><span class="javascript">  toggle = toggle ? <span class="number">0</span> : <span class="number">1</span>;</span></span><br><span class="line"><span class="javascript">&#125;</span></span><br><span class="line"><span class="javascript"><span class="built_in">setInterval</span>(toggleFun, time)</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>代码大概的意思就是定时以两种操作设置样式，收集浏览器的回流或者重绘次数。</p>
-<p>打开chrome的开发者工具，切换到<code>Performance</code>选项卡，点击左上角的圆 ○，开始<code>record</code>，等几秒后<code>stop</code>，点击<code>Frames</code>查看<code>Event log</code>选项卡，内容如下：</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E5%85%B3%E4%BA%8E%E5%9B%9E%E6%B5%81%E4%B8%8E%E9%87%8D%E7%BB%98%E4%BC%98%E5%8C%96%E7%9A%84%E6%8E%A2%E7%B4%A2/1.png" alt="运行结果"></p>
-<p>大概可以看到，<code>Recalculate Style -&gt; Layout -&gt; Update Layer Tree -&gt; Paint -&gt; Composite Layers</code> 这个过程在循环进行，触发的目标代码是第25行代码合29行代码，也就是<code>box.style.borderWidth = &#39;50px&#39;;</code>和<code>box.style.cssText = &#39;border: &#39; + borderWidth + &#39;px solid&#39; + borderColor;</code>。</p>
-<p>首先回顾一下浏览器渲染页面的流程：</p>
-<ol>
-<li>请求拿到html报文。</li>
-<li>同时解析生成CSS规则树和DOM树。</li>
-<li>合并CSS规则树和DOM树，生成render树。</li>
-<li>渲染进程根据render树进行Layout。</li>
-<li>绘制paint页面。</li>
-</ol>
-<p>然后在看看上面的过程，可以容易看出，</p>
-<ol>
-<li>首先，<code>Recalculate Style</code>，重新计算css规则树。</li>
-<li>进行<code>Layout</code>，这里的Layout可以理解成回流，重新计算每个元素的位置。</li>
-<li><code>Update Layer Tree</code>，字面意思理解，更新层级树。</li>
-<li><code>Paint</code>，绘制页面，在这里可以理解成重绘。</li>
-<li><code>Composite Layers</code>，字面意思理解，合并层级。</li>
-</ol>
-<p>由上面过程得到结果，当在同一执行任务里面对DOM的样式进行多次操作的时候，只会进行一次回流或者重绘，也就是说，只要我们的js引擎时候忙碌的，渲染引擎是冻结的时候，无论对DOM样式进行多少次操作，都只会进行一次回流或者重绘，也就是说前面说的<code>合并样式</code>优化是无效的。</p>
-<p>这个时候，我对上面过程又产生了新的疑问，为什么要<code>Paint</code>之后在<code>Composite Layers</code>呢？为什么不把所有层合并完了在绘制页面呢？</p>
-<p>…………………….(看搜索相关资料去了)</p>
-<p>翻看资料结束后，我得到以下理解。</p>
-<p>首先理解<code>layer</code>概念，可以理解成PS里面的图层，我们知道PS文件最后保存层PSD文件，当图层越多的时候，PSD文件就越大，在我们的浏览器里面也是一样的，我们的layer越多，所占的内存就越大。</p>
-<p>然后理解<code>Paint</code>真正做的事情，paint的任务大概就是把所有的layer绘制到页面中，这个绘制与canvas的绘制不一样，canvas的绘制相当于在画布里把像素直接绘制成指定颜色，然后我们直接看到的东西就直接是像素颜色，而我们这里说的<code>Paint</code>只是把图层丢到页面中，最后的绘制，需要交给<code>Composite线程</code>处理。</p>
-<p>最后是<code>Composite Layers</code>，由<code>composite线程</code>进行，这个线程在浏览器的Renderer进程中，任务是把Paint时候丢上页面的图层转化成位图，最终生成我们肉眼可以看到的图像，所以，真正的绘制，应该是<code>Composite Layers</code>过程进行的。</p>
-<p>由于<code>paint</code>与<code>composite</code>解耦，浏览器对每一个<code>layer</code>都有一个标识，这个标识用来标识该<code>layer</code>是否需要重绘，在有CSS规则树变化的时候，浏览器只会对这些被标识的layer进行重绘，用这样的方式提高浏览器的渲染性能。</p>
-<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>前端大法博大精深，越往下学越觉得自己不适合前端！！！仿佛看到自己在从入门到跑路这条路上快走到了终点。。。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/016e8e78eb1f">Chrome 性能调优简介</a></li>
-<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/quincyWang/p/6932382.html">浏览器解析过程</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/fendouzhe123/article/details/49127441">GPU：合成加速</a></li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/09/09/%E5%85%B3%E4%BA%8E%E5%9B%9E%E6%B5%81%E4%B8%8E%E9%87%8D%E7%BB%98%E4%BC%98%E5%8C%96%E7%9A%84%E6%8E%A2%E7%B4%A2/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-服务端渲染原理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>闲来无事，研究一下SSR，主要原因在于上周一位后端同学在一次组内技术分享的时候说，对前后端分离、服务端渲染特别感兴趣，在他分享了后端微服务之后，专门点名邀请我下周分享服务端渲染，然后我还没同意，领导就内定让我下周分享了（其实就是下周愿意下周分享，我是那个替死鬼）。</p>
-<p>本人主要从个人角度介绍了对服务端渲染的理解，读完本文后，你将了解到：</p>
-<ul>
-<li>什么是服务端渲染，与客户端渲染的区别是什么？</li>
-<li>为什么需要服务端渲染，服务端渲染的利弊是什么？</li>
-<li>如何对VUE项目进行同构？</li>
-</ul>
-<h2 id="服务端渲染的定义"><a href="#服务端渲染的定义" class="headerlink" title="服务端渲染的定义"></a>服务端渲染的定义</h2><p>在讲服务度渲染之前，我们先回顾一下页面的渲染流程：</p>
-<ol>
-<li>浏览器通过请求得到一个HTML文本</li>
-<li>渲染进程解析HTML文本，构建DOM树</li>
-<li>解析HTML的同时，如果遇到内联样式或者样式脚本，则下载并构建样式规则（stytle rules），若遇到JavaScript脚本，则会下载执行脚本。</li>
-<li>DOM树和样式规则构建完成之后，渲染进程将两者合并成渲染树（render tree）</li>
-<li>渲染进程开始对渲染树进行布局，生成布局树（layout tree）</li>
-<li>渲染进程对布局树进行绘制，生成绘制记录</li>
-<li>渲染进程的对布局树进行分层，分别栅格化每一层，并得到合成帧</li>
-<li>渲染进程将合成帧信息发送给GPU进程显示到页面中</li>
-</ol>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%E5%8E%9F%E7%90%86/image-20200730191954015.png" alt="image-20200730191954015"></p>
-<p>可以看到，页面的渲染其实就是浏览器将HTML文本转化为页面帧的过程。而如今我们大部分WEB应用都是使用 JavaScript 框架（Vue、React、Angular）进行页面渲染的，也就是说，在执行 JavaScript 脚本的时候，HTML页面已经开始解析并且构建DOM树了，JavaScript 脚本只是动态的改变 DOM 树的结构，使得页面成为希望成为的样子，这种渲染方式叫动态渲染，也可以叫客户端渲染（client side rende）。</p>
-<p>那么什么是服务端渲染（server side render）？顾名思义，服务端渲染就是在浏览器请求页面URL的时候，服务端将我们需要的HTML文本组装好，并返回给浏览器，这个HTML文本被浏览器解析之后，不需要经过 JavaScript 脚本的执行，即可直接构建出希望的 DOM 树并展示到页面中。这个服务端组装HTML的过程，叫做服务端渲染。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%E5%8E%9F%E7%90%86/image-20200731165404271.png" alt="image-20200731165404271"></p>
-<h2 id="服务端渲染的由来"><a href="#服务端渲染的由来" class="headerlink" title="服务端渲染的由来"></a>服务端渲染的由来</h2><h3 id="Web1-0"><a href="#Web1-0" class="headerlink" title="Web1.0"></a>Web1.0</h3><p>在没有AJAX的时候，也就是web1.0时代，几乎所有应用都是服务端渲染（此时服务器渲染非现在的服务器渲染），那个时候的页面渲染大概是这样的，浏览器请求页面URL，然后服务器接收到请求之后，到数据库查询数据，将数据丢到后端的组件模板（php、asp、jsp等）中，并渲染成HTML片段，接着服务器在组装这些HTML片段，组成一个完整的HTML，最后返回给浏览器，这个时候，浏览器已经拿到了一个完整的被服务器动态组装出来的HTML文本，然后将HTML渲染到页面中，过程没有任何JavaScript代码的参与。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%E5%8E%9F%E7%90%86/image-20200731115513579.png" alt="image-20200731115513579"></p>
-<h3 id="客户端渲染"><a href="#客户端渲染" class="headerlink" title="客户端渲染"></a>客户端渲染</h3><p>在WEB1.0时代，服务端渲染看起来是一个当时的最好的渲染方式，但是随着业务的日益复杂和后续AJAX的出现，也渐渐开始暴露出了WEB1.0服务器渲染的缺点。</p>
-<ul>
-<li>每次更新页面的一小的模块，都需要重新请求一次页面，重新查一次数据库，重新组装一次HTML</li>
-<li>前端JavaScript代码和后端（jsp、php、jsp）代码混杂在一起，使得日益复杂的WEB应用难以维护</li>
-</ul>
-<p>而且那个时候，根本就没有前端工程师这一职位，前端js的活一般都由后端同学 jQuery 一把梭。但是随着前端页面渐渐地复杂了之后，后端开始发现js好麻烦，虽然很简单，但是坑太多了，于是让公司招聘了一些专门写js的人，也就是前端，这个时候，前后端的鄙视链就出现了，后端鄙视前端，因为后端觉得js太简单，无非就是写写页面的特效（JS），切切图（CSS），根本算不上是真正的程序员。</p>
-<p>随之 nodejs 的出现，前端看到了翻身的契机，为了摆脱后端的指指点点，前端开启了一场前后端分离的运动，希望可以脱离后端独立发展。前后端分离，表面上看上去是代码分离，实际上是为了前后端人员分离，也就是前后端分家，前端不再归属于后端团队。</p>
-<p>前后端分离之后，网页开始被当成了独立的应用程序（SPA，Single Page Application），前端团队接管了所有页面渲染的事，后端团队只负责提供所有数据查询与处理的API，大体流程是这样的：首先浏览器请求URL，前端服务器直接返回一个空的静态HTML文件（不需要任何查数据库和模板组装），这个HTML文件中加载了很多渲染页面需要的 JavaScript 脚本和 CSS 样式表，浏览器拿到 HTML 文件后开始加载脚本和样式表，并且执行脚本，这个时候脚本请求后端服务提供的API，获取数据，获取完成后将数据通过JavaScript脚本动态的将数据渲染到页面中，完成页面显示。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%E5%8E%9F%E7%90%86/image-20200731142605631.png" alt="image-20200731142605631"></p>
-<p>这一个前后端分离的渲染模式，也就是客户端渲染（CSR）。</p>
-<h3 id="服务端渲染"><a href="#服务端渲染" class="headerlink" title="服务端渲染"></a>服务端渲染</h3><p>随着单页应用（SPA）的发展，程序员们渐渐发现 SEO（Search Engine Optimazition，即搜索引擎优化）出了问题，而且随着应用的复杂化，JavaScript 脚本也不断的臃肿起来，使得首屏渲染相比于 Web1.0时候的服务端渲染，也慢了不少。</p>
-<p>自己选的路，跪着也要走下去。于是前端团队选择了使用 nodejs 在服务器进行页面的渲染，进而再次出现了服务端渲染。大体流程与客户端渲染有些相似，首先是浏览器请求URL，前端服务器接收到URL请求之后，根据不同的URL，前端服务器向后端服务器请求数据，请求完成后，前端服务器会组装一个携带了具体数据的HTML文本，并且返回给浏览器，浏览器得到HTML之后开始渲染页面，同时，浏览器加载并执行 JavaScript 脚本，给页面上的元素绑定事件，让页面变得可交互，当用户与浏览器页面进行交互，如跳转到下一个页面时，浏览器会执行 JavaScript 脚本，向后端服务器请求数据，获取完数据之后再次执行 JavaScript 代码动态渲染页面。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%E5%8E%9F%E7%90%86/image-20200731172929911.png" alt="image-20200731172929911"></p>
-<h2 id="服务端渲染的利弊"><a href="#服务端渲染的利弊" class="headerlink" title="服务端渲染的利弊"></a>服务端渲染的利弊</h2><p>相比于客户端渲染，服务端渲染有什么优势？</p>
-<h3 id="利于SEO"><a href="#利于SEO" class="headerlink" title="利于SEO"></a>利于SEO</h3><p>有利于SEO，其实就是有利于爬虫来爬你的页面，然后在别人使用搜索引擎搜索相关的内容时，你的网页排行能靠得更前，这样你的流量就有越高。那为什么服务端渲染更利于爬虫爬你的页面呢？其实，爬虫也分低级爬虫和高级爬虫。</p>
-<ul>
-<li>低级爬虫：只请求URL，URL返回的HTML是什么内容就爬什么内容。</li>
-<li>高级爬虫：请求URL，加载并执行JavaScript脚本渲染页面，爬JavaScript渲染后的内容。</li>
-</ul>
-<p>也就是说，低级爬虫对客户端渲染的页面来说，简直无能为力，因为返回的HTML是一个空壳，它需要执行 JavaScript 脚本之后才会渲染真正的页面。而目前像百度、谷歌、微软等公司，有一部分年代老旧的爬虫还属于低级爬虫，使用服务端渲染，对这些低级爬虫更加友好一些。</p>
-<h3 id="白屏时间更短"><a href="#白屏时间更短" class="headerlink" title="白屏时间更短"></a>白屏时间更短</h3><p>相对于客户端渲染，服务端渲染在浏览器请求URL之后已经得到了一个带有数据的HTML文本，浏览器只需要解析HTML，直接构建DOM树就可以。而客户端渲染，需要先得到一个空的HTML页面，这个时候页面已经进入白屏，之后还需要经过加载并执行 JavaScript、请求后端服务器获取数据、JavaScript 渲染页面几个过程才可以看到最后的页面。特别是在复杂应用中，由于需要加载 JavaScript 脚本，越是复杂的应用，需要加载的 JavaScript 脚本就越多、越大，这会导致应用的首屏加载时间非常长，进而降低了体验感。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%E5%8E%9F%E7%90%86/image-20200731165404271.png" alt="image-20200731165404271"></p>
-<h3 id="服务端渲染缺点"><a href="#服务端渲染缺点" class="headerlink" title="服务端渲染缺点"></a>服务端渲染缺点</h3><p>并不是所有的WEB应用都必须使用SSR，这需要开发者自己来权衡，因为服务端渲染会带来以下问题：</p>
-<ul>
-<li>代码复杂度增加。为了实现服务端渲染，应用代码中需要兼容服务端和客户端两种运行情况，而一部分依赖的外部扩展库却只能在客户端运行，需要对其进行特殊处理，才能在服务器渲染应用程序中运行。</li>
-<li>需要更多的服务器负载均衡。由于服务器增加了渲染HTML的需求，使得原本只需要输出静态资源文件的nodejs服务，新增了数据获取的IO和渲染HTML的CPU占用，如果流量突然暴增，有可能导致服务器down机，因此需要使用响应的缓存策略和准备相应的服务器负载。</li>
-<li>涉及构建设置和部署的更多要求。与可以部署在任何静态文件服务器上的完全静态单页面应用程序 (SPA) 不同，服务器渲染应用程序，需要处于 Node.js server 运行环境。</li>
-</ul>
-<p>所以在使用服务端渲染SSR之前，需要开发者考虑投入产出比，比如大部分应用系统都不需要SEO，而且首屏时间并没有非常的慢，如果使用SSR反而小题大做了。</p>
-<h2 id="同构"><a href="#同构" class="headerlink" title="同构"></a>同构</h2><p>知道了服务器渲染的利弊后，假如我们需要在项目中使用服务端渲染，我们需要做什么呢？那就是同构我们的项目。</p>
-<h3 id="同构的定义"><a href="#同构的定义" class="headerlink" title="同构的定义"></a>同构的定义</h3><p>在服务端渲染中，有两种页面渲染的方式：</p>
-<ul>
-<li>前端服务器通过请求后端服务器获取数据并组装HTML返回给浏览器，浏览器直接解析HTML后渲染页面</li>
-<li>浏览器在交互过程中，请求新的数据并动态更新渲染页面</li>
-</ul>
-<p>这两种渲染方式有一个不同点就是，一个是在服务端中组装html的，一个是在客户端中组装html的，运行环境是不一样的。所谓同构，就是让一份代码，既可以在服务端中执行，也可以在客户端中执行，并且执行的效果都是一样的，都是完成这个html的组装，正确的显示页面。也就是说，一份代码，既可以客户端渲染，也可以服务端渲染。</p>
-<h3 id="同构的条件"><a href="#同构的条件" class="headerlink" title="同构的条件"></a>同构的条件</h3><p>为了实现同构，我们需要满足什么条件呢？首先，我们思考一个应用中一个页面的组成，假如我们使用的是<code>Vue.js</code>，当我们打开一个页面时，首先是打开这个页面的URL，这个URL，可以通过应用的<code>路由</code>匹配，找到具体的页面，不同的页面有不同的视图，那么，视图是什么？从应用的角度来看，视图 = <code>模板</code> + <code>数据</code>，那么在 Vue.js 中， 模板可以理解成<code>组件</code>，数据可以理解为<code>数据模型</code>，即响应式数据。所以，对于同构应用来说，我们必须实现客户端与服务端的路由、模型组件、数据模型的共享。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%E5%8E%9F%E7%90%86/image-20200731175841011.png" alt="image-20200731175841011"></p>
-<h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><p>知道了服务端渲染、同构的原理之后，下面从头开始，一步一步完成一次同构，通过实践来了解SSR。</p>
-<h3 id="实现基础的NODEJS服务端渲染"><a href="#实现基础的NODEJS服务端渲染" class="headerlink" title="实现基础的NODEJS服务端渲染"></a>实现基础的NODEJS服务端渲染</h3><p>首先，模拟一个最简单的服务器渲染，只需要向页面返回我们需要的html文件。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> app = express();</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">&#x27;/&#x27;</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">    res.send(<span class="string">`</span></span><br><span class="line"><span class="string">        &lt;html&gt;</span></span><br><span class="line"><span class="string">            &lt;head&gt;</span></span><br><span class="line"><span class="string">                &lt;title&gt;SSR&lt;/title&gt;</span></span><br><span class="line"><span class="string">            &lt;/head&gt;</span></span><br><span class="line"><span class="string">            &lt;body&gt;</span></span><br><span class="line"><span class="string">                &lt;p&gt;hello world&lt;/p&gt;</span></span><br><span class="line"><span class="string">            &lt;/body&gt;</span></span><br><span class="line"><span class="string">        &lt;/html&gt;</span></span><br><span class="line"><span class="string">    `</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.listen(<span class="number">3001</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;listen:3001&#x27;</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>启动之后打开localhost:3001可以看到页面显示了hello world。而且打开网页源代码：</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%E5%8E%9F%E7%90%86/image-20200801121804500.png" alt="image-20200801121804500"></p>
-<p>也就是说，当浏览器拿到服务器返回的这一段HTML源代码的时候，不需要加载任何JavaScript脚本，就可以直接将hello world显示出来。</p>
-<h3 id="实现基础的VUE客户端渲染"><a href="#实现基础的VUE客户端渲染" class="headerlink" title="实现基础的VUE客户端渲染"></a>实现基础的VUE客户端渲染</h3><p>我们用 <code>vue-cli</code>新建一个vue项目，修改一个App.vue组件：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  	<span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    		<span class="tag">&lt;<span class="name">p</span>&gt;</span>hello world<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    		<span class="tag">&lt;<span class="name">button</span> @<span class="attr">click</span>=<span class="string">&quot;sayHello&quot;</span>&gt;</span>say hello<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">  	<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span><br><span class="line"><span class="javascript">    <span class="attr">methods</span>: &#123;</span></span><br><span class="line"><span class="javascript">        <span class="function"><span class="title">sayHello</span>(<span class="params"></span>)</span> &#123;</span></span><br><span class="line"><span class="javascript">	          alert(<span class="string">&#x27;hello ssr&#x27;</span>);</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript">    &#125;</span></span><br><span class="line"><span class="javascript">&#125;</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>然后运行<code>npm run serve</code>启动项目，打开浏览器，一样可以看到页面显示了 hello world，但是打开我们开网页源代码：</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%E5%8E%9F%E7%90%86/image-20200801131013543.png" alt="image-20200801131013543"></p>
-<p>除了简单的兼容性处理 noscript 标签以外，只有一个简单的id为app的div标签，没有关于hello world的任何字眼，可以说这是一个空的页面（白屏），而当加载了下面的 script 标签的 JavaScript 脚本之后，页面开始这行这些脚本，执行结束，hello world 正常显示。也就是说真正渲染 hello world 的是 JavaScript 脚本。</p>
-<h3 id="同构VUE项目"><a href="#同构VUE项目" class="headerlink" title="同构VUE项目"></a>同构VUE项目</h3><h4 id="构建配置"><a href="#构建配置" class="headerlink" title="构建配置"></a>构建配置</h4><p>模板组件的共享，其实就是使用同一套组件代码，为了实现 Vue 组件可以在服务端中运行，首先我们需要解决代码编译问题。一般情况，vue项目使用的是webpack进行代码构建，同样，服务端代码的构建，也可以使用webpack，借用官方的一张。</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%E5%8E%9F%E7%90%86/vue%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%E6%9E%84%E5%BB%BA.png" alt="vue服务端渲染构建"></p>
-<h5 id="第一步：构建服务端代码"><a href="#第一步：构建服务端代码" class="headerlink" title="第一步：构建服务端代码"></a>第一步：构建服务端代码</h5><p>由前面的图可以看到，在服务端代码构建结束后，需要将构建结果运行在nodejs服务器上，但是，对于服务端代码的构建，有一下内容需要注意：</p>
-<ul>
-<li>不需要编译CSS，样式表只有在浏览器（客户端）运行时需要。</li>
-<li>构建的目标的运行环境是commonjs，nodejs的模块化模式为commonjs</li>
-<li>不需要代码切割，nodejs将所有代码一次性加载到内存中更有利于运行效率</li>
-</ul>
-<p>于是，我们得到一个服务端的 webpack 构建配置文件 vue.server.config.js</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> nodeExternals = <span class="built_in">require</span>(<span class="string">&quot;webpack-node-externals&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> VueSSRServerPlugin = <span class="built_in">require</span>(<span class="string">&#x27;vue-server-renderer/server-plugin&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    <span class="attr">css</span>: &#123;</span><br><span class="line">        <span class="attr">extract</span>: <span class="literal">false</span> <span class="comment">// 不提取 CSS</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">configureWebpack</span>: <span class="function">() =&gt;</span> (&#123;</span><br><span class="line">        <span class="attr">entry</span>: <span class="string">`./src/server-entry.js`</span>, <span class="comment">// 服务器入口文件</span></span><br><span class="line">        <span class="attr">devtool</span>: <span class="string">&#x27;source-map&#x27;</span>,</span><br><span class="line">        <span class="attr">target</span>: <span class="string">&#x27;node&#x27;</span>, <span class="comment">// 构建目标为nodejs环境</span></span><br><span class="line">        <span class="attr">output</span>: &#123;</span><br><span class="line">            <span class="attr">libraryTarget</span>: <span class="string">&#x27;commonjs2&#x27;</span> <span class="comment">// 构建目标加载模式 commonjs</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="comment">// 跳过 node_mdoules，运行时会自动加载，不需要编译</span></span><br><span class="line">        <span class="attr">externals</span>: nodeExternals(&#123;</span><br><span class="line">            <span class="attr">allowlist</span>: [<span class="regexp">/\.css$/</span>] <span class="comment">// 允许css文件，方便css module</span></span><br><span class="line">        &#125;),</span><br><span class="line">        <span class="attr">optimization</span>: &#123;</span><br><span class="line">            <span class="attr">splitChunks</span>: <span class="literal">false</span> <span class="comment">// 关闭代码切割</span></span><br><span class="line">        &#125;,</span><br><span class="line">      	<span class="attr">plugins</span>: [</span><br><span class="line">            <span class="keyword">new</span> VueSSRServerPlugin()</span><br><span class="line">        ]</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>使用 <code>vue-server-renderer</code>提供的<code>server-plugin</code>，这个插件主要配合下面讲到的<code>client-plugin</code>使用，作用主要是用来实现nodejs在开发过程中的热加载、source-map、生成html文件。</p>
-<h5 id="第二步：构建客户端代码"><a href="#第二步：构建客户端代码" class="headerlink" title="第二步：构建客户端代码"></a>第二步：构建客户端代码</h5><p>在构建客户端代码时，使用的是客户端的执行入口文件，构建结束后，将构建结果在浏览器运行即可，但是在服务端渲染中，HTML是由服务端渲染的，也就是说，我们要加载那些JavaScript脚本，是服务端决定的，因为HTML中的script标签是由服务端拼接的，所以在客户端代码构建的时候，我们需要使用插件，生成一个构建结果清单，这个清单是用来告诉服务端，当前页面需要加载哪些JS脚本和CSS样式表。</p>
-<p>于是我们得到了客户端的构建配置，vue.client.config.js</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> VueSSRClientPlugin = <span class="built_in">require</span>(<span class="string">&#x27;vue-server-renderer/client-plugin&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    <span class="attr">configureWebpack</span>: <span class="function">() =&gt;</span> (&#123;</span><br><span class="line">        <span class="attr">entry</span>: <span class="string">`./src/client-entry.js`</span>,</span><br><span class="line">        <span class="attr">devtool</span>: <span class="string">&#x27;source-map&#x27;</span>,</span><br><span class="line">        <span class="attr">target</span>: <span class="string">&#x27;web&#x27;</span>,</span><br><span class="line">        <span class="attr">plugins</span>: [</span><br><span class="line">            <span class="keyword">new</span> VueSSRClientPlugin()</span><br><span class="line">        ]</span><br><span class="line">    &#125;),</span><br><span class="line">    <span class="attr">chainWebpack</span>: <span class="function"><span class="params">config</span> =&gt;</span> &#123;</span><br><span class="line">      	<span class="comment">// 去除所有关于客户端生成的html配置，因为已经交给后端生成</span></span><br><span class="line">        config.plugins.delete(<span class="string">&#x27;html&#x27;</span>);</span><br><span class="line">        config.plugins.delete(<span class="string">&#x27;preload&#x27;</span>);</span><br><span class="line">        config.plugins.delete(<span class="string">&#x27;prefetch&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>使用<code>vue-server-renderer</code>提供的<code>client-server</code>，主要作用是生成构建加过清单<code>vue-ssr-client-manifest.json</code>，服务端在渲染页面时，根据这个清单来渲染HTML中的script标签（JavaScript）和link标签（CSS）。</p>
-<p>接下来，我们需要将vue.client.config.js和vue.server.config.js都交给vue-cli内置的构建配置文件vue.config.js，根据环境变量使用不同的配置</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// vue.config.js</span></span><br><span class="line"><span class="keyword">const</span> TARGET_NODE = process.env.WEBPACK_TARGET === <span class="string">&#x27;node&#x27;</span>;</span><br><span class="line"><span class="keyword">const</span> serverConfig = <span class="built_in">require</span>(<span class="string">&#x27;./vue.server.config&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> clientConfig = <span class="built_in">require</span>(<span class="string">&#x27;./vue.client.config&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (TARGET_NODE) &#123;</span><br><span class="line">    <span class="built_in">module</span>.exports = serverConfig;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="built_in">module</span>.exports = clientConfig;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>使用<code>cross-env</code>区分环境</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;scripts&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;server&quot;</span>: <span class="string">&quot;babel-node src/server.js&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;serve&quot;</span>: <span class="string">&quot;vue-cli-service serve&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;build&quot;</span>: <span class="string">&quot;vue-cli-service build&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;build:server&quot;</span>: <span class="string">&quot;cross-env WEBPACK_TARGET=node vue-cli-service build --mode server&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="模板组件共享"><a href="#模板组件共享" class="headerlink" title="模板组件共享"></a>模板组件共享</h4><h5 id="第一步：创建VUE实例"><a href="#第一步：创建VUE实例" class="headerlink" title="第一步：创建VUE实例"></a>第一步：创建VUE实例</h5><p>为了实现模板组件共享，我们需要将获取 Vue 渲染实例写成通用代码，如下 createApp：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> App <span class="keyword">from</span> <span class="string">&#x27;./App&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">createApp</span> (<span class="params">context</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> app = <span class="keyword">new</span> Vue(&#123;</span><br><span class="line">        <span class="attr">render</span>: <span class="function"><span class="params">h</span> =&gt;</span> h(App)</span><br><span class="line">    &#125;);</span><br><span class="line">  	<span class="keyword">return</span> &#123;</span><br><span class="line">      	app</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h5 id="第二步：客户端实例化VUE"><a href="#第二步：客户端实例化VUE" class="headerlink" title="第二步：客户端实例化VUE"></a>第二步：客户端实例化VUE</h5><p>新建客户端项目的入口文件，client-entry.js</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> createApp <span class="keyword">from</span> <span class="string">&#x27;./createApp&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> &#123;app&#125; = createApp();</span><br><span class="line"></span><br><span class="line">app.$mount(<span class="string">&#x27;#app&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>client-entry.js是浏览器渲染的入口文件，在浏览器加载了客户端编译后的代码后，组件会被渲染到id为app的元素节点上。</p>
-<h5 id="第三步：服务端实例化VUE"><a href="#第三步：服务端实例化VUE" class="headerlink" title="第三步：服务端实例化VUE"></a>第三步：服务端实例化VUE</h5><p>新建服务端代码的入口文件，server-entry.js</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> createApp <span class="keyword">from</span> <span class="string">&#x27;./createApp&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> context =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; app &#125; = createApp(context);</span><br><span class="line">    <span class="keyword">return</span> app;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>server-entry.js是提供给服务器渲染vue组件的入口文件，在浏览器通过URL访问到服务器后，服务器需要使用server-entry.js提供的函数，将组件渲染成html。</p>
-<h5 id="第四步：HTTP服务"><a href="#第四步：HTTP服务" class="headerlink" title="第四步：HTTP服务"></a>第四步：HTTP服务</h5><p>所有东西的准备好之后，我们需要修改nodejs的HTTP服务器的启动文件。首先，加载服务端代码server-entry.js的webpack构建结果</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&#x27;path&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> serverBundle = path.resolve(process.cwd(), <span class="string">&#x27;serverDist&#x27;</span>, <span class="string">&#x27;vue-ssr-server-bundle.json&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> &#123;createBundleRenderer&#125; = <span class="built_in">require</span>(<span class="string">&#x27;vue-server-renderer&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> serverBundle = path.resolve(process.cwd(), <span class="string">&#x27;serverDist&#x27;</span>, <span class="string">&#x27;vue-ssr-server-bundle.json&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>加载客户端代码client-entry.js的webpack构建结果</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> clientManifestPath = path.resolve(process.cwd(), <span class="string">&#x27;dist&#x27;</span>, <span class="string">&#x27;vue-ssr-client-manifest.json&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> clientManifest = <span class="built_in">require</span>(clientManifestPath);</span><br></pre></td></tr></table></figure>
-
-<p>使用 <a target="_blank" rel="noopener" href="https://www.npmjs.com/package/vue-server-renderer">vue-server-renderer</a> 的<code>createBundleRenderer</code>创建一个html渲染器：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> template = fs.readFileSync(path.resolve(__dirname, <span class="string">&#x27;index.html&#x27;</span>), <span class="string">&#x27;utf-8&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> renderer = createBundleRenderer(serverBundle, &#123;</span><br><span class="line">    template,  <span class="comment">// 使用HTML模板</span></span><br><span class="line">    clientManifest <span class="comment">// 将客户端的构建结果清单传入</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>创建HTML模板，index.html</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>SSR<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--vue-ssr-outlet--&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>在HTML模板中，通过传入的客户端渲染结果<code>clientManifest</code>，将自动注入所有link样式表标签，而占位符<!--vue-ssr-outlet-->将会被替换成模板组件被渲染后的具体的HTML片段和script脚本标签。</p>
-<p>HTML准备完成后，我们在server中挂起所有路由请求</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> app = express();</span><br><span class="line"></span><br><span class="line"><span class="comment">/* code todo 实例化渲染器renderer */</span></span><br><span class="line"></span><br><span class="line">app.get(<span class="string">&#x27;*&#x27;</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">    renderer.renderToString(&#123;&#125;, <span class="function">(<span class="params">err, html</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (err) &#123;</span><br><span class="line">            res.send(<span class="string">&#x27;500 server error&#x27;</span>);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        res.send(html);</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>接下来，我们构建客户端、服务端项目，然后执行 node server.js，打开页面源代码，</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%E5%8E%9F%E7%90%86/image-20200801233249503.png" alt="image-20200801233249503"></p>
-<p>看起来是符合预期的，但是发现控制台有报错，加载不到客户端构建css和js，报404，原因很明确，我们没有把客户端的构建结果文件挂载到服务器的静态资源目录，在挂载路由前加入下面代码：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.use(express.static(path.resolve(process.cwd(), <span class="string">&#x27;dist&#x27;</span>)));</span><br></pre></td></tr></table></figure>
-
-<p>看起来大功告成，点击say hello也弹出了消息，细心的同学会发现根节点有一个<code>data-server-rendered</code>属性，这个属性有什么作用呢？</p>
-<p>由于服务器已经渲染好了 HTML，我们显然无需将其丢弃再重新创建所有的 DOM 元素。相反，我们需要”激活”这些静态的 HTML，然后使他们成为动态的（能够响应后续的数据变化）。</p>
-<p>如果检查服务器渲染的输出结果，应用程序的根元素上添加了一个特殊的属性：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;app&quot;</span> <span class="attr">data-server-rendered</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p><code>data-server-rendered</code>是特殊属性，让客户端 Vue 知道这部分 HTML 是由 Vue 在服务端渲染的，并且应该以激活模式进行挂载。</p>
-<h4 id="路由的共享和同步"><a href="#路由的共享和同步" class="headerlink" title="路由的共享和同步"></a>路由的共享和同步</h4><p>完成了模板组件的共享之后，下面完成路由的共享，我们前面服务器使用的路由是<code>*</code>，接受任意URL，这允许所有URL请求交给Vue路由处理，进而完成客户端路由与服务端路由的复用。</p>
-<h5 id="第一步：创建ROUTER实例"><a href="#第一步：创建ROUTER实例" class="headerlink" title="第一步：创建ROUTER实例"></a>第一步：创建ROUTER实例</h5><p>为了实现复用，与createApp一样，我们创建一个createRouter.js</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> Router <span class="keyword">from</span> <span class="string">&#x27;vue-router&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> Home <span class="keyword">from</span> <span class="string">&#x27;./views/Home&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> About <span class="keyword">from</span> <span class="string">&#x27;./views/About&#x27;</span>;</span><br><span class="line">Vue.use(Router)</span><br><span class="line"><span class="keyword">const</span> routes = [&#123;</span><br><span class="line">    <span class="attr">path</span>: <span class="string">&#x27;/&#x27;</span>,</span><br><span class="line">    <span class="attr">name</span>: <span class="string">&#x27;Home&#x27;</span>,</span><br><span class="line">    <span class="attr">component</span>: Home</span><br><span class="line">&#125;, &#123;</span><br><span class="line">    <span class="attr">path</span>: <span class="string">&#x27;/about&#x27;</span>,</span><br><span class="line">    <span class="attr">name</span>: <span class="string">&#x27;About&#x27;</span>,</span><br><span class="line">    <span class="attr">component</span>: About</span><br><span class="line">&#125;];</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">createRouter</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Router(&#123;</span><br><span class="line">        <span class="attr">mode</span>: <span class="string">&#x27;history&#x27;</span>,</span><br><span class="line">        routes</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在createApp.js中创建router</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> App <span class="keyword">from</span> <span class="string">&#x27;./App&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> createRouter <span class="keyword">from</span> <span class="string">&#x27;./createRouter&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">createApp</span>(<span class="params">context</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> router = createRouter(); <span class="comment">// 创建 router 实例</span></span><br><span class="line">    <span class="keyword">const</span> app = <span class="keyword">new</span> Vue(&#123;</span><br><span class="line">        router, <span class="comment">// 注入 router 到根 Vue 实例</span></span><br><span class="line">        <span class="attr">render</span>: <span class="function"><span class="params">h</span> =&gt;</span> h(App)</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> &#123; router, app &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h5 id="第二步：路由匹配"><a href="#第二步：路由匹配" class="headerlink" title="第二步：路由匹配"></a>第二步：路由匹配</h5><p>router准备好了之后，修改server-entry.js，将请求的URL传递给router，使得在创建app的时候可以根据URL匹配到对应的路由，进而可知道需要渲染哪些组件</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> createApp <span class="keyword">from</span> <span class="string">&#x27;./createApp&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> context =&gt; &#123;</span><br><span class="line">    <span class="comment">// 因为有可能会是异步路由钩子函数或组件，所以我们将返回一个 Promise，</span></span><br><span class="line">    <span class="comment">// 以便服务器能够等待所有的内容在渲染前就已经准备就绪。</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> &#123; app, router &#125; = createApp();</span><br><span class="line">        <span class="comment">// 设置服务器端 router 的位置</span></span><br><span class="line">        router.push(context.url)</span><br><span class="line">        <span class="comment">// onReady 等到 router 将可能的异步组件和钩子函数解析完</span></span><br><span class="line">        router.onReady(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">const</span> matchedComponents = router.getMatchedComponents();</span><br><span class="line">            <span class="comment">// 匹配不到的路由，执行 reject 函数，并返回 404</span></span><br><span class="line">            <span class="keyword">if</span> (!matchedComponents.length) &#123;</span><br><span class="line">                <span class="keyword">return</span> reject(&#123;</span><br><span class="line">                    <span class="attr">code</span>: <span class="number">404</span></span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// Promise 应该 resolve 应用程序实例，以便它可以渲染</span></span><br><span class="line">            resolve(app)</span><br><span class="line">        &#125;, reject)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>修改server.js的路由，把url传递给renderer</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">app.get(<span class="string">&#x27;*&#x27;</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> context = &#123;</span><br><span class="line">        <span class="attr">url</span>: req.url</span><br><span class="line">    &#125;;</span><br><span class="line">    renderer.renderToString(context, <span class="function">(<span class="params">err, html</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (err) &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(err);</span><br><span class="line">            res.send(<span class="string">&#x27;500 server error&#x27;</span>);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        res.send(html);</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>为了测试，我们将App.vue修改为router-view</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;app&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">router-link</span> <span class="attr">to</span>=<span class="string">&quot;/&quot;</span>&gt;</span>Home<span class="tag">&lt;/<span class="name">router-link</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">router-link</span> <span class="attr">to</span>=<span class="string">&quot;/about&quot;</span>&gt;</span>About<span class="tag">&lt;/<span class="name">router-link</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">router-view</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>Home.vue</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span>Home Page<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>About.vue</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span>About Page<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>编译，运行，查看源代码</p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%E5%8E%9F%E7%90%86/image-20200802011753771.png" alt="image-20200802011753771"></p>
-<p>点击路由并没有刷新页面，而是客户端路由跳转的，一切符合预期。</p>
-<h4 id="数据模型的共享与状态同步"><a href="#数据模型的共享与状态同步" class="headerlink" title="数据模型的共享与状态同步"></a>数据模型的共享与状态同步</h4><p>前面我们简单的实现了服务端渲染，但是实际情况下，我们在访问页面的时候，还需要获取需要渲染的数据，并且渲染成HTML，也就是说，在渲染HTML之前，我们需要将所有数据都准备好，然后传递给renderer。</p>
-<p>一般情况下，在Vue中，我们将状态数据交给Vuex进行管理，当然，状态也可以保存在组件内部，只不过需要组件实例化的时候自己去同步数据。</p>
-<h5 id="第一步：创建STORE实例"><a href="#第一步：创建STORE实例" class="headerlink" title="第一步：创建STORE实例"></a>第一步：创建STORE实例</h5><p>首先第一步，与createApp类似，创建一个createStore.js，用来实例化store，同时提供给客户端和服务端使用</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> Vuex <span class="keyword">from</span> <span class="string">&#x27;vuex&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123;fetchItem&#125; <span class="keyword">from</span> <span class="string">&#x27;./api&#x27;</span>;</span><br><span class="line"></span><br><span class="line">Vue.use(Vuex);</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">createStore</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Vuex.Store(&#123;</span><br><span class="line">        <span class="attr">state</span>: &#123;</span><br><span class="line">            <span class="attr">item</span>: &#123;&#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">actions</span>: &#123;</span><br><span class="line">            <span class="function"><span class="title">fetchItem</span>(<span class="params">&#123; commit &#125;, id</span>)</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> fetchItem(id).then(<span class="function"><span class="params">item</span> =&gt;</span> &#123;</span><br><span class="line">                    commit(<span class="string">&#x27;setItem&#x27;</span>, item);</span><br><span class="line">                &#125;)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">mutations</span>: &#123;</span><br><span class="line">            <span class="function"><span class="title">setItem</span>(<span class="params">state, item</span>)</span> &#123;</span><br><span class="line">                Vue.set(state.item, item);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>actions封装了请求数据的函数，mutations用来设置状态。</p>
-<p>将createStore加入到createApp中，并将store注入到vue实例中，让所有Vue组件可以获取到store实例</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">createApp</span>(<span class="params">context</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> router = createRouter();</span><br><span class="line">    <span class="keyword">const</span> store = createStore();</span><br><span class="line">    <span class="keyword">const</span> app = <span class="keyword">new</span> Vue(&#123;</span><br><span class="line">        router,</span><br><span class="line">        store, <span class="comment">// 注入 store 到根 Vue 实例</span></span><br><span class="line">        <span class="attr">render</span>: <span class="function"><span class="params">h</span> =&gt;</span> h(App)</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> &#123; router, store, app &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>为了方便测试，我们mock一个远程服务函数fetchItem，用于查询对应item</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">fetchItem</span>(<span class="params">id</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> items = [</span><br><span class="line">        &#123; <span class="attr">name</span>: <span class="string">&#x27;item1&#x27;</span>, <span class="attr">id</span>: <span class="number">1</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">name</span>: <span class="string">&#x27;item2&#x27;</span>, <span class="attr">id</span>: <span class="number">2</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">name</span>: <span class="string">&#x27;item3&#x27;</span>, <span class="attr">id</span>: <span class="number">3</span> &#125;</span><br><span class="line">    ];</span><br><span class="line">    <span class="keyword">const</span> item = items.find(<span class="function"><span class="params">i</span> =&gt;</span> i.id == id);</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Promise</span>.resolve(item);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="第二步：STORE连接组件"><a href="#第二步：STORE连接组件" class="headerlink" title="第二步：STORE连接组件"></a>第二步：STORE连接组件</h5><p>一般情况下，我们需要通过访问路由，来决定获取哪部分数据，这也决定了哪些组件需要渲染。事实上，给定路由所需的数据，也是在该路由上渲染组件时所需的数据。所以，我们需要在路由的组件中放置数据预取逻辑函数。</p>
-<p>在Home组件中自定义一个静态函数<code>asyncData</code>，需要注意的是，由于此函数会在组件实例化之前调用，所以它无法访问 <code>this</code>。需要将 store 和路由信息作为参数传递进去</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span>id: &#123;&#123;item.id&#125;&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span>name: &#123;&#123;item.name&#125;&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span><br><span class="line"><span class="javascript">    <span class="function"><span class="title">asyncData</span>(<span class="params">&#123; store, route &#125;</span>)</span> &#123;</span></span><br><span class="line"><span class="javascript">        <span class="comment">// 触发 action 后，会返回 Promise</span></span></span><br><span class="line"><span class="javascript">        <span class="keyword">return</span> store.dispatch(<span class="string">&#x27;fetchItems&#x27;</span>, route.params.id)</span></span><br><span class="line"><span class="javascript">    &#125;,</span></span><br><span class="line"><span class="javascript">    <span class="attr">computed</span>: &#123;</span></span><br><span class="line"><span class="javascript">        <span class="comment">// 从 store 的 state 对象中的获取 item。</span></span></span><br><span class="line"><span class="javascript">        <span class="function"><span class="title">item</span>(<span class="params"></span>)</span> &#123;</span></span><br><span class="line"><span class="javascript">            <span class="keyword">return</span> <span class="built_in">this</span>.$store.state.item;</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript">    &#125;</span></span><br><span class="line"><span class="javascript">&#125;</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="第三步：服务端获取数据"><a href="#第三步：服务端获取数据" class="headerlink" title="第三步：服务端获取数据"></a>第三步：服务端获取数据</h5><p>在服务器的入口文件<code>server-entry.js</code>中，我们通过URL路由匹配 <code>router.getMatchedComponents()</code>得到了需要渲染的组件，这个时候我们可以调用组件内部的<code>asyncData</code>方法，将所需要的所有数据都获取完后，传递给渲染器renderer上下文。</p>
-<p>修改createApp，在路由组件匹配到了之后，调用asyncData方法，获取数据后传递给renderer</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> createApp <span class="keyword">from</span> <span class="string">&#x27;./createApp&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> context =&gt; &#123;</span><br><span class="line">    <span class="comment">// 因为有可能会是异步路由钩子函数或组件，所以我们将返回一个 Promise，</span></span><br><span class="line">    <span class="comment">// 以便服务器能够等待所有的内容在渲染前就已经准备就绪。</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> &#123; app, router, store &#125; = createApp();</span><br><span class="line">        <span class="comment">// 设置服务器端 router 的位置</span></span><br><span class="line">        router.push(context.url)</span><br><span class="line">        <span class="comment">// onReady 等到 router 将可能的异步组件和钩子函数解析完</span></span><br><span class="line">        router.onReady(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">const</span> matchedComponents = router.getMatchedComponents();</span><br><span class="line">            <span class="comment">// 匹配不到的路由，执行 reject 函数，并返回 404</span></span><br><span class="line">            <span class="keyword">if</span> (!matchedComponents.length) &#123;</span><br><span class="line">                <span class="keyword">return</span> reject(&#123; <span class="attr">code</span>: <span class="number">404</span> &#125;)</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 对所有匹配的路由组件调用 `asyncData()`</span></span><br><span class="line">            <span class="built_in">Promise</span>.all(matchedComponents.map(<span class="function"><span class="params">Component</span> =&gt;</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (Component.asyncData) &#123;</span><br><span class="line">                    <span class="keyword">return</span> Component.asyncData(&#123;</span><br><span class="line">                        store,</span><br><span class="line">                        <span class="attr">route</span>: router.currentRoute</span><br><span class="line">                    &#125;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;)).then(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">                <span class="comment">// 状态传递给renderer的上下文，方便后面客户端激活数据</span></span><br><span class="line">                context.state = store.state</span><br><span class="line">                resolve(app)</span><br><span class="line">            &#125;).catch(reject);</span><br><span class="line">        &#125;, reject);</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>将state存入context后，在服务端渲染HTML时候，也就是渲染template的时候，context.state会被序列化到<code>window.__INITIAL_STATE__</code>中，方便客户端激活数据。</p>
-<h5 id="第四步：客户端激活状态数据"><a href="#第四步：客户端激活状态数据" class="headerlink" title="第四步：客户端激活状态数据"></a>第四步：客户端激活状态数据</h5><p>服务端预请求数据之后，通过将数据注入到组件中，渲染组件并转化成HTML，然后吐给客户端，那么客户端为了激活后端返回的HTML被解析后的DOM节点，需要将后端渲染组件时用的store的state也同步到浏览器的store中，保证在页面渲染的时候保持与服务器渲染时的数据是一致的，才能完成DOM的激活，也就是我们前面说到的<code>data-server-rendered</code>标记。</p>
-<p>在服务端的渲染中，state已经被序列化到了<code>window.__INITIAL_STATE__</code>，比如我们访问<a target="_blank" rel="noopener" href="http://localhost:3001/?id=1%EF%BC%8C%E6%9F%A5%E7%9C%8B%E9%A1%B5%E9%9D%A2%E6%BA%90%E4%BB%A3%E7%A0%81">http://localhost:3001?id=1，查看页面源代码</a></p>
-<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%E5%8E%9F%E7%90%86/image-20200802153036538.png" alt="image-20200802153036538"></p>
-<p>可以看到，状态已经被序列化到<code>window.__INITIAL_STATE__</code>中，我们需要做的就是将这个<code>window.__INITIAL_STATE__</code>在客户端渲染之前，同步到客户端的store中，下面修改client-entry.js</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; app, router, store &#125; = createApp();</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">window</span>.__INITIAL_STATE__) &#123;</span><br><span class="line">  	<span class="comment">// 激活状态数据</span></span><br><span class="line">    store.replaceState(<span class="built_in">window</span>.__INITIAL_STATE__);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">router.onReady(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    app.$mount(<span class="string">&#x27;#app&#x27;</span>, <span class="literal">true</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>通过使用store的replaceState函数，将<code>window.__INITIAL_STATE__</code>同步到store内部，完成数据模型的状态同步。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>当浏览器访问服务端渲染项目时，服务端将URL传给到预选构建好的VUE应用渲染器，渲染器匹配到对应的路由的组件之后，执行我们预先在组件内定义的asyncData方法获取数据，并将获取完的数据传递给渲染器的上下文，利用template组装成HTML，并将HTML和状态state一并吐给前端浏览器，浏览器加载了构建好的客户端VUE应用后，将state数据同步到前端的store中，并根据数据激活后端返回的被浏览器解析为DOM元素的HTML文本，完成了数据状态、路由、组件的同步，同时使得页面得到直出，较少了白屏时间，有了更好的加载体验，同时更有利于SEO。</p>
-<p>个人觉得了解服务端渲染，有助于提升前端工程师的综合能力，因为它的内容除了前端框架，还有前端构建和后端内容，是一个性价比还挺高的知识，不学白不学，加油！</p>
-<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/59578433/answer/326694511">为什么现在又流行服务端渲染html？</a></li>
-<li><a target="_blank" rel="noopener" href="https://ssr.vuejs.org/zh/">Vue.js服务端渲染指南</a></li>
-<li><a target="_blank" rel="noopener" href="https://juejin.im/post/6844903881390964744">从头开始，彻底理解服务端渲染原理(8千字汇总长文)</a></li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/09/09/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93%E5%8E%9F%E7%90%86/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-从react转职到vue开发的项目准备" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -731,183 +396,19 @@ var _hmt = _hmt || [];
 
 
   
-    <article id="post-一次关于Vue的自我模拟面试" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>昨晚做了一个梦，梦见自己到了一家大厂面试，面试官走近房间，坐了下来：是杨溜溜吧？国际惯例，先来个自我介绍吧。</p>
-<p>于是我巴拉巴拉开始了长达两分钟的自我介绍，与此同时，面试官边听边看我的简历，边看边皱眉，结束后问：看你之前的项目经常用到Vue，对Vue熟悉吗？</p>
-<p>我嘴角一笑，心里暗喜：幸好有专门看Vue的面试题，看来这次稳了。于是谦虚又装逼的回答：还行吧，您随便问。</p>
-<p>于是面试官看我口气那么大，心想：哟嚯，来了一个装逼的，劳资今天就只问Vue。</p>
-<h2 id="来，先介绍一下Vue的响应式系统"><a href="#来，先介绍一下Vue的响应式系统" class="headerlink" title="来，先介绍一下Vue的响应式系统"></a>来，先介绍一下Vue的响应式系统</h2><p>Vue为MVVM框架，当数据模型data变化时，页面视图会得到响应更新，其原理对data的getter/setter方法进行拦截（Object.defineProperty或者Proxy），利用发布订阅的设计模式，在getter方法中进行订阅，在setter方法中发布通知，让所有订阅者完成响应。</p>
-<p>在响应式系统中，Vue会为数据模型data的每一个属性新建一个订阅中心作为发布者，而监听器watch、计算属性computed、视图渲染template/render三个角色同时作为订阅者，对于监听器watch，会直接订阅观察监听的属性，对于计算属性computed和视图渲染template/render，如果内部执行获取了data的某个属性，就会执行该属性的getter方法，然后自动完成对该属性的订阅，当属性被修改时，就会执行该属性的setter方法，从而完成该属性的发布通知，通知所有订阅者进行更新。</p>
-<h2 id="computed与watch的区别"><a href="#computed与watch的区别" class="headerlink" title="computed与watch的区别"></a>computed与watch的区别</h2><p>计算属性computed和监听器watch都可以观察属性的变化从而做出响应，不同的是：</p>
-<p>计算属性computed更多是作为缓存功能的观察者，它可以将一个或者多个data的属性进行复杂的计算生成一个新的值，提供给渲染函数使用，当依赖的属性变化时，computed不会立即重新计算生成新的值，而是先标记为脏数据，当下次computed被获取时候，才会进行重新计算并返回。</p>
-<p>而监听器watch并不具备缓存性，监听器watch提供一个监听函数，当监听的属性发生变化时，会立即执行该函数。</p>
-<h2 id="介绍一下Vue的生命周期"><a href="#介绍一下Vue的生命周期" class="headerlink" title="介绍一下Vue的生命周期"></a>介绍一下Vue的生命周期</h2><p><code>beforeCreate</code>：是new Vue()之后触发的第一个钩子，在当前阶段data、methods、computed以及watch上的数据和方法都不能被访问。</p>
-<p><code>created</code>：在实例创建完成后发生，当前阶段已经完成了数据观测，也就是可以使用数据，更改数据，在这里更改数据不会触发updated函数。可以做一些初始数据的获取，在当前阶段无法与Dom进行交互，如果非要想，可以通过vm.$nextTick来访问Dom。</p>
-<p><code>beforeMount</code>：发生在挂载之前，在这之前template模板已导入渲染函数编译。而当前阶段虚拟Dom已经创建完成，即将开始渲染。在此时也可以对数据进行更改，不会触发updated。</p>
-<p><code>mounted</code>：在挂载完成后发生，在当前阶段，真实的Dom挂载完毕，数据完成双向绑定，可以访问到Dom节点，使用$refs属性对Dom进行操作。</p>
-<p><code>beforeUpdate</code>：发生在更新之前，也就是响应式数据发生更新，虚拟dom重新渲染之前被触发，你可以在当前阶段进行更改数据，不会造成重渲染。</p>
-<p><code>updated</code>：发生在更新完成之后，当前阶段组件Dom已完成更新。要注意的是避免在此期间更改数据，因为这可能会导致无限循环的更新。</p>
-<p><code>beforeDestroy</code>：发生在实例销毁之前，在当前阶段实例完全可以被使用，我们可以在这时进行善后收尾工作，比如清除计时器。</p>
-<p><code>destroyed</code>：发生在实例销毁之后，这个时候只剩下了dom空壳。组件已被拆解，数据绑定被卸除，监听被移出，子实例也统统被销毁。</p>
-<h2 id="为什么组件的data必须是一个函数"><a href="#为什么组件的data必须是一个函数" class="headerlink" title="为什么组件的data必须是一个函数"></a>为什么组件的data必须是一个函数</h2><p>一个组件可能在很多地方使用，也就是会创建很多个实例，如果data是一个对象的话，对象是引用类型，一个实例修改了data会影响到其他实例，所以data必须使用函数，为每一个实例创建一个属于自己的data，使其同一个组件的不同实例互不影响。</p>
-<h2 id="组件之间是怎么通信的"><a href="#组件之间是怎么通信的" class="headerlink" title="组件之间是怎么通信的"></a>组件之间是怎么通信的</h2><ul>
-<li>父子组件通信</li>
-</ul>
-<p>父组件 -&gt; 子组件：<code>prop</code></p>
-<p>子组件 -&gt; 父组件：<code>$on/$emit</code></p>
-<p>获取组件实例：使用<code>$parent/$children</code>，<code>$refs.xxx</code>，获取到实例后直接获取属性数据或调用组件方法</p>
-<ul>
-<li>兄弟组件通信</li>
-</ul>
-<p>Event Bus：每一个Vue实例都是一个Event Bus，都支持<code>$on/$emit</code>，可以为兄弟组件的实例之间new一个Vue实例，作为Event Bus进行通信。</p>
-<p>Vuex：将状态和方法提取到Vuex，完成共享</p>
-<ul>
-<li>跨级组件通信</li>
-</ul>
-<p>使用provide/inject</p>
-<p>Event Bus：同兄弟组件Event Bus通信</p>
-<p>Vuex：将状态和方法提取到Vuex，完成共享</p>
-<h2 id="Vue事件绑定原理说一下"><a href="#Vue事件绑定原理说一下" class="headerlink" title="Vue事件绑定原理说一下"></a>Vue事件绑定原理说一下</h2><p>每一个Vue实例都是一个Event Bus，当子组件被创建的时候，父组件将事件传递给子组件，子组件初始化的时候是有<code>$on</code>方法将事件注册到内部，在需要的时候使用<code>$emit</code>触发函数，而对于原生native事件，使用addEventListener绑定到真实的DOM元素上。</p>
-<h2 id="slot是什么？有什么作用？原理是什么？"><a href="#slot是什么？有什么作用？原理是什么？" class="headerlink" title="slot是什么？有什么作用？原理是什么？"></a>slot是什么？有什么作用？原理是什么？</h2><p>slot又名插槽，是Vue的内容分发机制，组件内部的模板引擎使用slot元素作为承载分发内容的出口。插槽slot是子组件的一个模板标签元素，而这一个标签元素是否显示，以及怎么显示是由父组件决定的。</p>
-<p>slot又分三类，默认插槽，具名插槽和作用域插槽。</p>
-<ul>
-<li>默认插槽：又名匿名查抄，当slot没有指定name属性值的时候一个默认显示插槽，一个组件内只有有一个匿名插槽。</li>
-<li>具名插槽：带有具体名字的插槽，也就是带有name属性的slot，一个组件可以出现多个具名插槽。</li>
-<li>作用域插槽：默认插槽、具名插槽的一个变体，可以是匿名插槽，也可以是具名插槽，该插槽的不同点是在子组件渲染作用域插槽时，可以将子组件内部的数据传递给父组件，让父组件根据子组件的传递过来的数据决定如何渲染该插槽。</li>
-</ul>
-<p>实现原理：当子组件vm实例化时，获取到父组件传入的slot标签的内容，存放在<code>vm.$slot</code>中，默认插槽为<code>vm.$slot.default</code>，具名插槽为<code>vm.$slot.xxx</code>，xxx 为插槽名，当组件执行渲染函数时候，遇到slot标签，使用<code>$slot</code>中的内容进行替换，此时可以为插槽传递数据，若存在数据，则可称该插槽为作用域插槽。</p>
-<h2 id="Vue模板渲染的原理是什么？"><a href="#Vue模板渲染的原理是什么？" class="headerlink" title="Vue模板渲染的原理是什么？"></a>Vue模板渲染的原理是什么？</h2><p>vue中的模板template无法被浏览器解析并渲染，因为这不属于浏览器的标准，不是正确的HTML语法，所有需要将template转化成一个JavaScript函数，这样浏览器就可以执行这一个函数并渲染出对应的HTML元素，就可以让视图跑起来了，这一个转化的过程，就成为模板编译。</p>
-<p>模板编译又分三个阶段，解析parse，优化optimize，生成generate，最终生成可执行函数render。</p>
-<ul>
-<li>parse阶段：使用大量的正则表达式对template字符串进行解析，将标签、指令、属性等转化为抽象语法树AST。</li>
-<li>optimize阶段：遍历AST，找到其中的一些静态节点并进行标记，方便在页面重渲染的时候进行diff比较时，直接跳过这一些静态节点，优化runtime的性能。</li>
-<li>generate阶段：将最终的AST转化为render函数字符串。</li>
-</ul>
-<h2 id="template预编译是什么？"><a href="#template预编译是什么？" class="headerlink" title="template预编译是什么？"></a>template预编译是什么？</h2><p>对于 Vue 组件来说，模板编译只会在组件实例化的时候编译一次，生成渲染函数之后在也不会进行编译。因此，编译对组件的 runtime 是一种性能损耗。</p>
-<p>而模板编译的目的仅仅是将template转化为<code>render function</code>，这个过程，正好可以在项目构建的过程中完成，这样可以让实际组件在 runtime 时直接跳过模板渲染，进而提升性能，这个在项目构建的编译template的过程，就是预编译。</p>
-<h2 id="那template和jsx的有什么分别？"><a href="#那template和jsx的有什么分别？" class="headerlink" title="那template和jsx的有什么分别？"></a>那template和jsx的有什么分别？</h2><p>对于 runtime 来说，只需要保证组件存在 render 函数即可，而我们有了预编译之后，我们只需要保证构建过程中生成 render 函数就可以。</p>
-<p>在 webpack 中，我们使用<code>vue-loader</code>编译.vue文件，内部依赖的<code>vue-template-compiler</code>模块，在 webpack 构建过程中，将template预编译成 render 函数。</p>
-<p>与 react 类似，在添加了jsx的语法糖解析器<code>babel-plugin-transform-vue-jsx</code>之后，就可以直接手写render函数。</p>
-<p>所以，template和jsx的都是render的一种表现形式，不同的是：</p>
-<p>JSX相对于template而言，具有更高的灵活性，在复杂的组件中，更具有优势，而 template 虽然显得有些呆滞。但是 template 在代码结构上更符合视图与逻辑分离的习惯，更简单、更直观、更好维护。</p>
-<h2 id="说一下什么是Virtual-DOM"><a href="#说一下什么是Virtual-DOM" class="headerlink" title="说一下什么是Virtual DOM"></a>说一下什么是Virtual DOM</h2><p>Virtual DOM 是 DOM 节点在 JavaScript 中的一种抽象数据结构，之所以需要虚拟DOM，是因为浏览器中操作DOM的代价比较昂贵，频繁操作DOM会产生性能问题。虚拟DOM的作用是在每一次响应式数据发生变化引起页面重渲染时，Vue对比更新前后的虚拟DOM，匹配找出尽可能少的需要更新的真实DOM，从而达到提升性能的目的。</p>
-<h2 id="介绍一下Vue中的Diff算法"><a href="#介绍一下Vue中的Diff算法" class="headerlink" title="介绍一下Vue中的Diff算法"></a>介绍一下Vue中的Diff算法</h2><p>在新老虚拟DOM对比时</p>
-<ul>
-<li>首先，对比节点本身，判断是否为同一节点，如果不为相同节点，则删除该节点重新创建节点进行替换</li>
-<li>如果为相同节点，进行patchVnode，判断如何对该节点的子节点进行处理，先判断一方有子节点一方没有子节点的情况(如果新的children没有子节点，将旧的子节点移除)</li>
-<li>比较如果都有子节点，则进行updateChildren，判断如何对这些新老节点的子节点进行操作（diff核心）。</li>
-<li>匹配时，找到相同的子节点，递归比较子节点</li>
-</ul>
-<p>在diff中，只对同层的子节点进行比较，放弃跨级的节点比较，使得时间复杂从<code>O(n^3)</code>降低值<code>O(n)</code>，也就是说，只有当新旧children都为多个子节点时才需要用核心的Diff算法进行同层级比较。</p>
-<h2 id="key属性的作用是什么"><a href="#key属性的作用是什么" class="headerlink" title="key属性的作用是什么"></a>key属性的作用是什么</h2><p>在对节点进行diff的过程中，判断是否为相同节点的一个很重要的条件是key是否相等，如果是相同节点，则会尽可能的复用原有的DOM节点。所以key属性是提供给框架在diff的时候使用的，而非开发者。</p>
-<h2 id="说说Vue2-0和Vue3-0有什么区别"><a href="#说说Vue2-0和Vue3-0有什么区别" class="headerlink" title="说说Vue2.0和Vue3.0有什么区别"></a>说说Vue2.0和Vue3.0有什么区别</h2><ol>
-<li>重构响应式系统，使用Proxy替换Object.defineProperty，使用Proxy优势：</li>
-</ol>
-<ul>
-<li>可直接监听数组类型的数据变化</li>
-<li>监听的目标为对象本身，不需要像Object.defineProperty一样遍历每个属性，有一定的性能提升</li>
-<li>可拦截apply、ownKeys、has等13种方法，而Object.defineProperty不行</li>
-<li>直接实现对象属性的新增/删除</li>
-</ul>
-<ol start="2">
-<li>新增Composition API，更好的逻辑复用和代码组织</li>
-<li>重构 Virtual DOM</li>
-</ol>
-<ul>
-<li>模板编译时的优化，将一些静态节点编译成常量</li>
-<li>slot优化，将slot编译为lazy函数，将slot的渲染的决定权交给子组件</li>
-<li>模板中内联事件的提取并重用（原本每次渲染都重新生成内联函数）</li>
-</ul>
-<ol start="4">
-<li>代码结构调整，更便于Tree shaking，使得体积更小</li>
-<li>使用Typescript替换Flow</li>
-</ol>
-<h2 id="为什么要新增Composition-API，它能解决什么问题"><a href="#为什么要新增Composition-API，它能解决什么问题" class="headerlink" title="为什么要新增Composition API，它能解决什么问题"></a>为什么要新增Composition API，它能解决什么问题</h2><p>Vue2.0中，随着功能的增加，组件变得越来越复杂，越来越难维护，而难以维护的根本原因是Vue的API设计迫使开发者使用watch，computed，methods选项组织代码，而不是实际的业务逻辑。</p>
-<p>另外Vue2.0缺少一种较为简洁的低成本的机制来完成逻辑复用，虽然可以minxis完成逻辑复用，但是当mixin变多的时候，会使得难以找到对应的data、computed或者method来源于哪个mixin，使得类型推断难以进行。</p>
-<p>所以Composition API的出现，主要是也是为了解决Option API带来的问题，第一个是代码组织问题，Compostion API可以让开发者根据业务逻辑组织自己的代码，让代码具备更好的可读性和可扩展性，也就是说当下一个开发者接触这一段不是他自己写的代码时，他可以更好的利用代码的组织反推出实际的业务逻辑，或者根据业务逻辑更好的理解代码。</p>
-<p>第二个是实现代码的逻辑提取与复用，当然mixin也可以实现逻辑提取与复用，但是像前面所说的，多个mixin作用在同一个组件时，很难看出property是来源于哪个mixin，来源不清楚，另外，多个mixin的property存在变量命名冲突的风险。而Composition API刚好解决了这两个问题。</p>
-<h2 id="都说Composition-API与React-Hook很像，说说区别"><a href="#都说Composition-API与React-Hook很像，说说区别" class="headerlink" title="都说Composition API与React Hook很像，说说区别"></a>都说Composition API与React Hook很像，说说区别</h2><p>从React Hook的实现角度看，React Hook是根据useState调用的顺序来确定下一次重渲染时的state是来源于哪个useState，所以出现了以下限制</p>
-<ul>
-<li>不能在循环、条件、嵌套函数中调用Hook</li>
-<li>必须确保总是在你的React函数的顶层调用Hook</li>
-<li>useEffect、useMemo等函数必须手动确定依赖关系</li>
-</ul>
-<p>而Composition API是基于Vue的响应式系统实现的，与React Hook的相比</p>
-<ul>
-<li>声明在setup函数内，一次组件实例化只调用一次setup，而React Hook每次重渲染都需要调用Hook，使得React的GC比Vue更有压力，性能也相对于Vue来说也较慢</li>
-<li>Compositon API的调用不需要顾虑调用顺序，也可以在循环、条件、嵌套函数中使用</li>
-<li>响应式系统自动实现了依赖收集，进而组件的部分的性能优化由Vue内部自己完成，而React Hook需要手动传入依赖，而且必须必须保证依赖的顺序，让useEffect、useMemo等函数正确的捕获依赖变量，否则会由于依赖不正确使得组件性能下降。</li>
-</ul>
-<p>虽然Compositon API看起来比React Hook好用，但是其设计思想也是借鉴React Hook的。</p>
-<h2 id="SSR有了解吗？原理是什么？"><a href="#SSR有了解吗？原理是什么？" class="headerlink" title="SSR有了解吗？原理是什么？"></a>SSR有了解吗？原理是什么？</h2><p>在客户端请求服务器的时候，服务器到数据库中获取到相关的数据，并且在服务器内部将Vue组件渲染成HTML，并且将数据、HTML一并返回给客户端，这个在服务器将数据和组件转化为HTML的过程，叫做服务端渲染SSR。</p>
-<p>而当客户端拿到服务器渲染的HTML和数据之后，由于数据已经有了，客户端不需要再一次请求数据，而只需要将数据同步到组件或者Vuex内部即可。除了数据意外，HTML也结构已经有了，客户端在渲染组件的时候，也只需要将HTML的DOM节点映射到Virtual DOM即可，不需要重新创建DOM节点，这个将数据和HTML同步的过程，又叫做客户端激活。</p>
-<p>使用SSR的好处：</p>
-<ul>
-<li><p>有利于SEO：其实就是有利于爬虫来爬你的页面，因为部分页面爬虫是不支持执行JavaScript的，这种不支持执行JavaScript的爬虫抓取到的非SSR的页面会是一个空的HTML页面，而有了SSR以后，这些爬虫就可以获取到完整的HTML结构的数据，进而收录到搜索引擎中。</p>
-</li>
-<li><p>白屏时间更短：相对于客户端渲染，服务端渲染在浏览器请求URL之后已经得到了一个带有数据的HTML文本，浏览器只需要解析HTML，直接构建DOM树就可以。而客户端渲染，需要先得到一个空的HTML页面，这个时候页面已经进入白屏，之后还需要经过加载并执行 JavaScript、请求后端服务器获取数据、JavaScript 渲染页面几个过程才可以看到最后的页面。特别是在复杂应用中，由于需要加载 JavaScript 脚本，越是复杂的应用，需要加载的 JavaScript 脚本就越多、越大，这会导致应用的首屏加载时间非常长，进而降低了体验感。</p>
-</li>
-</ul>
-<p>更多详情查看<a target="_blank" rel="noopener" href="https://github.com/yacan8/blog/issues/30">彻底理解服务端渲染 - SSR原理</a></p>
-<h2 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h2><p>面试官点了点头，嗯呢，这小伙还可以，懂得还挺多，可以弄进来写业务。</p>
-<p>我也暗自窃喜，幸亏没问到我不会的，然后我坐那傻笑，笑着笑着，突然听到我的闹铃响了，然后，我梦醒了。</p>
-<p>然后，新的搬砖的一天又开始了。</p>
-<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://juejin.im/post/6844904084374290446">「面试题」20+Vue面试题整理</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/yacan8/blog/issues/26">面试官：聊聊对Vue.js框架的理解</a></li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/09/09/%E4%B8%80%E6%AC%A1%E5%85%B3%E4%BA%8EVue%E7%9A%84%E8%87%AA%E6%88%91%E6%A8%A1%E6%8B%9F%E9%9D%A2%E8%AF%95/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-我们把公司前端慢慢架构了" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>笔者本科是在成都的一所双非大学念的，四年前大四的找工作时候，由于没什么好公司愿意到我们学校招人，于是我每天到隔壁985电子科技大学蹲点混宣讲会，经过了一个多月的不要脸的摸爬滚打，终于收到杭州的一家独角兽公司的offer，月薪8K，贼开心，不久之后，我就到了这家公司上班。</p>
+        <hr>
+<p>title：优化架沟<br>date：2021-09-18 17:00:00<br>tags：</p>
+<ul>
+<li>重构</li>
+<li>前端</li>
+</ul>
+<hr>
+<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>笔者本科是在成都的一所双非大学念的，四年前大四的找工作时候，由于没什么好公司愿意到我们学校招人，于是我每天到隔壁985电子科技大学蹲点混宣讲会，经过了一个多月的不要脸的摸爬滚打，终于收到杭州的一家独角兽公司的offer，月薪8K，贼开心，不久之后，我就到了这家公司上班。</p>
 <h2 id="项目初态"><a href="#项目初态" class="headerlink" title="项目初态"></a>项目初态</h2><p>这家独角兽公司主要是toB的业务，对于前端的需求来说，项目是一个非常大的管理平台，当时前端架构也非常非常古老，前后端并没有分离，整体架构大体是这样的。</p>
 <p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E6%88%91%E4%BB%AC%E6%8A%8A%E5%85%AC%E5%8F%B8%E5%89%8D%E7%AB%AF%E6%85%A2%E6%85%A2%E6%9E%B6%E6%9E%84%E4%BA%86/image-20201119205537278.png" alt="image-20201119205537278"></p>
 <p>一个非常大的Java项目，用的阿里开源的JavaWeb框架Webx，然后用了类似JSP之类的东西，也就是velocity模板来渲染页面，而前端需要编写jQuery脚本和CSS脚本来完成功能，这些脚本放在Webx的静态资源目录，在velocity模板中引入对应的脚本。</p>
@@ -1034,7 +535,15 @@ var _hmt = _hmt || [];
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>最近，项目进入维护期，基本没有什么需求，比较闲，这让我莫名的有了危机感，每天像是在混日子，感觉这像是在温水煮青蛙，已经毕业3年了，很怕自己到了5年经验的时候，能力却和3年经验的时候一样，没什么长进。于是开始整理自己的技术点，刚好查漏补缺，在收藏夹在翻出了一篇文章<a target="_blank" rel="noopener" href="https://juejin.im/post/6844903830887366670">一名【合格】前端工程师的自检清单</a>，看到了里面的两个问题：</p>
+        <hr>
+<p>title：深入理解Chrome V8垃圾回收机制<br>date：2021-09-16 16:08:00<br>tags：</p>
+<ul>
+<li>前端</li>
+<li>Chreom</li>
+<li>JavaScript</li>
+</ul>
+<hr>
+<p>最近，项目进入维护期，基本没有什么需求，比较闲，这让我莫名的有了危机感，每天像是在混日子，感觉这像是在温水煮青蛙，已经毕业3年了，很怕自己到了5年经验的时候，能力却和3年经验的时候一样，没什么长进。于是开始整理自己的技术点，刚好查漏补缺，在收藏夹在翻出了一篇文章<a target="_blank" rel="noopener" href="https://juejin.im/post/6844903830887366670">一名【合格】前端工程师的自检清单</a>，看到了里面的两个问题：</p>
 <ul>
 <li><code>JavaScript</code>中的变量在内存中的具体存储形式是什么？</li>
 <li>浏览器的垃圾回收机制，如何避免内存泄漏？</li>
@@ -1355,6 +864,356 @@ var _hmt = _hmt || [];
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2021/09/09/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-如何理解TCPIP协议？" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/06/29/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3TCPIP%E5%8D%8F%E8%AE%AE%EF%BC%9F/">如何理解TCPIP协议？</a>
+    </h1>
+  
+
+        
+        <a href="/2021/06/29/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3TCPIP%E5%8D%8F%E8%AE%AE%EF%BC%9F/" class="archive-article-date">
+  	<time datetime="2021-06-29T12:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-29</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="一、是什么"><a href="#一、是什么" class="headerlink" title="一、是什么"></a>一、是什么</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;从字面意义上讲，有人可能会认为 TCP/IP 是指 TCP 和 IP 两种协议。实际生活当中有时也确实就是指这两种协议。然而在很多情况下，它只是利用 IP 进行通信时所必须用到的协议群的统称。具体来说，IP 或 ICMP、TCP 或 UDP、TELNET 或 FTP、以及 HTTP 等都属于 TCP/IP 协议。他们与 TCP 或 IP 的关系紧密，是互联网必不可少的组成部分。TCP/IP 一词泛指这些协议，因此，有时也称 TCP/IP 为网际协议群。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;互联网进行通信时，需要相应的网络协议，TCP/IP 原本就是为使用互联网而开发制定的协议族。因此，互联网的协议就是 TCP/IP，TCP/IP 就是互联网的协议。</p>
+<p><img src="https://files.mdnice.com/user/10342/3c26da6f-ae77-40f7-ad60-76ddbbe4a4fe.png"></p>
+<ul>
+<li>TCP（传输控制协议）</li>
+</ul>
+<p>一种面向连接的、可靠的、基于字节流的传输层通信协</p>
+<ul>
+<li>IP（网际协议）</li>
+</ul>
+<p>用于封包交换数据网络的协议</p>
+<p>TCP/IP协议不仅仅指的是<font color=red>TCP</font>和IP两个协议，而是指一个由<font color=red>FTP、SMTP、TCP、UDP、IP</font>等协议构成的协议簇，</p>
+<p>只是因为在<font color=#E21918>TCP/IP</font>协议中<font color=#E21018>TCP</font>协议和<font color=#E21918>IP</font>协议最具代表性，所以通称为TCP/IP协议族（英语：TCP/IP Protocol Suite，或TCP/IP Protocols）</p>
+        
+          <a class="article-more-a" href="/2021/06/29/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3TCPIP%E5%8D%8F%E8%AE%AE%EF%BC%9F/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机网络</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">TCP/IP</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/06/29/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3TCPIP%E5%8D%8F%E8%AE%AE%EF%BC%9F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Vue组件化开发" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/06/24/Vue%E7%BB%84%E4%BB%B6%E5%8C%96%E5%BC%80%E5%8F%91/">Vue组件化开发</a>
+    </h1>
+  
+
+        
+        <a href="/2021/06/24/Vue%E7%BB%84%E4%BB%B6%E5%8C%96%E5%BC%80%E5%8F%91/" class="archive-article-date">
+  	<time datetime="2021-06-24T11:12:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-24</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="什么是Vue组件？"><a href="#什么是Vue组件？" class="headerlink" title="什么是Vue组件？"></a>什么是Vue组件？</h2><p><a target="_blank" rel="noopener" href="https://cn.vuejs.org/v2/guide/components.html">组件 (Component) 是 Vue.js 最强大的功能之一。组件可以扩展 HTML 元素，封装可重用的代码。在较高层面上，组件是自定义元素，Vue.js 的编译器为它添加特殊功能。在有些情况下，组件也可以是原生 HTML 元素的形式，以 is 特性扩展。</a></p>
+<br />
+<br />
+
+<h2 id="Vue组件间通信"><a href="#Vue组件间通信" class="headerlink" title="Vue组件间通信"></a>Vue组件间通信</h2><h3 id="父组件向子组件通信"><a href="#父组件向子组件通信" class="headerlink" title="父组件向子组件通信"></a>父组件向子组件通信</h3><h4 id="方法一：props"><a href="#方法一：props" class="headerlink" title="方法一：props"></a>方法一：props</h4><p>使用<a target="_blank" rel="noopener" href="https://cn.vuejs.org/v2/guide/components.html#Prop">props</a>，父组件可以使用props向子组件传递数据。</p>
+<p>父组件vue模板father.vue</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">child</span> <span class="attr">:msg</span>=<span class="string">&quot;message&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">child</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="keyword">import</span> child <span class="keyword">from</span> <span class="string">&#x27;./child.vue&#x27;</span>;</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span><br><span class="line"><span class="javascript">    <span class="attr">components</span>: &#123;</span></span><br><span class="line"><span class="javascript">        child</span></span><br><span class="line"><span class="javascript">    &#125;,</span></span><br><span class="line"><span class="javascript">    data () &#123;</span></span><br><span class="line"><span class="javascript">        <span class="keyword">return</span> &#123;</span></span><br><span class="line"><span class="javascript">            <span class="attr">message</span>: <span class="string">&#x27;father message&#x27;</span>;</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript">    &#125;</span></span><br><span class="line"><span class="javascript">&#125;</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+        
+          <a class="article-more-a" href="/2021/06/24/Vue%E7%BB%84%E4%BB%B6%E5%8C%96%E5%BC%80%E5%8F%91/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">组件化开发</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Vue</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">前端</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/06/24/Vue%E7%BB%84%E4%BB%B6%E5%8C%96%E5%BC%80%E5%8F%91/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-前端赋能业务-Node实现自动化部署平台" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/03/21/%E5%89%8D%E7%AB%AF%E8%B5%8B%E8%83%BD%E4%B8%9A%E5%8A%A1-Node%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2%E5%B9%B3%E5%8F%B0/">前端赋能业务 - Node实现自动化部署平台</a>
+    </h1>
+  
+
+        
+        <a href="/2020/03/21/%E5%89%8D%E7%AB%AF%E8%B5%8B%E8%83%BD%E4%B8%9A%E5%8A%A1-Node%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2%E5%B9%B3%E5%8F%B0/" class="archive-article-date">
+  	<time datetime="2020-03-21T13:02:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-21</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>是否有很多人跟我一样有这样的一个烦恼，每天有写不完的需求、改不完的BUG，每天撸着重复、繁琐的业务代码，担心着自己的技术成长。</p>
+<p>其实换个角度，我们所学的所有前端技术都是服务于业务的，那我们为什么不想办法使用前端技术为业务做点东西？这样既能解决业务的困扰，也能让自己摆脱每天只能写重复繁琐代码的困扰。</p>
+<p>本文主要为笔者针对当前团队内的一些业务问题，实现的一个自动化部署平台的技术方案。</p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>去年年初，由于团队里没有前端，刚好我是被招过来的第一个，也是唯一一个FE，于是我接手了一个一直由后端维护的JSSDK项目，其实也说不上项目，接手的时候它只是一个2000多行代码的胖脚本，没有任何工程化痕迹。</p>
+<h3 id="业务需求"><a href="#业务需求" class="headerlink" title="业务需求"></a>业务需求</h3><p>这个JSSDK，主要作用是在后端了为业务方分配appKey之后，前端将appKey写死在JSSDK中，上传到CDN后，为业务方提供数据采集服务的脚本。</p>
+<p>有的同学可能有疑问，为什么不像一些正常的SDK一样，appKey是以参数的形式传入到JSSDK中，这样就可以统一所有业务方使用同一个JSSDK，而不需要为每个业务业务方都提供一个JSSDK。其实我刚开始也是这么想的，于是我向我的leader提出了我的这个想法，被拒绝了，拒绝原因如下：</p>
+<ul>
+<li>appKey如果以参数形式传入，对业务方的接入成本有所增加，会出现appKey填错的问题。</li>
+<li>业务方接入JSSDK之后，希望每次JSSDK版本迭代对业务方来说是无感知的（也就是版本迭代是覆盖式发布），如果所有业务方使用同一个JSSDK，每次JSSDK的版本迭代，一次发版会一次性对所有业务方都有影响，会增加风险。</li>
+</ul>
+<p>由于我的leader现在主要是负责产品推广，经常和业务方打交道，可能他更能站在业务方的角度来考虑问题。所以，我的leader选择牺牲项目的维护成本来降低SDK的接入成本和规避风险，可以理解。</p>
+<p>那既然我们改变不了现状，那就只能适应现状。</p>
+<h3 id="项目痛点"><a href="#项目痛点" class="headerlink" title="项目痛点"></a>项目痛点</h3><p>那么针对原来没有任何工程化情况的胖脚本，每次新增一个业务方，我需要做的事情如下：</p>
+<ol>
+<li>打开一个胖脚本和JSSDK接入文档，拷贝一份新的。</li>
+<li>找后端要分配好的appKey，找对对应的appKey那一行代码手动修改。</li>
+<li>手动混淆修改完好的脚本并上传到CDN。</li>
+<li>修改JSSDK接入文档中CDN的地址，保存后发送给业务方。</li>
+</ol>
+<p>整个过程都需要手动进行，相对来说非常繁琐，并且一不小心就会填错，每次都需要对脚本和接入文档进行检查。</p>
+<p>针对以上情况，得到我们需要解决的问题：</p>
+<ul>
+<li>怎样针对一个新的业务方快速输出一份新的JSSDK和接入文档？</li>
+<li>怎样快速对新的JSSDK进行混淆并上传到CDN。</li>
+</ul>
+<h2 id="自动化方案"><a href="#自动化方案" class="headerlink" title="自动化方案"></a>自动化方案</h2><p>介绍方案之前，先上一张平台截图，以便先有一个直观的认识：</p>
+<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E5%89%8D%E7%AB%AF%E8%B5%8B%E8%83%BD%E4%B8%9A%E5%8A%A1-Node%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2%E5%B9%B3%E5%8F%B0/1.jpg" alt="img"></p>
+<p>SDK自动化部署平台主要实现了JSSDK的编译，发布测试（在线预览），上传CDN功能。</p>
+<p>服务端技术栈包括：</p>
+<ul>
+<li>  <a target="_blank" rel="noopener" href="http://expressjs.com/">框架 Express</a></li>
+<li>  <a target="_blank" rel="noopener" href="https://github.com/remy/nodemon">热更新 nodemon</a></li>
+<li>  <a target="_blank" rel="noopener" href="https://github.com/jeffijoe/awilix">依赖注入 awilix</a></li>
+<li>  <a target="_blank" rel="noopener" href="https://github.com/sequelize/sequelize">数据持久化 sequelize</a></li>
+<li>  <a target="_blank" rel="noopener" href="https://pm2.io/">部署 pm2</a></li>
+</ul>
+<p>客户端技术栈就不介绍了，Vue全家桶 + <a target="_blank" rel="noopener" href="https://github.com/kaorun343/vue-property-decorator#readme">vue-property-decorator</a> + <a target="_blank" rel="noopener" href="https://github.com/ktsn/vuex-class">vuex-class</a>。</p>
+<p>项目搭建参考：<a target="_blank" rel="noopener" href="https://juejin.im/post/5ce96694f265da1bc5523f69">Vue+Express+Mysql 全栈初体验</a></p>
+<p>自动化部署平台主要依赖于 GIT + 本地环境 + 私有NPM源 + MYSQL，各环节之间进行通信交互，完成自动化部署。</p>
+<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E5%89%8D%E7%AB%AF%E8%B5%8B%E8%83%BD%E4%B8%9A%E5%8A%A1-Node%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2%E5%B9%B3%E5%8F%B0/2.jpg" alt="img"></p>
+<p>主要达到的效果：本地环境拉取git仓库代码后，进行需求开发，完成后发布一个带Rollup的SDK编译器包到私有NPM仓库，自动化部署平台在工程目录安装指定版本的SDK，并且备份到本地，在SDK编译时，选择特定版本的Rollup的SDK编译器，并传参（如appKey，appId等）到编译器中进行编译，同时自动生成JSSDK接入文档等后打包成带描述文件的Release包，在上传到CDN时，将描述文件的对应的信息写入MYSQL中进行保存。</p>
+<h3 id="版本管理"><a href="#版本管理" class="headerlink" title="版本管理"></a>版本管理</h3><p>由于JSSDK原本只是一个脚本，我们必须实现项目的工程化，从而完成版本管理，方便快速版本切换进行发布，回滚，进而快速止损。</p>
+<p>首先，我们需要将项目工程化，使用<code>Rollup</code>进行模块管理，并且在发包NPM包的时候，输入为各种参数（如appKey）输出为一个<code>Rollup Complier</code>的函数，然后使用<a target="_blank" rel="noopener" href="https://www.npmjs.com/package/rollup-plugin-replace">rollup-plugin-replace</a>在编译时候替换代码中具体的参数。</p>
+<p><code>lib/build.js</code>，JSSDK中发包的入口文件，提供给SDK编译时使用</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> rollup <span class="keyword">from</span> <span class="string">&#x27;rollup&#x27;</span>;</span><br><span class="line"><span class="keyword">const</span> replace = <span class="built_in">require</span>(<span class="string">&#x27;rollup-plugin-replace&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&#x27;path&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> pkgPath = path.join(__dirname, <span class="string">&#x27;..&#x27;</span>, <span class="string">&#x27;package.json&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> pkg = <span class="built_in">require</span>(pkgPath);</span><br><span class="line"><span class="keyword">const</span> proConfig = <span class="built_in">require</span>(<span class="string">&#x27;./proConfig&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getRollupConfig</span>(<span class="params">replaceParams</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> config = proConfig;</span><br><span class="line">    <span class="comment">// 注入系统变量</span></span><br><span class="line">    <span class="keyword">const</span> replacePlugin = replace(&#123;</span><br><span class="line">        <span class="string">&#x27;__JS_SDK_VERSION__&#x27;</span>: <span class="built_in">JSON</span>.stringify(pkg.version),</span><br><span class="line">        <span class="string">&#x27;__SUPPLY_ID__&#x27;</span>: <span class="built_in">JSON</span>.stringify(replaceParams.supplyId || <span class="string">&#x27;7102&#x27;</span>),</span><br><span class="line">        <span class="string">&#x27;__APP_KEY__&#x27;</span>: <span class="built_in">JSON</span>.stringify(replaceParams.appKey)</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="attr">input</span>: config.input,</span><br><span class="line">        <span class="attr">output</span>: config.output,</span><br><span class="line">        <span class="attr">plugins</span>: [</span><br><span class="line">            ...config.plugins,</span><br><span class="line">            replacePlugin</span><br><span class="line">        ]</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = <span class="keyword">async</span> <span class="function"><span class="keyword">function</span> (<span class="params">params</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> config = getRollupConfig(&#123;</span><br><span class="line">        <span class="attr">supplyId</span>: params.supplyId || <span class="string">&#x27;7102&#x27;</span>,</span><br><span class="line">        <span class="attr">appKey</span>: params.appKey</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">const</span> &#123;</span><br><span class="line">        input,</span><br><span class="line">        plugins</span><br><span class="line">    &#125; = config;</span><br><span class="line">    <span class="keyword">const</span> bundle = <span class="keyword">await</span> rollup.rollup(&#123;</span><br><span class="line">        input,</span><br><span class="line">        plugins</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">const</span> compiler = &#123;</span><br><span class="line">        <span class="keyword">async</span> <span class="function"><span class="title">write</span>(<span class="params">file</span>)</span> &#123;</span><br><span class="line">            <span class="keyword">await</span> bundle.write(&#123;</span><br><span class="line">                file,</span><br><span class="line">                <span class="attr">format</span>: <span class="string">&#x27;iife&#x27;</span>,</span><br><span class="line">                <span class="attr">sourcemap</span>: <span class="literal">false</span>,</span><br><span class="line">                <span class="attr">strict</span>: <span class="literal">false</span></span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">return</span> compiler;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在自动化部署平台中，使用<code>shelljs</code>安装JSSDK包：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;route, POST&#125; <span class="keyword">from</span> <span class="string">&#x27;awilix-express&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123;Api&#125; <span class="keyword">from</span> <span class="string">&#x27;../framework/Api&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> shell <span class="keyword">from</span> <span class="string">&#x27;shell&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> path <span class="keyword">from</span> <span class="string">&#x27;path&#x27;</span>;</span><br><span class="line"></span><br><span class="line">@route(<span class="string">&#x27;/supply&#x27;</span>)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">SupplyAPI</span> <span class="keyword">extends</span> <span class="title">Api</span> </span>&#123;</span><br><span class="line">    <span class="comment">// some code</span></span><br><span class="line"></span><br><span class="line">    @route(<span class="string">&#x27;/installSdkVersion&#x27;</span>)</span><br><span class="line">    @POST()</span><br><span class="line">    <span class="keyword">async</span> <span class="function"><span class="title">installSdkVersion</span>(<span class="params">req, res</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> &#123;version&#125; = req.body;</span><br><span class="line">        <span class="keyword">const</span> pkg = <span class="string">`@baidu/xxx-js-sdk@<span class="subst">$&#123;version&#125;</span>`</span>;</span><br><span class="line">        <span class="keyword">const</span> registry = <span class="string">&#x27;http://registry.npm.baidu-int.com&#x27;</span>;</span><br><span class="line">        shell.exec(<span class="string">`npm i <span class="subst">$&#123;pkg&#125;</span> --registry=<span class="subst">$&#123;registry&#125;</span>`</span>, <span class="function">(<span class="params">code, stdout, stderr</span>)  =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (code !== <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="built_in">console</span>.error(stderr);</span><br><span class="line">                res.failPrint(<span class="string">&#x27;npm install fail&#x27;</span>);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// sdk包备份路径</span></span><br><span class="line">            <span class="keyword">const</span> sdkBackupPath = <span class="built_in">this</span>.sdkBackupPath;</span><br><span class="line">            <span class="keyword">const</span> sdkPath = path.resolve(sdkBackupPath, version);</span><br><span class="line">            shell.mkdir(<span class="string">&#x27;-p&#x27;</span>, sdkPath).then(<span class="function">(<span class="params">code, stdout, stderr</span>) =&gt;</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (code !== <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="built_in">console</span>.error(stderr);</span><br><span class="line">                    res.failPrint(<span class="string">`mkdir \`<span class="subst">$&#123;sdkPath&#125;</span>\` error.`</span>);</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">const</span> modulePath = path.resolve(process.cwd(), <span class="string">&#x27;node_modules&#x27;</span>, <span class="string">&#x27;@baidu&#x27;</span>, <span class="string">&#x27;xxx-js-sdk&#x27;</span>);</span><br><span class="line">                <span class="comment">// 拷贝安装后的文件，方便后续使用</span></span><br><span class="line">                shell.cp(<span class="string">&#x27;-rf&#x27;</span>, modulePath + <span class="string">&#x27;/.&#x27;</span>, sdkPath).then(<span class="function">(<span class="params">code, stdout, stderr</span>) =&gt;</span> &#123;</span><br><span class="line">                    <span class="keyword">if</span> (code !== <span class="number">0</span>) &#123;</span><br><span class="line">                        <span class="built_in">console</span>.error(stderr);</span><br><span class="line">                        res.failPrint(<span class="string">`backup sdk error.`</span>);</span><br><span class="line">                        <span class="keyword">return</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    res.successPrint(<span class="string">`<span class="subst">$&#123;pkg&#125;</span> install success.`</span>);</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;)</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Release包"><a href="#Release包" class="headerlink" title="Release包"></a>Release包</h3><p>Release包就是我们在上传到CDN之前需要准备的压缩包。因此，打包JSSDK之后，我们需要生成的文件有，接入文档、JSSDK DEMO预览页面、JSSDK编译结果、描述文件。</p>
+<p>首先，打包函数如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;Service&#125; <span class="keyword">from</span> <span class="string">&#x27;../framework&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> fs <span class="keyword">from</span> <span class="string">&#x27;fs&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> path <span class="keyword">from</span> <span class="string">&#x27;path&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> _ <span class="keyword">from</span> <span class="string">&#x27;lodash&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">SupplyService</span> <span class="keyword">extends</span> <span class="title">Service</span> </span>&#123;</span><br><span class="line">    <span class="keyword">async</span> <span class="function"><span class="title">generateFile</span>(<span class="params">supplyId, sdkVersion</span>)</span> &#123;</span><br><span class="line">        <span class="comment">// 数据库查询对应的业务方的CDN文件名</span></span><br><span class="line">        <span class="keyword">const</span> [sdkInfoErr, sdkInfo] = <span class="keyword">await</span> <span class="built_in">this</span>.supplyDao.getSupplyInfo(supplyId);</span><br><span class="line">        <span class="keyword">if</span> (sdkInfoErr) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">this</span>.fail(<span class="string">&#x27;服务器错误&#x27;</span>, <span class="literal">null</span>, sdkInfoErr);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">const</span> &#123;appKey, cdnFilename, name&#125; = sdkInfo;</span><br><span class="line">        <span class="comment">// 需要替换的数据</span></span><br><span class="line">        <span class="keyword">const</span> data = &#123;</span><br><span class="line">            name,</span><br><span class="line">            supplyId,</span><br><span class="line">            appKey,</span><br><span class="line">            <span class="string">&#x27;sdk_url&#x27;</span>: <span class="string">`https://***.com/sdk/<span class="subst">$&#123;cdnFilename&#125;</span>`</span></span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 编译JSSDK</span></span><br><span class="line">            <span class="keyword">const</span> sdkResult = <span class="keyword">await</span> <span class="built_in">this</span>.buildSdk(supplyId, appKey, sdkVersion);</span><br><span class="line">            <span class="comment">// 生成接入文档</span></span><br><span class="line">            <span class="keyword">const</span> docResult = <span class="keyword">await</span> <span class="built_in">this</span>.generateDocs(data);</span><br><span class="line">            <span class="comment">// 生成预览DEMO html文件</span></span><br><span class="line">            <span class="keyword">const</span> demoHtmlResult = <span class="keyword">await</span> <span class="built_in">this</span>.generateDemoHtml(data, <span class="string">&#x27;sdk-demo.html&#x27;</span>, <span class="string">`JSSDK-接入页面-<span class="subst">$&#123;data.name&#125;</span>.html`</span>);</span><br><span class="line">            <span class="comment">// 生成release包描述文件</span></span><br><span class="line">            <span class="keyword">const</span> sdkInfoFileResult = <span class="keyword">await</span> <span class="built_in">this</span>.writeSdkVersionFile(supplyId, appKey, sdkVersion);</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">const</span> success = docResult &amp;&amp; demoHtmlResult &amp;&amp; sdkInfoFileResult &amp;&amp; sdkResult;</span><br><span class="line">            <span class="keyword">if</span> (success) &#123;</span><br><span class="line">                <span class="comment">// release目标目录</span></span><br><span class="line">                <span class="keyword">const</span> dir = path.join(<span class="built_in">this</span>.releasePath, supplyId + <span class="string">&#x27;&#x27;</span>);</span><br><span class="line">                <span class="keyword">const</span> fileName = <span class="string">`<span class="subst">$&#123;supplyId&#125;</span>-<span class="subst">$&#123;sdkVersion&#125;</span>.zip`</span>;</span><br><span class="line">                <span class="keyword">const</span> zipFileName = path.join(dir, fileName);</span><br><span class="line">                <span class="comment">// 压缩所有结果文件</span></span><br><span class="line">                <span class="keyword">const</span> zipResult = <span class="keyword">await</span> <span class="built_in">this</span>.zipDirFile(dir, zipFileName);</span><br><span class="line">                <span class="keyword">if</span> (!zipResult) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="built_in">this</span>.fail(<span class="string">&#x27;打包失败&#x27;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 返回压缩包提供下载</span></span><br><span class="line">                <span class="keyword">return</span> <span class="built_in">this</span>.success(<span class="string">&#x27;打包成功&#x27;</span>, &#123;</span><br><span class="line">                    <span class="attr">url</span>: <span class="string">`/<span class="subst">$&#123;supplyId&#125;</span>/<span class="subst">$&#123;fileName&#125;</span>`</span></span><br><span class="line">                &#125;);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="built_in">this</span>.fail(<span class="string">&#x27;打包失败&#x27;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">this</span>.fail(<span class="string">&#x27;打包失败&#x27;</span>, <span class="literal">null</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="编译JSSDK"><a href="#编译JSSDK" class="headerlink" title="编译JSSDK"></a>编译JSSDK</h4><p>JSSDK的编译很简单，只需要加载对应版本的JSSDK的编译函数，然后将对应的参数传入编译函数得到一个Rollup Compiler，然后将 Compiler 结果写入Release路径即可。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">SupplyService</span> <span class="keyword">extends</span> <span class="title">Service</span> </span>&#123;</span><br><span class="line">    <span class="keyword">async</span> <span class="function"><span class="title">buildSdk</span>(<span class="params">supplyId, appKey, sdkVersion</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">const</span> sdkBackupPath = <span class="built_in">this</span>.sdkBackupPath;</span><br><span class="line">            <span class="comment">// 加载对应版本的备份的JSSDK包的Rollup编译函数</span></span><br><span class="line">            <span class="keyword">const</span> compileSdk = <span class="built_in">require</span>(path.resolve(sdkBackupPath, sdkVersion, <span class="string">&#x27;lib&#x27;</span>, <span class="string">&#x27;build.js&#x27;</span>));</span><br><span class="line">            <span class="keyword">const</span> bundle = <span class="keyword">await</span> compileSdk(&#123;</span><br><span class="line">                supplyId,</span><br><span class="line">                <span class="attr">appKey</span>: <span class="built_in">Number</span>(sdkInfo.appKey)</span><br><span class="line">            &#125;);</span><br><span class="line">            <span class="keyword">const</span> releasePath = path.resolve(<span class="built_in">this</span>.releasePath, supplyId, <span class="string">`<span class="subst">$&#123;supplyId&#125;</span>-sdk.js`</span>);</span><br><span class="line">            <span class="comment">// Rollup Compiler 编译结果至release目录</span></span><br><span class="line">            <span class="keyword">await</span> bundle.write(releasePath);</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">            <span class="built_in">console</span>.error(e);</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="生成接入文档"><a href="#生成接入文档" class="headerlink" title="生成接入文档"></a>生成接入文档</h4><p>原理很简单，使用<code>JSZip</code>，打开接入文档模板，然后使用<code>Docxtemplater</code>替换模板里的特殊字符，然后重新生成DOC文件：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Docxtemplater <span class="keyword">from</span> <span class="string">&#x27;docxtemplater&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> JSZip <span class="keyword">from</span> <span class="string">&#x27;JSZip&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">SupplyService</span> <span class="keyword">extends</span> <span class="title">Service</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">async</span> <span class="function"><span class="title">generateDocs</span>(<span class="params">data</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="keyword">async</span> (resolve, reject) =&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (data) &#123;</span><br><span class="line">                <span class="comment">// 读取接入文档，替换appKey，cdn路径</span></span><br><span class="line">                <span class="keyword">const</span> supplyId = data.supplyId;</span><br><span class="line">                <span class="keyword">const</span> docsFileName = <span class="string">&#x27;sdk-doc.docx&#x27;</span>;</span><br><span class="line">                <span class="keyword">const</span> supplyFilesPath = path.resolve(process.cwd(), <span class="string">&#x27;src/server/files&#x27;</span>);</span><br><span class="line">                <span class="keyword">const</span> content = fs.readFileSync(path.resolve(supplyFilesPath, docsFileName), <span class="string">&#x27;binary&#x27;</span>);</span><br><span class="line">                <span class="keyword">const</span> zip = <span class="keyword">new</span> JSZip(content);</span><br><span class="line">                <span class="keyword">const</span> doc = <span class="keyword">new</span> Docxtemplater();</span><br><span class="line">                <span class="comment">// 替换`[[`前缀和`]]`后缀的内容</span></span><br><span class="line">                doc.loadZip(zip).setOptions(&#123;<span class="attr">delimiters</span>: &#123;<span class="attr">start</span>: <span class="string">&#x27;[[&#x27;</span>, <span class="attr">end</span>: <span class="string">&#x27;]]&#x27;</span>&#125;&#125;);</span><br><span class="line">                doc.setData(data);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    doc.render();</span><br><span class="line">                &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">                    <span class="built_in">console</span>.error(error);</span><br><span class="line">                    reject(error);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 生成DOC的buffer</span></span><br><span class="line">                <span class="keyword">const</span> buf = doc.getZip().generate(&#123;<span class="attr">type</span>: <span class="string">&#x27;nodebuffer&#x27;</span>&#125;);</span><br><span class="line">                <span class="keyword">const</span> releasePath = path.resolve(<span class="built_in">this</span>.releasePath, supplyId);</span><br><span class="line">                <span class="comment">// 创建目标目录</span></span><br><span class="line">                shell.mkdir(releasePath).then(<span class="function">(<span class="params">code, stdout, stderr</span>) =&gt;</span> &#123;</span><br><span class="line">                    <span class="keyword">if</span> (code !== <span class="number">0</span> ) &#123;</span><br><span class="line">                        resolve(<span class="literal">false</span>);</span><br><span class="line">                        <span class="keyword">return</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="comment">// 将替换后的结果写入release路径</span></span><br><span class="line">                    fs.writeFileSync(path.resolve(releasePath, <span class="string">`JSSDK-文档-<span class="subst">$&#123;data.name&#125;</span>.docx`</span>), buf);</span><br><span class="line">                    resolve(<span class="literal">true</span>);</span><br><span class="line">                &#125;).catch(<span class="function"><span class="params">e</span> =&gt;</span> &#123;</span><br><span class="line">                    <span class="built_in">console</span>.error(e);</span><br><span class="line">                    resolve(<span class="literal">false</span>);</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="生成预览DEMO页面"><a href="#生成预览DEMO页面" class="headerlink" title="生成预览DEMO页面"></a>生成预览DEMO页面</h4><p>与接入文档生成原理类似，打开一个DEMO模板HTML文件，替换内部字符，重新生成文件：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">SupplyService</span> <span class="keyword">extends</span> <span class="title">Service</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="title">generateDemoHtml</span>(<span class="params">data, file, toFile</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">const</span> supplyId = data.supplyId;</span><br><span class="line">            <span class="comment">// 需要替换的数据</span></span><br><span class="line">            <span class="keyword">const</span> replaceData = data;</span><br><span class="line">            <span class="comment">// 打开文件</span></span><br><span class="line">            <span class="keyword">const</span> content = fs.readFileSync(path.resolve(supplyFilesPath, file), <span class="string">&#x27;utf-8&#x27;</span>);</span><br><span class="line">            <span class="comment">// 字符串替换`&#123;&#123;`前缀和`&#125;&#125;`后缀的内容</span></span><br><span class="line">            <span class="keyword">const</span> replaceContent = content.replace(<span class="regexp">/&#123;&#123;(.*)&#125;&#125;/g</span>, <span class="function">(<span class="params">match, key</span>) =&gt;</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> replaceData[key] || match;</span><br><span class="line">            &#125;);</span><br><span class="line">            <span class="keyword">const</span> releasePath = path.resolve(<span class="built_in">this</span>.releasePath, supplyId);</span><br><span class="line">            <span class="comment">// 写入文件</span></span><br><span class="line">            fs.writeFile(path.resolve(releasePath, toFile), replaceContent, <span class="function"><span class="params">err</span> =&gt;</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (err) &#123;</span><br><span class="line">                    <span class="built_in">console</span>.error(err);</span><br><span class="line">                    resolve(<span class="literal">false</span>);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    resolve(<span class="literal">true</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="生成Release包描述文件"><a href="#生成Release包描述文件" class="headerlink" title="生成Release包描述文件"></a>生成Release包描述文件</h4><p>将当前打包的一些参数存在一个文件中的，一并打包到Release包中，作用很简单，用来描述当前打包的一些参数，方便上线CDN的时候记录当前上线的是哪个SDK版本等</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">SupplyService</span> <span class="keyword">extends</span> <span class="title">Service</span> </span>&#123;</span><br><span class="line">    <span class="keyword">async</span> <span class="function"><span class="title">writeSdkVersionFile</span>(<span class="params">supplyId, appKey, sdkVersion</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">const</span> writePath = path.resolve(<span class="built_in">this</span>.releasePath, supplyId, <span class="string">&#x27;version.json&#x27;</span>);</span><br><span class="line">            <span class="comment">// Release描述数据</span></span><br><span class="line">            <span class="keyword">const</span> data = &#123;<span class="attr">version</span>: sdkVersion, appKey, supplyId&#125;;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">// 写入release目录</span></span><br><span class="line">                fs.writeFileSync(writePath, <span class="built_in">JSON</span>.stringify(data));</span><br><span class="line">                resolve(<span class="literal">true</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">                <span class="built_in">console</span>.error(e);</span><br><span class="line">                resolve(<span class="literal">false</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="打包所有文件结果"><a href="#打包所有文件结果" class="headerlink" title="打包所有文件结果"></a>打包所有文件结果</h4><p>将之前生成的JSSDK编译结果、接入文档、预览DEMO页面文件，描述文件使用<code>archive</code>打包起来:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">SupplyService</span> <span class="keyword">extends</span> <span class="title">Service</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="title">zipDirFile</span>(<span class="params">dir, to</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="keyword">async</span> (resolve, reject) =&gt; &#123;</span><br><span class="line">            <span class="keyword">const</span> output = fs.createWriteStream(to);</span><br><span class="line">            <span class="keyword">const</span> archive = archiver(<span class="string">&#x27;zip&#x27;</span>);</span><br><span class="line">            archive.on(<span class="string">&#x27;error&#x27;</span>, <span class="function"><span class="params">err</span> =&gt;</span> reject(err));</span><br><span class="line">            archive.pipe(output);</span><br><span class="line">            <span class="keyword">const</span> files = fs.readdirSync(dir);</span><br><span class="line">            files.forEach(<span class="function"><span class="params">file</span> =&gt;</span> &#123;</span><br><span class="line">                <span class="keyword">const</span> filePath = path.resolve(dir, file);</span><br><span class="line">                <span class="keyword">const</span> info = fs.statSync(filePath);</span><br><span class="line">                <span class="keyword">if</span> (!info.isDirectory()) &#123;</span><br><span class="line">                    archive.append(fs.createReadStream(filePath), &#123;</span><br><span class="line">                        <span class="string">&#x27;name&#x27;</span>: file</span><br><span class="line">                    &#125;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">            archive.finalize();</span><br><span class="line">            resolve(<span class="literal">true</span>);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="CDN部署"><a href="#CDN部署" class="headerlink" title="CDN部署"></a>CDN部署</h3><p>大部分上传到CDN都为像CDN源站push文件，而正好我们运维在我的自动化部署平台的机器上挂载了NFS，即我只需要本地将JSSDK文件拷贝到共享目录，就实现了CDN文件上传。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">SupplyService</span> <span class="keyword">extends</span> <span class="title">Service</span> </span>&#123;</span><br><span class="line">    <span class="keyword">async</span> <span class="function"><span class="title">cp2CDN</span>(<span class="params">supplyId, fileName</span>)</span> &#123;</span><br><span class="line">        <span class="comment">// 读取描述文件</span></span><br><span class="line">        <span class="keyword">const</span> sdkInfoPath = path.resolve(<span class="built_in">this</span>.releasePath, <span class="string">&#x27;&#x27;</span> + supplyId, <span class="string">&#x27;version.json&#x27;</span>);</span><br><span class="line">        <span class="keyword">if</span> (!fs.existsSync(sdkInfoPath)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">this</span>.fail(<span class="string">&#x27;Release描述文件丢失，请重新打包&#x27;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">const</span> sdkInfo = <span class="built_in">JSON</span>.parse(fs.readFileSync(sdkInfoPath, <span class="string">&#x27;utf-8&#x27;</span>));</span><br><span class="line">        sdkInfo.cdnFilename = fileName;</span><br><span class="line">        <span class="comment">// 将文件拷贝至文件共享目录</span></span><br><span class="line">        <span class="keyword">const</span> result = <span class="keyword">await</span> <span class="built_in">this</span>.cpFile(supplyId, fileName, <span class="literal">false</span>);</span><br><span class="line">        <span class="comment">// 上传成功</span></span><br><span class="line">        <span class="keyword">if</span> (result) &#123;</span><br><span class="line">            <span class="comment">// 将Release包描述文件的数据同步到MYSQL</span></span><br><span class="line">            <span class="keyword">const</span> [sdkInfoErr] = <span class="keyword">await</span> <span class="built_in">this</span>.supplyDao.update(sdkInfo, &#123;<span class="attr">where</span>: &#123;supplyId&#125;&#125;);</span><br><span class="line">            <span class="keyword">if</span> (sdkInfoErr) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="built_in">this</span>.fail(<span class="string">&#x27;JSSDK信息记录失败，请重试&#x27;</span>, <span class="literal">null</span>, jssdkInfoResult);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">this</span>.success(<span class="string">&#x27;上传成功&#x27;</span>, &#123;url&#125;)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>.fail(<span class="string">&#x27;上传失败&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="项目成效"><a href="#项目成效" class="headerlink" title="项目成效"></a>项目成效</h2><p>项目效益还是很明显，从本质上解决了我们需要解决的问题：</p>
+<ul>
+<li>完成了项目的工程化，自动化生成JSSDK和接入文档。</li>
+<li>编译过程中自动化进行混淆，并实现了一键上传至CDN。</li>
+</ul>
+<p>节省了人工上传粘贴代码的时间，大大地提高了工作效率。</p>
+<p>这个项目还是19年前半年个人花业余时间完成的工具项目，后来得到了Leader的重视，将工具正式升级为平台，集成了很多业务相关的配置在平台，我19年的前半年KPI就这么来的，哈~~~</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>或者这一套思路对每个业务都比较适用</p>
+<ol>
+<li>了解业务的背景</li>
+<li>发现业务的痛点</li>
+<li>寻找解决方案并主动推进实现</li>
+<li>解决问题</li>
+</ol>
+<p>其实每个项目中的痛点都一般都是XX的性能低下、XX非常低效，还是比较容易发现的，这个时候只需要主动的寻找方案并推进实现就OK了。</p>
+<p>前端技术离不开业务，技术永远服务于业务，离开了业务的技术，那是完全没有落脚点的技术，完全没有意义的技术。所以，除了写写页面，利用前端页面实现工具化、自动化，从而推进到平台化也是一个不错的落脚点选择。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">JavaScript</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">业务</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">自动化</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/03/21/%E5%89%8D%E7%AB%AF%E8%B5%8B%E8%83%BD%E4%B8%9A%E5%8A%A1-Node%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2%E5%B9%B3%E5%8F%B0/">展开全文 >></a>
         </p>
       
 
