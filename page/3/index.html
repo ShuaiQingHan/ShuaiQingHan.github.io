@@ -151,6 +151,128 @@ var _hmt = _hmt || [];
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-关于回流与重绘优化的探索" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/11/18/%E5%85%B3%E4%BA%8E%E5%9B%9E%E6%B5%81%E4%B8%8E%E9%87%8D%E7%BB%98%E4%BC%98%E5%8C%96%E7%9A%84%E6%8E%A2%E7%B4%A2/">回流与重回优化探究</a>
+    </h1>
+  
+
+        
+        <a href="/2018/11/18/%E5%85%B3%E4%BA%8E%E5%9B%9E%E6%B5%81%E4%B8%8E%E9%87%8D%E7%BB%98%E4%BC%98%E5%8C%96%E7%9A%84%E6%8E%A2%E7%B4%A2/" class="archive-article-date">
+  	<time datetime="2018-11-18T07:22:07.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-18</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>看到大佬在群里发了一篇文章<a target="_blank" rel="noopener" href="https://juejin.im/post/5c0c7f28f265da612e2875de">你应该要知道的重绘与重排</a>，文章里有一段骚操作，就是为了减少重绘与重排，合并样式操作，这个骚操作成功的引起了我的注意，然后开启了我的探索。</p>
+<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><p>前言中描述的合并样式的骚操作是如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> el = <span class="built_in">document</span>.querySelector(<span class="string">&#x27;div&#x27;</span>);</span><br><span class="line">el.style.borderLeft = <span class="string">&#x27;1px&#x27;</span>;</span><br><span class="line">el.style.borderRight = <span class="string">&#x27;2px&#x27;</span>;</span><br><span class="line">el.style.padding = <span class="string">&#x27;5px&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>原文描述的大概意思是这段代码多次对 DOM 的修改和对样式的修改，页面会进行多次回流或者重绘，应该进行如下优化：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> el = <span class="built_in">document</span>.querySelector(<span class="string">&#x27;div&#x27;</span>);</span><br><span class="line">el.style.cssText = <span class="string">&#x27;border-left: 1px; border-right: 1px; padding: 5px;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>这样的优化在以前我刚开始学习前端的时候，经常也在一些相关的性能优化的文章里看到，因为一直没有探究过，概念里一直觉得自己应该把多次 DOM 的样式的修改合并在一起，这样效率会更高，直到后来，自己对浏览器的进程与线程慢慢有了了解，曾经也写过一篇博客，<a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000013083967">浅谈浏览器多进程与JS线程</a>，其中有一个概念是，<code>JS线程与GUI渲染线程是互斥关系</code>，大概的意思就是当js引擎在执行js代码的时候，浏览器的渲染引擎是被冻结了的，无法渲染页面的，必须等待js引擎空闲了才能渲染页面。</p>
+<p>这个概念，<code>JS线程与GUI渲染线程是互斥关系</code>与上面描述的骚操作似乎有点冲突，也就是当我们对<code>el.style</code>进行一些列赋值的时候，渲染引擎是被冻结的状态，怎么会进行多次重绘或者回流？带着这样的疑问，写了一个小demo，代码如下。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">title</span>&gt;</span>测试页<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="css"></span></span><br><span class="line"><span class="css">    <span class="selector-id">#box</span> &#123;</span></span><br><span class="line"><span class="css">      <span class="attribute">width</span>: <span class="number">109px</span>;</span></span><br><span class="line"><span class="css">      <span class="attribute">height</span>: <span class="number">100px</span>;</span></span><br><span class="line"><span class="css">      <span class="attribute">background-color</span>: lightsteelblue;</span></span><br><span class="line"><span class="css">      <span class="attribute">border-style</span>: solid;</span></span><br><span class="line"><span class="css">    &#125;</span></span><br><span class="line"><span class="css">  </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;box&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="keyword">var</span> box = <span class="built_in">document</span>.getElementById(<span class="string">&#x27;box&#x27;</span>);</span></span><br><span class="line"><span class="javascript"><span class="keyword">var</span> toggle = <span class="number">0</span>;</span></span><br><span class="line"><span class="javascript"><span class="keyword">var</span> time = <span class="number">500</span>;</span></span><br><span class="line"><span class="javascript"><span class="function"><span class="keyword">function</span> <span class="title">toggleFun</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">var</span> borderWidth = toggle ? <span class="number">20</span> : <span class="number">0</span>;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">var</span> borderColor = toggle ? <span class="string">&#x27;coral&#x27;</span> : <span class="string">&#x27;transparent&#x27;</span>;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">if</span> (toggle) &#123;</span></span><br><span class="line"><span class="javascript">    box.style.borderWidth = <span class="string">&#x27;50px&#x27;</span>;</span></span><br><span class="line"><span class="javascript">    box.style.borderWidth = borderWidth + <span class="string">&#x27;px&#x27;</span>;</span></span><br><span class="line"><span class="javascript">    box.style.borderColor = borderColor;</span></span><br><span class="line"><span class="javascript">  &#125; <span class="keyword">else</span> &#123;</span></span><br><span class="line"><span class="javascript">    box.style.cssText = <span class="string">&#x27;border: &#x27;</span> + borderWidth + <span class="string">&#x27;px solid&#x27;</span> + borderColor;</span></span><br><span class="line"><span class="javascript">  &#125;</span></span><br><span class="line"><span class="javascript">  toggle = toggle ? <span class="number">0</span> : <span class="number">1</span>;</span></span><br><span class="line"><span class="javascript">&#125;</span></span><br><span class="line"><span class="javascript"><span class="built_in">setInterval</span>(toggleFun, time)</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>代码大概的意思就是定时以两种操作设置样式，收集浏览器的回流或者重绘次数。</p>
+<p>打开chrome的开发者工具，切换到<code>Performance</code>选项卡，点击左上角的圆 ○，开始<code>record</code>，等几秒后<code>stop</code>，点击<code>Frames</code>查看<code>Event log</code>选项卡，内容如下：</p>
+<p><img src="https://raw.githubusercontent.com/yacan8/blog/master/images/%E5%85%B3%E4%BA%8E%E5%9B%9E%E6%B5%81%E4%B8%8E%E9%87%8D%E7%BB%98%E4%BC%98%E5%8C%96%E7%9A%84%E6%8E%A2%E7%B4%A2/1.png" alt="运行结果"></p>
+<p>大概可以看到，<code>Recalculate Style -&gt; Layout -&gt; Update Layer Tree -&gt; Paint -&gt; Composite Layers</code> 这个过程在循环进行，触发的目标代码是第25行代码合29行代码，也就是<code>box.style.borderWidth = &#39;50px&#39;;</code>和<code>box.style.cssText = &#39;border: &#39; + borderWidth + &#39;px solid&#39; + borderColor;</code>。</p>
+<p>首先回顾一下浏览器渲染页面的流程：</p>
+<ol>
+<li>请求拿到html报文。</li>
+<li>同时解析生成CSS规则树和DOM树。</li>
+<li>合并CSS规则树和DOM树，生成render树。</li>
+<li>渲染进程根据render树进行Layout。</li>
+<li>绘制paint页面。</li>
+</ol>
+<p>然后在看看上面的过程，可以容易看出，</p>
+<ol>
+<li>首先，<code>Recalculate Style</code>，重新计算css规则树。</li>
+<li>进行<code>Layout</code>，这里的Layout可以理解成回流，重新计算每个元素的位置。</li>
+<li><code>Update Layer Tree</code>，字面意思理解，更新层级树。</li>
+<li><code>Paint</code>，绘制页面，在这里可以理解成重绘。</li>
+<li><code>Composite Layers</code>，字面意思理解，合并层级。</li>
+</ol>
+<p>由上面过程得到结果，当在同一执行任务里面对DOM的样式进行多次操作的时候，只会进行一次回流或者重绘，也就是说，只要我们的js引擎时候忙碌的，渲染引擎是冻结的时候，无论对DOM样式进行多少次操作，都只会进行一次回流或者重绘，也就是说前面说的<code>合并样式</code>优化是无效的。</p>
+<p>这个时候，我对上面过程又产生了新的疑问，为什么要<code>Paint</code>之后在<code>Composite Layers</code>呢？为什么不把所有层合并完了在绘制页面呢？</p>
+<p>…………………….(看搜索相关资料去了)</p>
+<p>翻看资料结束后，我得到以下理解。</p>
+<p>首先理解<code>layer</code>概念，可以理解成PS里面的图层，我们知道PS文件最后保存层PSD文件，当图层越多的时候，PSD文件就越大，在我们的浏览器里面也是一样的，我们的layer越多，所占的内存就越大。</p>
+<p>然后理解<code>Paint</code>真正做的事情，paint的任务大概就是把所有的layer绘制到页面中，这个绘制与canvas的绘制不一样，canvas的绘制相当于在画布里把像素直接绘制成指定颜色，然后我们直接看到的东西就直接是像素颜色，而我们这里说的<code>Paint</code>只是把图层丢到页面中，最后的绘制，需要交给<code>Composite线程</code>处理。</p>
+<p>最后是<code>Composite Layers</code>，由<code>composite线程</code>进行，这个线程在浏览器的Renderer进程中，任务是把Paint时候丢上页面的图层转化成位图，最终生成我们肉眼可以看到的图像，所以，真正的绘制，应该是<code>Composite Layers</code>过程进行的。</p>
+<p>由于<code>paint</code>与<code>composite</code>解耦，浏览器对每一个<code>layer</code>都有一个标识，这个标识用来标识该<code>layer</code>是否需要重绘，在有CSS规则树变化的时候，浏览器只会对这些被标识的layer进行重绘，用这样的方式提高浏览器的渲染性能。</p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>前端大法博大精深，越往下学越觉得自己不适合前端！！！仿佛看到自己在从入门到跑路这条路上快走到了终点。。。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/016e8e78eb1f">Chrome 性能调优简介</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/quincyWang/p/6932382.html">浏览器解析过程</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/fendouzhe123/article/details/49127441">GPU：合成加速</a></li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">JavaScript</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">前端</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/11/18/%E5%85%B3%E4%BA%8E%E5%9B%9E%E6%B5%81%E4%B8%8E%E9%87%8D%E7%BB%98%E4%BC%98%E5%8C%96%E7%9A%84%E6%8E%A2%E7%B4%A2/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-一年半经验，百度、有赞、阿里面试总结" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1582,116 +1704,6 @@ var _hmt = _hmt || [];
 
 
   
-    <article id="post-JavaScript原型与原型链的理解" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/05/13/JavaScript%E5%8E%9F%E5%9E%8B%E4%B8%8E%E5%8E%9F%E5%9E%8B%E9%93%BE%E7%9A%84%E7%90%86%E8%A7%A3/">JavaScript原型与原型链的理解</a>
-    </h1>
-  
-
-        
-        <a href="/2018/05/13/JavaScript%E5%8E%9F%E5%9E%8B%E4%B8%8E%E5%8E%9F%E5%9E%8B%E9%93%BE%E7%9A%84%E7%90%86%E8%A7%A3/" class="archive-article-date">
-  	<time datetime="2018-05-13T12:02:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-05-13</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h3><p>原型与原型链一直是JavaScript中的重点与难点，虽然老生常谈了，但是还是需要对其进行深入与巩固。。。。</p>
-<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>首先是原型，要理解原型，需要知道三个东西;</p>
-<p><code>prototype</code>：每个<code>函数</code>都会有的属性，它指向函数的原型对象。（注意：函数对象才有，普通对象没有。）</p>
-<p><code>__proto__</code>：每一个对象都会有个属性，当然，函数也属于对象，所以函数也有这个属性，它指向构造函数的原型对象;</p>
-<p><code>constructor</code>：原型对象上的一个属性，指向对象的构造函数;</p>
-<p>下面用示例来验证一下其关系;</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Pig</span>(<span class="params">name</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">this</span>.name = name;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> peppa = <span class="keyword">new</span> Pig(<span class="string">&#x27;peppa&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>用<code>new</code>关键字实例化一个Pig对象，返回一个普通对象pie示例，在实例化的时候，Pig的prototype上的属性会作为原型对象赋值给实例。也就是说peppa的原型，是从Pig的prototype引用来的，即<code>peppa.__proto__ === Pig.prototype</code>;</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">peppa.__proto__ === Pig.prototype;</span><br><span class="line"><span class="comment">// true;</span></span><br></pre></td></tr></table></figure>
-
-<p>Pig是一个函数对象，它是Function的一个实例，所以<code>Pig.__proto__ === Function.prototype</code>一定为true;</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Pig.__proto__ === <span class="built_in">Function</span>.prototype;</span><br><span class="line"><span class="comment">// true</span></span><br></pre></td></tr></table></figure>
-
-<p>上面说到的constructor，它指向原型对象构造函数属性，也就是<code>peppa.__proto__.constructor == Pig</code>;</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pie.__proto__.constructor == Pig;</span><br><span class="line"><span class="comment">// true</span></span><br></pre></td></tr></table></figure>
-
-<p>当然我们有<code>peppa.__proto__ === Pig.prototype</code>，所以<code>Pig.prototype.constructor == Pig</code>也为true;</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Pig.prototype.constructor == Pig</span><br></pre></td></tr></table></figure>
-
-<p>下面我们来说一下Pig、Function、Object之间的关系；<br>首先，Pig为Function的实例，所以有<code>Pig.__proto__ === Function.prototype</code>为true；</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Pig.__proto__ === <span class="built_in">Function</span>.prototype;</span><br><span class="line"><span class="comment">// true</span></span><br></pre></td></tr></table></figure>
-
-<p>然后由于构造函数创建的时候会给其函数加上prototype属性，方面后面实例的引用，prototype属于普通对象，为Object的实例，有：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Pig.prototype.__proto__ === <span class="built_in">Object</span>.prototype;</span><br><span class="line"><span class="comment">// true</span></span><br></pre></td></tr></table></figure>
-
-<p>由上可以知道，所有构造函数的原型对象的<code>__proto__</code>都指向Object.prototype：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Function</span>.prototype.__proto__ === <span class="built_in">Object</span>.prototype</span><br><span class="line"><span class="comment">// true</span></span><br></pre></td></tr></table></figure>
-
-<p>另外，Object为一个对象，可以认为为某一个Function的实例返回，所以有：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Object</span>.__proto__ === <span class="built_in">Function</span>.prototype</span><br><span class="line"><span class="comment">// true</span></span><br></pre></td></tr></table></figure>
-
-<p>至此，得到链条<code>pie.__proto__ === Pig.prototype</code> =&gt; <code>Pig.__proto__ === Function.prototype</code> =&gt; <code>Function.prototype.__proto__ === Object.prototype</code>;<br>那么<code>Object.prototype.__proto__</code>又指向谁，JS世界里万物皆对象，Object似乎已经到了原型链的顶端，果然不出我所料，它确实是null；</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Object</span>.prototype.__proto__ === <span class="literal">null</span>;</span><br><span class="line"><span class="comment">// true</span></span><br></pre></td></tr></table></figure>
-
-<p>接着说一下原型链。正如你在上面图中所看到的，JS在创建对象的时候，会在新对象上产生一个__proto__的属性，这个属性指向了它构造函数的原型的prototype。由此一级一级向上直到到达Object.prototype.proto === null的这个链条我们称之为原型链。</p>
-<h3 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h3><p>关于原型与原型链大概理解如上，大部分继承都是基于原型与原型链完成的。。。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">JavaScript</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/05/13/JavaScript%E5%8E%9F%E5%9E%8B%E4%B8%8E%E5%8E%9F%E5%9E%8B%E9%93%BE%E7%9A%84%E7%90%86%E8%A7%A3/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/2/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/4/">Next &amp;raquo;</a>
@@ -1785,11 +1797,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">JavaScript</a>
+                <a href="javascript:void(0)" class="js-tag color2">canvas</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">canvas</a>
+                <a href="javascript:void(0)" class="js-tag color1">JavaScript</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1885,6 +1897,14 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">面试</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">继承</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
               </li>
              
@@ -1934,10 +1954,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">redux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">面试</a>
               </li>
              
               <li class="article-tag-list-item">
