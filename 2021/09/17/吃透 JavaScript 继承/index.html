@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/LuckyWinty/blog/master/markdown/JavaScript/911587-20160905171954254-954754097.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/ShuaiQingHan/Images/master/QQ/%E4%BA%8C%E7%BB%B4%E7%A0%81%E7%BE%8E%E5%8C%96.png">
 <meta property="article:published_time" content="2021-09-16T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-09-17T03:19:16.920Z">
+<meta property="article:modified_time" content="2021-09-17T03:25:20.729Z">
 <meta property="article:author" content="小韩">
 <meta property="article:tag" content="JavaScript">
 <meta property="article:tag" content="面试">
@@ -203,7 +203,9 @@ var _hmt = _hmt || [];
 
 <h4 id="基本思想"><a href="#基本思想" class="headerlink" title="基本思想"></a>基本思想</h4><p>借用构造函数的基本思想就是利用call或者apply把父类中通过this指定的属性和方法复制（借用）到子类创建的实例中。因为this对象是在运行时基于函数的执行环境绑定的。也就是说，在全局中，this等于window，而当函数被作为某个对象的方法调用时，this等于那个对象。call 、apply方法可以用来代替另一个对象调用一个方法。call、apply 方法可将一个函数的对象上下文从初始的上下文改变为由 thisObj 指定的新对象。 　　</p>
 <p>所以，这个借用构造函数就是，new对象的时候(注意，new操作符与直接调用是不同的，以函数的方式直接调用的时候，this指向window，new创建的时候，this指向创建的这个实例)，创建了一个新的实例对象，并且执行SubType里面的代码，而SubType里面用call调用了SuperTyep，也就是说把this指向改成了指向新的实例，所以就会把SuperType里面的this相关属性和方法赋值到新的实例上，而不是赋值到SupType上面。所有实例中就拥有了父类定义的这些this的属性和方法。</p>
-<h4 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h4><p>相对于原型链而言，借用构造函数有一个很大的优势，即可以在子类型构造函数中向超类型构造函数传递参数。因为属性是绑定到this上面的，所以调用的时候才赋到相应的实例中，各个实例的值就不会互相影响了。</p>
+<h4 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h4><span id="more"></span>
+
+<p>相对于原型链而言，借用构造函数有一个很大的优势，即可以在子类型构造函数中向超类型构造函数传递参数。因为属性是绑定到this上面的，所以调用的时候才赋到相应的实例中，各个实例的值就不会互相影响了。</p>
 <p>例如：</p>
 <figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> SuperType(name)&#123;</span><br><span class="line">    <span class="keyword">this</span><span class="variable">.name</span> = name;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> SubType()&#123;</span><br><span class="line">    <span class="comment">//继承了SuperType，同时还传递了参数</span></span><br><span class="line">    SuperType<span class="variable">.call</span>(<span class="keyword">this</span>, <span class="string">&quot;Nicholas&quot;</span>);</span><br><span class="line">    <span class="comment">//实例属性</span></span><br><span class="line">    <span class="keyword">this</span><span class="variable">.age</span> = <span class="number">29</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> <span class="keyword">instance</span> = <span class="keyword">new</span> SubType();</span><br><span class="line">alert(<span class="keyword">instance</span><span class="variable">.name</span>); <span class="comment">//&quot;Nicholas&quot;;</span></span><br><span class="line">alert(<span class="keyword">instance</span><span class="variable">.age</span>); <span class="comment">//29</span></span><br></pre></td></tr></table></figure>
 
@@ -477,11 +479,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">JavaScript</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color1">JavaScript</a>
               </li>
              
               <li class="article-tag-list-item">
